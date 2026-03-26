@@ -273,6 +273,7 @@
     <a href="#arch"      class="nav-item">工程架构</a>
     <a href="#skill"     class="nav-item">Skill 框架</a>
     <a href="#eval"      class="nav-item">Eval 实验</a>
+    <a href="#production" class="nav-item">生产链路</a>
     <a href="#structure" class="nav-item">目录结构</a>
     <a href="#gap"       class="nav-item">现状差距</a>
     <a href="#next"      class="nav-item">下一步</a>
@@ -793,10 +794,320 @@
 
 <div class="section-rule"></div>
 
-<!-- ═══════════════════ SECTION 5: STRUCTURE + GAP + NEXT ═══════════════════ -->
+<!-- ═══════════════════ SECTION 5: PRODUCTION PIPELINE ═══════════════════ -->
+<section class="section" id="production">
+  <div class="section-header">
+    <div class="section-eyebrow">05 · Production Pipeline</div>
+    <h2 class="section-title">生成稿如何直接进入生产？</h2>
+    <p class="section-desc">
+      AI 生成的 HTML/CSS 设计稿不是"给设计师看的原型"，而是<strong>前端可直接使用的生产代码</strong>。
+      这需要在生成侧满足三个条件：结构可接管、样式可剥离、Token 可对齐。
+    </p>
+  </div>
+
+  <!-- 端到端流程图 -->
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:36px 40px;margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:28px;font-family:'JetBrains Mono',monospace;">END-TO-END · 从需求到上线</div>
+
+    <div style="display:flex;align-items:stretch;gap:0;overflow-x:auto;">
+
+      <!-- Step 1 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#eef3ff;border:2px solid #c7d8ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📋</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">需求描述</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">"帮我生成一个<br/>知识库列表页"</div>
+        </div>
+        <div style="background:var(--brand-dim);border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--brand);font-weight:600">产品/设计师</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,var(--brand),var(--brand-mid));border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--brand-mid);"></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fff7ed;border:2px solid #fed7aa;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤖</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">AI 规范生成</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">b-design-codegen<br/>调用规范 Skill</div>
+        </div>
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#c2410c;font-weight:600">Token 精确 · 合规 100%</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#c2410c,#ea580c);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #ea580c;"></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#f0fdf4;border:2px solid #bbf7d0;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📄</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">输出产物</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">HTML + CSS<br/>（含规范注释）</div>
+        </div>
+        <div style="background:var(--success-dim);border:1px solid #bbf7d0;border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--success);font-weight:600">生产就绪格式</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #4ade80;"></div>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fdf4ff;border:2px solid #e9d5ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⚙️</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">前端接管</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">结构拆解为<br/>Vue/React 组件</div>
+        </div>
+        <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#7e22ce;font-weight:600">无需重写逻辑</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#7e22ce,#9333ea);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #9333ea;"></div>
+      </div>
+
+      <!-- Step 5 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fef3c7;border:2px solid #fde68a;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">自动走查</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">b-design-review<br/>CI 门控</div>
+        </div>
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#92400e;font-weight:600">不合规不合并</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #f59e0b;"></div>
+      </div>
+
+      <!-- Step 6 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#2563f4,#6b9bff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🚀</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">上线</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">规范合规<br/>零 UI 债务</div>
+        </div>
+        <div style="background:var(--brand-dim);border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--brand);font-weight:600">100% 规范合规</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3 条件 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+
+    <!-- 条件1：结构可接管 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#0f1530,#1a2a5e);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 1</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">结构可接管</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">HTML 语义化，组件边界清晰</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          生成的 HTML 必须有明确的组件边界注释，让前端可以直接按区域拆 Vue/React 组件，而不是面对一团 div 猜结构。
+        </p>
+        <div style="background:var(--ink);border-radius:var(--r);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2;color:rgba(255,255,255,0.7);">
+          <div style="color:#6b9bff"><!-- [COMPONENT: KnowledgeList] --></div>
+          <div style="color:rgba(255,255,255,0.4)">&lt;div class="knowledge-list"&gt;</div>
+          <div style="padding-left:16px;color:rgba(255,255,255,0.4)">&lt;div class="list-header"&gt;...</div>
+          <div style="padding-left:16px;color:rgba(255,255,255,0.4)">&lt;div class="list-body"&gt;...</div>
+          <div style="color:rgba(255,255,255,0.4)">&lt;/div&gt;</div>
+          <div style="color:#6b9bff"><!-- [/COMPONENT] --></div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 组件开始/结束注释</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 语义化标签（nav/header/main/section）</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ class 命名与组件库一致</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 条件2：样式可剥离 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#1a3a1a,#14532d);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 2</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">样式可剥离</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">CSS 变量映射到组件库 Token</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          CSS 使用 CSS 变量，变量名与快手组件库的 Design Token 对齐。前端只需替换 Token 引用，不需要逐行改样式值。
+        </p>
+        <div style="background:var(--ink);border-radius:var(--r);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2;color:rgba(255,255,255,0.7);">
+          <div style="color:rgba(255,255,255,0.35)">/* 生成稿（直接可用）*/</div>
+          <div><span style="color:#f87171">--btn-primary-bg:</span> <span style="color:#4ade80">#2563F4</span>;</div>
+          <div><span style="color:#f87171">--btn-height-sm:</span> <span style="color:#4ade80">28px</span>;</div>
+          <div><span style="color:#f87171">--modal-width:</span> <span style="color:#4ade80">400px</span>;</div>
+          <div style="margin-top:6px;color:rgba(255,255,255,0.35)">/* 映射到组件库 */</div>
+          <div><span style="color:#6b9bff">@import</span> <span style="color:#fcd34d">'@kuaishou/b-design/tokens'</span>;</div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 所有样式值来自 CSS 变量</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 变量名与 @kuaishou/b-design Token 对齐</div>
+          <div style="font-size:12px;color:var(--danger);display:flex;align-items:center;gap:6px;font-weight:600">✗ 禁止魔法值（#2563F4 直接写死）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 条件3：Token 可对齐 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#3b1e0a,#7c2d12);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 3</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">交付物可直用</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">Handoff 注释 + 走查报告随附</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          每次生成同时产出三份交付物：HTML 稿、规范对照说明、自动走查报告。前端接到的不是一个 HTML 文件，而是一个完整的可验收包。
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">📄</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">page.html</div>
+              <div style="font-size:11px;color:var(--ink-4)">含组件边界注释 + CSS 变量</div>
+            </div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">📋</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">spec-notes.md</div>
+              <div style="font-size:11px;color:var(--ink-4)">每个组件的规范来源引用</div>
+            </div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">✅</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">compliance-report.md</div>
+              <div style="font-size:11px;color:var(--ink-4)">P0/P1/P2 自动走查结果</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 前端视角：节省了什么 -->
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:28px 32px;">
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:20px">前端视角：原来要做什么 vs 现在要做什么</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--danger-dim);display:inline-flex;align-items:center;justify-content:center;font-size:10px">✗</span>
+          原来（没有生产就绪设计稿）
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">①</span>
+            <span>看 Figma 稿反推组件结构，逐层猜层次关系</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">②</span>
+            <span>手动查规范文档，找按钮色值/间距/弹框宽度</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">③</span>
+            <span>凭记忆写 CSS，经常写错或写漏</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">④</span>
+            <span>等设计师走查，发现规范问题再改</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">⑤</span>
+            <span>反复改返工，UI 债务累积</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--success);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--success-dim);display:inline-flex;align-items:center;justify-content:center;font-size:10px">✓</span>
+          现在（AI 生产就绪设计稿）
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">①</span>
+            <span>直接按组件注释边界拆 Vue/React 组件，结构已标注</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">②</span>
+            <span>CSS 变量已对齐组件库 Token，直接替换引用即可</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">③</span>
+            <span>随附 spec-notes.md，每个组件的规范来源可溯源</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">④</span>
+            <span>compliance-report.md 提前标注所有 P0 问题</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">⑤</span>
+            <span>CI 集成 b-design-review，不合规不合并</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- time saving -->
+    <div style="margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:var(--surface-2);border-radius:var(--r-lg);padding:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:26px;font-weight:800;color:var(--success);letter-spacing:-.03em">~0</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">规范查阅时间</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--success);letter-spacing:-.03em">~0</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">UI 走查等待</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-.03em">3件</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">交付物随稿产出</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-.03em">CI</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">门控自动拦截</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CI 集成 -->
+  <div style="margin-top:16px;background:var(--ink);border-radius:var(--r-xl);padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff">CI 门控：规范走查集成到 PR 流程</div>
+      <div style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:#4ade80">自动拦截</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--r);padding:16px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:rgba(255,255,255,0.7);">
+      <div style="color:rgba(255,255,255,0.35)"># .github/workflows/design-review.yml</div>
+      <div><span style="color:#6b9bff">on:</span> [pull_request]</div>
+      <div><span style="color:#6b9bff">jobs:</span></div>
+      <div style="padding-left:16px"><span style="color:#6b9bff">design-review:</span></div>
+      <div style="padding-left:32px"><span style="color:#6b9bff">steps:</span></div>
+      <div style="padding-left:48px"><span style="color:#f87171">- name:</span> Run b-design-review</div>
+      <div style="padding-left:56px"><span style="color:#f87171">run:</span> <span style="color:#4ade80">ai review --skill b-design-review --fail-on P0</span></div>
+      <div style="padding-left:48px;margin-top:4px;color:rgba(255,255,255,0.35)"># P0 问题 → PR 阻塞 · P1 问题 → Warning · P2 → 记录</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="background:var(--danger-dim);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--danger);font-weight:600">P0 问题 → 阻塞合并</div>
+      <div style="background:var(--warn-dim);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--warn);font-weight:600">P1 问题 → Warning 提示</div>
+      <div style="background:var(--surface-2);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--ink-4);font-weight:600">P2 问题 → 记录备案</div>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 6: STRUCTURE + GAP + NEXT ═══════════════════ -->
 <section class="section" id="structure">
   <div class="section-header">
-    <div class="section-eyebrow">05 · File Structure</div>
+    <div class="section-eyebrow">06 · File Structure</div>
     <h2 class="section-title">Skill 目录结构</h2>
     <p class="section-desc">按功能分层，每类文件职责单一，支持增量扩展。</p>
   </div>
@@ -825,7 +1136,7 @@
 
 <section class="section" id="gap">
   <div class="section-header">
-    <div class="section-eyebrow">06 · Gap Analysis</div>
+    <div class="section-eyebrow">07 · Gap Analysis</div>
     <h2 class="section-title">现有 vs 缺失：差距在哪里</h2>
     <p class="section-desc">Iteration 1 已验证核心合规率，以下是下一轮需要补充的缺失项。</p>
   </div>
@@ -860,7 +1171,7 @@
 
 <section class="section" id="next">
   <div class="section-header">
-    <div class="section-eyebrow">07 · Next Steps</div>
+    <div class="section-eyebrow">08 · Next Steps</div>
     <h2 class="section-title">下一步计划</h2>
   </div>
 
