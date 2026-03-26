@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>date-design-guidelines Skill 创建流程图</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 48px;
+  }
+
+  /* ── Timeline container ── */
+  .timeline {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Vertical line */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #334155 0%, #475569 50%, #334155 100%);
+    transform: translateX(-50%);
+  }
+
+  /* ── Phase block ── */
+  .phase {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .phase.left { flex-direction: row-reverse; }
+  .phase.right { flex-direction: row; }
+
+  /* Center dot */
+  .phase-dot {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    transform: translateX(-50%);
+    z-index: 2;
+    border: 3px solid #0f1117;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+  }
+
+  /* Card */
+  .card {
+    width: calc(50% - 44px);
+    background: #1e2535;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    border-color: #4a5568;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .phase.left .card  { margin-right: 44px; }
+  .phase.right .card { margin-left: 44px; }
+
+  /* Arrow connector */
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 26px;
+    border: 8px solid transparent;
+  }
+  .phase.right .card::after {
+    left: -16px;
+    border-right-color: #2d3748;
+  }
+  .phase.left .card::after {
+    right: -16px;
+    border-left-color: #2d3748;
+  }
+
+  .card-phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #f1f5f9;
+  }
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+
+  /* Tags / badges */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Output box */
+  .output-box {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .output-box strong { color: #9ca3af; }
+
+  /* Detail list */
+  .detail-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .detail-list li {
+    font-size: 12px;
+    color: #94a3b8;
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .detail-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: #4b5563;
+    font-weight: 700;
+  }
+
+  /* Metric row */
+  .metrics {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .metric {
+    flex: 1;
+    min-width: 80px;
+    background: #111827;
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .metric-val {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-label {
+    font-size: 10px;
+    color: #6b7280;
+    line-height: 1.3;
+  }
+
+  /* Color themes per phase */
+  .theme-blue   .phase-dot  { background: #1d4ed8; }
+  .theme-blue   .card-phase-label { color: #60a5fa; }
+  .theme-blue   .tag.main  { background: #1e3a5f; color: #60a5fa; border: 1px solid #1e40af; }
+
+  .theme-purple .phase-dot  { background: #7c3aed; }
+  .theme-purple .card-phase-label { color: #a78bfa; }
+  .theme-purple .tag.main  { background: #2e1065; color: #a78bfa; border: 1px solid #5b21b6; }
+
+  .theme-green  .phase-dot  { background: #065f46; }
+  .theme-green  .card-phase-label { color: #34d399; }
+  .theme-green  .tag.main  { background: #064e3b; color: #34d399; border: 1px solid #065f46; }
+
+  .theme-orange .phase-dot  { background: #92400e; }
+  .theme-orange .card-phase-label { color: #fbbf24; }
+  .theme-orange .tag.main  { background: #431407; color: #fbbf24; border: 1px solid #78350f; }
+
+  .theme-teal   .phase-dot  { background: #0f766e; }
+  .theme-teal   .card-phase-label { color: #2dd4bf; }
+  .theme-teal   .tag.main  { background: #042f2e; color: #2dd4bf; border: 1px solid #0f766e; }
+
+  .theme-rose   .phase-dot  { background: #be123c; }
+  .theme-rose   .card-phase-label { color: #fb7185; }
+  .theme-rose   .tag.main  { background: #4c0519; color: #fb7185; border: 1px solid #be123c; }
+
+  .theme-indigo .phase-dot  { background: #3730a3; }
+  .theme-indigo .card-phase-label { color: #818cf8; }
+  .theme-indigo .tag.main  { background: #1e1b4b; color: #818cf8; border: 1px solid #3730a3; }
+
+  .tag.neutral { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
+  .tag.success { background: #064e3b; color: #34d399; border: 1px solid #065f46; }
+  .tag.warn    { background: #431407; color: #fbbf24; border: 1px solid #78350f; }
+
+  /* Section divider */
+  .section-divider {
+    text-align: center;
+    margin: 8px 0 32px;
+    position: relative;
+    z-index: 3;
+  }
+  .section-divider span {
+    display: inline-block;
+    background: #1e2535;
+    border: 1px solid #374151;
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 11px;
+    color: #64748b;
+    letter-spacing: 0.5px;
+  }
+
+  /* Legend */
+  .legend {
+    max-width: 960px;
+    margin: 40px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    padding-top: 32px;
+    border-top: 1px solid #1e2535;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .timeline::before { left: 22px; }
+    .phase { flex-direction: column !important; padding-left: 58px; }
+    .phase-dot { left: 22px; top: 0; }
+    .card { width: 100%; margin: 0 !important; }
+    .card::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>date-design-guidelines Skill 创建全流程</h1>
+<p class="subtitle">从内部文档到 Skill 发布，到评估迭代的完整路径 · 2026-03-20 → 03-23</p>
+
+<div class="timeline">
+
+  <!-- ════════════════ PHASE 0 ════════════════ -->
+  <div class="phase right theme-blue">
+    <div class="phase-dot">🌱</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 0 · 需求发现</div>
+      <div class="card-title">业务痛点识别</div>
+      <div class="card-desc">
+        在实现知识库管理页面（KATE）时，用 Material Design 规范输出了 UI，但快手内部 B 端有独立的设计规范体系，通用前端知识无法覆盖专有约定（弹框宽度、标签冒号、胶囊禁用场景等）。
+      </div>
+      <ul class="detail-list">
+        <li>基于快手内部文档创建 MD2 风格知识库页面</li>
+        <li>发现约 70% 的 B 端规范是快手专有约定</li>
+        <li>无 Skill 时设计稿屡被 UI 评审打回</li>
+      </ul>
+      <div class="tags">
+        <span class="tag main">业务驱动</span>
+        <span class="tag neutral">KATE 知识库</span>
+        <span class="tag neutral">Material Design</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span>▼ 决定构建专属 Skill</span></div>
+
+  <!-- ════════════════ PHASE 1 ════════════════ -->
+  <div class="phase left theme-purple">
+    <div class="phase-dot">📚</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 1 · 原始素材收集</div>
+      <div class="card-title">抓取快手内部设计文档</div>
+      <div class="card-desc">
+        从快手内部文档系统（docs.corp.kuaishou.com）获取 B 端组件设计规范，覆盖全类型组件，转化为 Skill 可引用的 Markdown 参考文件。
+      </div>
+      <ul class="detail-list">
+        <li>访问内部文档：截图 / 开发者工具 / 复制导出</li>
+        <li>按组件分类整理为独立 .md 文件</li>
+        <li>覆盖 27 个组件规范文档</li>
+      </ul>
+      <div class="output-box">
+        <strong>输出：</strong> references/ 目录下 27 份规范文档<br>
+        input.md · button.md · tabs.md · pagination.md · form.md · message-box.md · radio.md · … 等
+      </div>
+      <div class="tags">
+        <span class="tag main">文档采集</span>
+        <span class="tag neutral">27 份规范文件</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ PHASE 2 ════════════════ -->
+  <div class="phase right theme-green">
+    <div class="phase-dot">⚙️</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 2 · Skill 结构设计</div>
+      <div class="card-title">使用 skill-creator 编写 SKILL.md</div>
+      <div class="card-desc">
+        基于 skill-creator 规范，设计 SKILL.md 的结构：frontmatter 触发描述、参考文档总览、快速决策指南、通用规范速查。
+      </div>
+      <ul class="detail-list">
+        <li>编写 YAML frontmatter（name / description / version）</li>
+        <li>按组件类别分组建立文档索引表</li>
+        <li>设计「组件选型决策树」（日期 / 按钮 / 反馈类）</li>
+        <li>提炼「✅ 必须遵守 / ❌ 禁止使用 / 🎯 最佳实践」速查</li>
+      </ul>
+      <div class="output-box">
+        <strong>输出：</strong> SKILL.md (8.2 KB) · version 2.0.0<br>
+        快速决策指南 · 通用交互状态 · 尺寸规范 · 使用规范速查
+      </div>
+      <div class="tags">
+        <span class="tag main">skill-creator</span>
+        <span class="tag neutral">SKILL.md</span>
+        <span class="tag neutral">决策树</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span>▼ Skill v1.0 初版发布</span></div>
+
+  <!-- ════════════════ PHASE 3 ════════════════ -->
+  <div class="phase left theme-orange">
+    <div class="phase-dot">🧪</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 3 · 实战验证</div>
+      <div class="card-title">加载 Skill 实现真实 UI 需求</div>
+      <div class="card-desc">
+        在「新建知识库」弹框实现任务中首次使用 Skill，加载规范文档逐一查阅 input / radio / button / form / message-box 规范，输出符合规范的 HTML 组件。
+      </div>
+      <ul class="detail-list">
+        <li>加载 date-design-guidelines → 查阅 6 份组件规范</li>
+        <li>实现必填字段 · 单选按钮组 · 主次按钮 · 弹框宽度</li>
+        <li>Python HTTP Server 本地预览验证</li>
+        <li>后续修复：补充 textarea 字符计数器 + min-height 64px</li>
+      </ul>
+      <div class="output-box">
+        <strong>产物：</strong> modal.html · 规范符合率 100%<br>
+        localhost:7821/modal.html 可预览
+      </div>
+      <div class="tags">
+        <span class="tag main">首次使用</span>
+        <span class="tag success">100% 规范符合</span>
+        <span class="tag neutral">KATE 弹框</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ PHASE 4 ════════════════ -->
+  <div class="phase right theme-teal">
+    <div class="phase-dot">📊</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 4 · 量化评估</div>
+      <div class="card-title">用 skill-creator 进行系统性 Eval 评测</div>
+      <div class="card-desc">
+        基于真实 UI 需求，使用 skill-creator 的评估能力设计 3 个 Eval，以 with-skill vs without-skill 对照实验量化 Skill 价值。
+      </div>
+      <ul class="detail-list">
+        <li>Eval-1：新建知识库弹框（8 断言）</li>
+        <li>Eval-2：标签页类型选择与分页（7 断言）</li>
+        <li>Eval-3：代码规范检查与修正（6 断言）</li>
+        <li>生成 evals.json / grading.json / benchmark.json</li>
+        <li>每个 Eval 双路运行，对照打分</li>
+      </ul>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-val" style="color:#34d399">100%</div>
+          <div class="metric-label">With Skill<br>通过率</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" style="color:#f87171">28.9%</div>
+          <div class="metric-label">Without Skill<br>通过率</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" style="color:#fbbf24">+71.1%</div>
+          <div class="metric-label">规范合规<br>提升幅度</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" style="color:#60a5fa">21</div>
+          <div class="metric-label">总断言<br>覆盖数</div>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag main">skill-creator 评估</span>
+        <span class="tag neutral">3 Evals · 6 次运行</span>
+        <span class="tag success">21/21 断言通过</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ PHASE 5 ════════════════ -->
+  <div class="phase left theme-rose">
+    <div class="phase-dot">🔍</div>
+    <div class="card">
+      <div class="card-phase-label">Phase 5 · 差距分析</div>
+      <div class="card-title">对比社区 Top 3 Skill，识别能力缺口</div>
+      <div class="card-desc">
+        搜索社区中 B 端设计规范相关的 Top 3 Skill，与本地 date-design-guidelines 进行多维度对比，发现 5 类结构性缺口。
+      </div>
+      <ul class="detail-list">
+        <li>design-consistency-auditor（95 installs）— 审查机制</li>
+        <li>axiom-hig（138 installs）— HIG 原则 + 触发描述</li>
+        <li>design-system（15 installs）— 分阶段工作流</li>
+        <li>缺口 1：无输出后自检 Checklist</li>
+        <li>缺口 2：无具体 Design Token（颜色 / 间距 / 字体数值）</li>
+        <li>缺口 3：页面级布局模式覆盖太窄</li>
+        <li>缺口 4：无分阶段设计工作流</li>
+        <li>缺口 5：触发描述精准性不足</li>
+      </ul>
+      <div class="tags">
+        <span class="tag main">竞品对比</span>
+        <span class="tag warn">5 类缺口</span>
+        <span class="tag neutral">find-skills</span>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>需求 & 迭代</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>素材收集</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#065f46"></div>Skill 构建</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#92400e"></div>实战验证</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0f766e"></div>量化评估</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#be123c"></div>差距分析</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3730a3"></div>报告输出</div>
+  <div class="legend-item" style="margin-left: 16px; color: #475569; font-size:11px">工具链：skill-creator · find-skills · date-design-guidelines</div>
+</div>
+
+</body>
+</html>

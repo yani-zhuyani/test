@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>新建任务 — 天工·离线开发 — 符合B端设计规范</title>
+<style>
+/* ========== Reset & Global ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: "PingFang SC", -apple-system, "Helvetica Neue", sans-serif;
+  color: #131416;
+  background: #FFFFFF;
+  width: 1440px;
+  height: 900px;
+  overflow: hidden;
+  line-height: 1.57;
+}
+
+/* ========== Color Tokens ========== */
+:root {
+  --primary: #2563F4;
+  --primary-hover: #5C8FFF;
+  --primary-active: #1747CA;
+  --primary-disabled: rgba(37,99,244,0.36);
+  --primary-bg: rgba(37,99,244,0.1);
+  --danger: #E34D59;
+  --text: #131416;
+  --text-secondary: #5F6062;
+  --placeholder: #8E8E90;
+  --disabled-text: #B2B2B3;
+  --border: #DFE0E2;
+  --border-light: #E9EAEC;
+  --border-lighter: #F0F2F4;
+  --bg-disabled: #F5F6F8;
+  --bg-hover: #F0F2F4;
+  --white: #FFFFFF;
+  --radius: 2px;
+}
+
+/* ========== Top Navigation (52px) ========== */
+.top-nav {
+  height: 52px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-lighter);
+  display: flex;
+  align-items: stretch;
+  padding: 0;
+  position: relative;
+  z-index: 50;
+  overflow: hidden;
+}
+
+/* Left section: hamburger + logo + env-tag + main menu */
+.top-nav__left {
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 16px;
+  gap: 0;
+  flex-shrink: 0;
+  height: 100%;
+}
+.top-nav__hamburger {
+  width: 20px; height: 20px;
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.top-nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.top-nav__logo-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #4F8AFF, #2563F4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.top-nav__brand {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 24px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.top-nav__divider-brand {
+  width: 1px; height: 16px;
+  background: var(--border);
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+.top-nav__env-tag {
+  font-size: 12px;
+  color: var(--primary);
+  background: var(--primary-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Main Nav Tabs */
+.top-nav__menu {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  margin-left: 20px;
+  gap: 0;
+}
+.top-nav__menu-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+  white-space: nowrap;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.top-nav__menu-item:hover { color: var(--primary); background: var(--bg-hover); }
+.top-nav__menu-item--active { font-weight: 600; }
+.top-nav__menu-item--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+.top-nav__menu-item .dropdown-arrow {
+  width: 12px; height: 12px;
+  color: var(--placeholder);
+  flex-shrink: 0;
+}
+
+/* Right actions — pinned to far right */
+.top-nav__right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  flex-shrink: 0;
+  height: 100%;
+}
+.top-nav__right-icon {
+  width: 20px; height: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.top-nav__right-icon:hover { color: var(--text); }
+.top-nav__right-divider {
+  width: 1px; height: 16px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.top-nav__right-text {
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.top-nav__avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ========== Main Layout ========== */
+.main-layout {
+  display: flex;
+  height: calc(900px - 52px);
+}
+
+/* ========== Icon Side Nav (56px) ========== */
+.icon-nav {
+  width: 56px;
+  height: 100%;
+  background: var(--white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.icon-nav__item {
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background 0.15s;
+}
+.icon-nav__item:hover { background: var(--bg-hover); }
+.icon-nav__item--active { background: var(--bg-hover); color: var(--text); }
+.icon-nav__item svg { width: 20px; height: 20px; }
+.icon-nav__bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ========== Left Panel (280px) ========== */
+.left-panel {
+  width: 280px;
+  height: 100%;
+  background: var(--white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Panel Header */
+.panel-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.panel-header__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.panel-header__icons {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+.panel-header__icon {
+  width: 16px; height: 16px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.panel-header__icon:hover { color: var(--text); }
+
+/* New Task Button */
+.panel-new-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--primary);
+  background: var(--white);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  gap: 4px;
+  white-space: nowrap;
+}
+.panel-new-btn:hover {
+  color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Search */
+.panel-search {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.panel-search__input {
+  width: 100%;
+  height: 26px;
+  padding: 0 8px 0 28px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg-disabled);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  outline: none;
+}
+.panel-search__input::placeholder { color: var(--placeholder); }
+.panel-search__input:focus { border-color: var(--primary); background: var(--white); }
+.panel-search__wrap {
+  position: relative;
+}
+.panel-search__icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px; height: 14px;
+  color: var(--placeholder);
+}
+
+/* Tree Categories */
+.panel-categories {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.panel-category {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  gap: 4px;
+}
+.panel-category:hover { background: var(--bg-hover); }
+.panel-category--active { background: rgba(37,99,244,0.1); color: var(--primary); }
+.panel-category .expand-icon {
+  width: 12px; height: 12px;
+  color: var(--placeholder);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.panel-category .expand-icon.collapsed { transform: rotate(-90deg); }
+.panel-category .folder-icon {
+  width: 16px; height: 16px;
+  color: var(--placeholder);
+  flex-shrink: 0;
+}
+
+/* Tree */
+.tree { overflow-y: auto; flex: 1; padding: 4px 0; }
+.tree-node {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text);
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tree-node:hover { background: var(--bg-hover); }
+.tree-node--active { background: rgba(37,99,244,0.1); color: var(--primary); }
+.tree-node--level-1 { padding-left: 12px; }
+.tree-node--level-2 { padding-left: 32px; }
+.tree-node--level-3 { padding-left: 52px; }
+.tree-node .node-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  color: var(--placeholder);
+}
+.tree-node .expand-icon {
+  width: 12px; height: 12px;
+  flex-shrink: 0;
+  color: var(--placeholder);
+}
+.tree-node__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Panel Bottom */
+.panel-bottom {
+  margin-top: auto;
+  border-top: 1px solid var(--border-light);
+}
+.panel-bottom__item {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  justify-content: space-between;
+}
+.panel-bottom__item:hover { background: var(--bg-hover); }
+.panel-bottom__item svg { width: 16px; height: 16px; color: var(--placeholder); }
+
+/* ========== Content Area ========== */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #FAFBFC;
+}
+
+/* Content Tabs */
+.content-tabs {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.content-tab {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  gap: 6px;
+  white-space: nowrap;
+}
+.content-tab:hover { background: var(--bg-hover); }
+.content-tab--active { font-weight: 600; }
+.content-tab--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 56px; height: 3px;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+.content-tab__close {
+  width: 14px; height: 14px;
+  color: var(--placeholder);
+  cursor: pointer;
+}
+.content-tab__close:hover { color: var(--danger); }
+
+/* Content Body */
+.content-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 40px 60px;
+}
+
+/* ========== Section Title ========== */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: "";
+  width: 3px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* ========== Form ========== */
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.form-label {
+  width: 100px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 32px;
+  text-align: right;
+  padding-right: 12px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.form-label .required-star {
+  color: var(--danger);
+  margin-right: 2px;
+}
+.form-control { flex: 1; }
+
+/* ========== Capsule Tabs (胶囊标签页) ========== */
+.capsule-tabs {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 32px;
+}
+.capsule-tab {
+  padding: 5px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--white);
+  border: none;
+  cursor: pointer;
+  line-height: 22px;
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+  transition: all 0.15s;
+}
+.capsule-tab:last-child { border-right: none; }
+.capsule-tab:hover { background: var(--bg-hover); }
+.capsule-tab--active {
+  background: var(--primary);
+  color: var(--white);
+}
+.capsule-tab--active:hover { background: var(--primary-hover); }
+
+/* ========== Checkbox ========== */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 24px;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 22px;
+  height: 32px;
+}
+.checkbox-input {
+  appearance: none;
+  width: 16px; height: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.checkbox-input:hover { border-color: var(--primary); }
+.checkbox-input:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.checkbox-input:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 5px;
+  width: 4px; height: 8px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ========== Tag NEW ========== */
+.tag-new {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #E8801A;
+  background: rgba(232,128,26,0.1);
+  border-radius: 10px;
+  margin-left: 4px;
+  line-height: 1;
+}
+
+/* ========== Link ========== */
+.link {
+  color: var(--primary);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 22px;
+}
+.link:hover { color: var(--primary-hover); text-decoration: underline; }
+
+/* ========== Input ========== */
+.input {
+  width: 100%;
+  max-width: 480px;
+  height: 32px;
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input::placeholder { color: var(--placeholder); }
+.input:hover { border-color: var(--placeholder); }
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+
+/* ========== Desc Block ========== */
+.desc-block {
+  margin-top: 16px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+}
+.desc-block__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.desc-block__text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+/* ========== Task Info Section ========== */
+.task-info-section {
+  margin-top: 32px;
+}
+
+/* ========== Button ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn--primary {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  min-width: 88px;
+}
+.btn--primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn--primary:active { background: var(--primary-active); border-color: var(--primary-active); }
+.btn--tertiary {
+  background: var(--white);
+  color: var(--text);
+  border-color: var(--border);
+  min-width: 88px;
+}
+.btn--tertiary:hover { border-color: var(--placeholder); }
+
+/* Footer Buttons */
+.footer-btns {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: calc(1440px - 56px - 280px - 2px);
+  height: 56px;
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 40px;
+  gap: 12px;
+  z-index: 40;
+}
+
+/* ========== Modal Overlay ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+
+/* ========== Message Box (400px) ========== */
+.message-box {
+  width: 400px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 24px;
+  position: relative;
+}
+.message-box__close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 20px; height: 20px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.message-box__close:hover { color: var(--text); }
+.message-box__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-right: 32px;
+}
+.message-box__body {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.message-box__links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ========== Compliance Badge ========== */
+.compliance-badge {
+  position: fixed;
+  bottom: 64px;
+  right: 24px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  z-index: 200;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.compliance-badge__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.compliance-badge__list {
+  list-style: none;
+  padding: 0;
+}
+.compliance-badge__list li {
+  padding: 2px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  line-height: 1.5;
+}
+.compliance-badge__list li::before {
+  content: "✅";
+  flex-shrink: 0;
+}
+
+/* ========== Category Separator ========== */
+.category-sep {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 20px 0 12px;
+  line-height: 22px;
+}
+</style>
+</head>
+<body>
+
+<!-- ====== Top Navigation Bar (52px) ====== -->
+<header class="top-nav">
+  <!-- Left: Hamburger + Logo + Env + Menu -->
+  <div class="top-nav__left">
+    <svg class="top-nav__hamburger" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M3 5h14M3 10h14M3 15h14"/>
+    </svg>
+    <div class="top-nav__logo">
+      <div class="top-nav__logo-icon">天</div>
+      <span class="top-nav__brand">天工</span>
+    </div>
+    <span class="top-nav__divider-brand"></span>
+    <span class="top-nav__env-tag">离线开发</span>
+    <nav class="top-nav__menu">
+      <a class="top-nav__menu-item" href="#">数据查询</a>
+      <a class="top-nav__menu-item top-nav__menu-item--active" href="#">
+        发布任务
+        <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </a>
+      <a class="top-nav__menu-item" href="#">
+        运维管理
+        <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </a>
+      <a class="top-nav__menu-item" href="#">
+        辅助工具
+        <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </a>
+      <a class="top-nav__menu-item" href="#">
+        数据同步
+        <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </a>
+      <a class="top-nav__menu-item" href="#">
+        API服务
+        <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Right Actions -->
+  <div class="top-nav__right">
+    <svg class="top-nav__right-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L17 17"/></svg>
+    <svg class="top-nav__right-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2a6 6 0 016 6c0 4-2 6-6 10C6 14 4 12 4 8a6 6 0 016-6z"/></svg>
+    <svg class="top-nav__right-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><text x="10" y="14" text-anchor="middle" font-size="11" fill="currentColor">?</text></svg>
+    <span class="top-nav__right-divider"></span>
+    <span class="top-nav__right-text">
+      数据工厂开发工具链
+      <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+    </span>
+    <span class="top-nav__right-divider"></span>
+    <span class="top-nav__right-text">
+      国内
+      <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+    </span>
+    <div class="top-nav__avatar">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><circle cx="10" cy="7" r="4"/><path d="M3 18c0-4 3-7 7-7s7 3 7 7"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ====== Main Layout ====== -->
+<div class="main-layout">
+
+  <!-- ====== Icon Side Nav (56px) ====== -->
+  <aside class="icon-nav">
+    <div class="icon-nav__item" title="概览">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>
+    </div>
+    <div class="icon-nav__item icon-nav__item--active" title="任务">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 8h6M7 12h4"/></svg>
+    </div>
+    <div class="icon-nav__item" title="监控">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="14" height="12" rx="1"/><path d="M7 16v1M13 16v1M5 16h10"/></svg>
+    </div>
+    <div class="icon-nav__item" title="资源">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h3v3H4zM4 9h3v3H4zM9 4h3v3H9zM9 9h3v3H9z"/></svg>
+    </div>
+    <div class="icon-nav__item" title="图表">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="3" height="7"/><rect x="8.5" y="6" width="3" height="11"/><rect x="14" y="3" width="3" height="14"/></svg>
+    </div>
+    <div class="icon-nav__bottom">
+      <div class="icon-nav__item" title="推送">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10l6-6 6 6M10 4v12"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====== Left Panel (280px) ====== -->
+  <aside class="left-panel">
+    <div class="panel-header">
+      <span class="panel-header__title">任务</span>
+      <div class="panel-header__icons">
+        <svg class="panel-header__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="8" r="5"/><path d="M8 5v3"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>
+        <svg class="panel-header__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></svg>
+        <svg class="panel-header__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/><path d="M6 3v10M3 6h10"/></svg>
+      </div>
+      <button class="panel-new-btn">新建任务</button>
+    </div>
+
+    <!-- Search -->
+    <div class="panel-search">
+      <div class="panel-search__wrap">
+        <svg class="panel-search__icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="6" cy="6" r="4.5"/><path d="M9.5 9.5L13 13"/></svg>
+        <input class="panel-search__input" type="text" placeholder="搜索任务名">
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="panel-categories">
+      <div class="panel-category">
+        <svg class="expand-icon" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        未发布
+        <svg style="margin-left:auto;width:12px;height:12px;color:var(--placeholder)" viewBox="0 0 12 12" fill="currentColor"><path d="M3 4.5l3 3 3-3"/></svg>
+      </div>
+    </div>
+
+    <!-- Tree -->
+    <div class="tree">
+      <div class="tree-node tree-node--level-1">
+        <svg class="expand-icon" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        <span class="tree-node__text">离线同步</span>
+      </div>
+      <div class="tree-node tree-node--level-2">
+        <svg class="expand-icon" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        <span class="tree-node__text">Hive2Redis</span>
+      </div>
+      <div class="tree-node tree-node--level-3 tree-node--active">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202212131...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202212091...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202212082...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202212082...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202212071...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202211301...</span>
+      </div>
+      <div class="tree-node tree-node--level-3">
+        <svg class="node-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+        <span class="tree-node__text">hive2redis_202211301...</span>
+      </div>
+      <div class="tree-node tree-node--level-2">
+        <svg class="expand-icon collapsed" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        <span class="tree-node__text">Hive2Mysql</span>
+      </div>
+      <div class="tree-node tree-node--level-2">
+        <svg class="expand-icon collapsed" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        <span class="tree-node__text">Hive2Kafka</span>
+      </div>
+      <div class="tree-node tree-node--level-2">
+        <svg class="expand-icon collapsed" viewBox="0 0 12 12" fill="currentColor"><path d="M4 3l4 3-4 3z"/></svg>
+        <span class="tree-node__text">Excel2Hive</span>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="panel-bottom">
+      <div class="panel-bottom__item">
+        <span>已上线</span>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l4 4-4 4"/></svg>
+      </div>
+      <div class="panel-bottom__item">
+        <span>已下线</span>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l4 4-4 4"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====== Content Area ====== -->
+  <main class="content-area">
+
+    <!-- Content Tab Bar -->
+    <div class="content-tabs">
+      <div class="content-tab content-tab--active">
+        <span>新建任务</span>
+        <svg class="content-tab__close" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l6 6M10 4l-6 6"/></svg>
+      </div>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+
+      <!-- Section: 任务类型 -->
+      <div class="section-title">任务类型</div>
+
+      <!-- 分类 (胶囊标签页) -->
+      <div class="form-row">
+        <label class="form-label"><span class="required-star">*</span>分类：</label>
+        <div class="form-control">
+          <div class="capsule-tabs">
+            <button class="capsule-tab">数据开发</button>
+            <button class="capsule-tab capsule-tab--active">数据同步</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 任务类型 (Checkbox Grid) -->
+      <div class="form-row">
+        <label class="form-label" style="line-height:22px;padding-top:5px;"><span class="required-star">*</span>任务类型：</label>
+        <div class="form-control">
+          <!-- 离线同步 Category -->
+          <div class="category-sep">离线同步（以下任务类型在<a class="link" href="#">离线任务管理</a>进行管理和运维）</div>
+          <div class="checkbox-grid">
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2Redis
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2ClickHouse
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2Mysql
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2HBase
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2Kafka
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hive2ES
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Hudi2ClickHouse
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Mysql2Hive
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Excel2Hive
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> ES2Hive
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked>
+              Mysql2Hudi
+              <span class="tag-new">NEW</span>
+            </label>
+          </div>
+
+          <!-- 实时同步 Category -->
+          <div class="category-sep" style="margin-top:24px;">实时同步（以下任务类型在<a class="link" href="#">实时任务管理</a>进行管理和运维）</div>
+          <div class="checkbox-grid">
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Kafka2Hive
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Kafka2HDFS
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked> Kafka2ClickHouse
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected type description -->
+      <div class="desc-block" style="margin-left:100px;">
+        <div class="desc-block__title">Mysql2Hive</div>
+        <div class="desc-block__text">
+          <strong>同步逻辑：</strong>Mysql2Hudi首次创建时，将Mysql的全量数据一次性同步到Hudi表，后续将Mysql表的增量数据实时同步到Hudi。
+        </div>
+        <div class="desc-block__text">
+          <strong>亮点：</strong>省去传统数仓凌晨合并全量和增量数据环节，大大提升了数据产出时效性；使用最新Hudi存储技术，极大节省存储成本
+        </div>
+        <a class="link" href="#">帮助文档</a>
+      </div>
+
+      <!-- Section: 任务信息 -->
+      <div class="task-info-section">
+        <div class="section-title">任务信息</div>
+
+        <div class="form-row">
+          <label class="form-label"><span class="required-star">*</span>任务名称：</label>
+          <div class="form-control">
+            <input class="input" type="text" placeholder="请输入任务名称">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label"><span class="required-star">*</span>任务所属目录：</label>
+          <div class="form-control">
+            <input class="input" type="text" placeholder="请输入任务所属目录路径">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="footer-btns">
+      <button class="btn btn--tertiary">取消</button>
+      <button class="btn btn--primary">新建</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ====== Modal: 不能新建任务 ====== -->
+<div class="modal-overlay" id="errorModal">
+  <div class="message-box">
+    <svg class="message-box__close" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" onclick="document.getElementById('errorModal').classList.add('hidden')">
+      <path d="M5 5l10 10M15 5L5 15"/>
+    </svg>
+    <div class="message-box__title">不能新建任务</div>
+    <div class="message-box__body">
+      当前所选项目组为创建Kafka2Hive/Kafka2HDFS任务的专用项目组，不能创建其他任务类型，请选择标签为"标准"的项目组
+    </div>
+    <div class="message-box__links">
+      <a class="link" href="#">更多帮助</a>
+      <a class="link" href="#">查看项目组详情</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Compliance Badge ====== -->
+<div class="compliance-badge">
+  <div class="compliance-badge__title">📐 B端设计规范合规项</div>
+  <ul class="compliance-badge__list">
+    <li>顶导高度 52px（典型页面规范）</li>
+    <li>图标侧栏 56px + 8px 内边距（规范）</li>
+    <li>文件树面板 280px（规范）</li>
+    <li>导航激活态 56×3px 蓝色指示条</li>
+    <li>表单标签末尾加冒号（Form 规范）</li>
+    <li>必填星号 #E34D59 紧跟标签右侧</li>
+    <li>Placeholder 说明选择目的</li>
+    <li>胶囊标签页用于类型切换（合规）</li>
+    <li>Checkbox 横排间距 ≥ 24px</li>
+    <li>弹框宽度 400px（Message-box 规范）</li>
+    <li>弹框操作按钮 ≤ 3个</li>
+    <li>按钮文案"动宾"结构 ≤ 7字</li>
+    <li>主要按钮颜色 #2563F4（规范）</li>
+    <li>多按钮从左到右重要性降序排列</li>
+    <li>文字链用于外跳场景（Link 规范）</li>
+    <li>Tag NEW 标签 20px 高度（规范）</li>
+    <li>树节点行高 28px + 12/32px 缩进</li>
+    <li>树节点选中态 #2563F41A 背景</li>
+    <li>搜索框 26px + 12px 占位文字</li>
+    <li>页面宽度 1440px（标准视口）</li>
+  </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Skill 升级综合结论报告</title>
+<style>
+:root {
+  --bg: #f7f8fc;
+  --surface: #ffffff;
+  --border: #e4e7f0;
+  --text: #1a1d27;
+  --text-muted: #7a7f99;
+  --accent: #2563F4;
+  --accent-light: #eef3ff;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --red: #dc2626;
+  --red-bg: #fee2e2;
+  --yellow: #d97706;
+  --yellow-bg: #fef3c7;
+  --radius: 10px;
+  --shadow: 0 2px 16px rgba(37,99,244,.07);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #1a1d27 0%, #1e3a8a 60%, #2563F4 100%);
+  color: #fff;
+  padding: 52px 48px 44px;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 32px;
+  max-width: 640px;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 12px;
+  justify-content: start;
+}
+.hero-stat {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  backdrop-filter: blur(4px);
+  min-width: 140px;
+}
+.hero-stat .label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 6px;
+}
+.hero-stat .value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+.hero-stat .delta {
+  display: inline-block;
+  margin-top: 4px;
+  background: rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 1px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,.75);
+}
+.value-green { color: #86efac; }
+.value-red { color: #fca5a5; }
+.value-yellow { color: #fde68a; }
+
+/* ── Layout ── */
+.container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── Section ── */
+.section { margin-bottom: 48px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Card ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-body { padding: 20px; }
+
+/* ── Alert ── */
+.alert {
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.65;
+  margin-bottom: 12px;
+  border-left: 3px solid;
+}
+.alert-red { background: var(--red-bg); border-color: var(--red); color: #7f1d1d; }
+.alert-yellow { background: var(--yellow-bg); border-color: var(--yellow); color: #78350f; }
+.alert-blue { background: var(--accent-light); border-color: var(--accent); color: #1e3a8a; }
+
+/* ── Removed grid ── */
+.removed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.removed-card {
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  opacity: .85;
+}
+.removed-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--red-bg); color: var(--red);
+  border-radius: 4px; padding: 2px 8px;
+  font-size: 11px; font-weight: 600; margin-bottom: 10px;
+}
+.removed-title { font-size: 14px; font-weight: 700; text-decoration: line-through; color: var(--text-muted); margin-bottom: 8px; }
+.removed-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.removed-keep {
+  margin-top: 12px; padding: 10px 12px;
+  background: var(--bg); border-radius: 6px;
+  font-size: 12px; color: #5c6370;
+  border-left: 2px solid var(--border);
+}
+
+/* ── Ref grid ── */
+.ref-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.ref-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.ref-top {
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.ref-accent-bar { height: 3px; margin: -16px -18px 14px; }
+.ref-icon-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+.ref-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ref-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.ref-src { font-size: 11px; color: var(--text-muted); }
+.stars-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--yellow-bg); color: var(--yellow);
+  border: 1px solid rgba(217,119,6,.25);
+  border-radius: 4px; padding: 2px 8px;
+  font-size: 11px; font-weight: 700; margin-top: 8px;
+}
+.ref-body { padding: 14px 18px; font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.ref-body strong { color: var(--text); font-weight: 600; }
+
+/* ── Comparison table ── */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cmp-table th {
+  padding: 10px 14px;
+  background: var(--bg);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.cmp-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: var(--bg); }
+.cmp-table .hl-row td { background: #eef3ff; }
+.cmp-table .hl-row td:first-child { font-weight: 600; color: var(--accent); border-left: 2px solid var(--accent); padding-left: 12px; }
+.tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-green { background: var(--green-bg); color: var(--green); }
+.tag-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.tag-red { background: var(--red-bg); color: var(--red); }
+.tag-gray { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+/* ── Action list ── */
+.action-list { display: flex; flex-direction: column; gap: 10px; }
+.action {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  display: flex; gap: 16px;
+  transition: box-shadow .2s;
+}
+.action:hover { box-shadow: 0 4px 20px rgba(37,99,244,.12); }
+.action-dot {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.action-body { flex: 1; }
+.action-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.action-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.action-code {
+  margin-top: 10px;
+  background: #1a1d27;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+.action-code .c { color: #64748b; }
+.from-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.from-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: var(--accent-light); color: var(--accent);
+  border-radius: 4px; padding: 2px 8px;
+  font-size: 11px; font-weight: 600;
+}
+.from-chip.gray { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+.from-chip.green { background: var(--green-bg); color: var(--green); }
+
+/* ── Verdict ── */
+.verdict {
+  background: linear-gradient(135deg, #1a1d27 0%, #1e3a8a 60%, #2563F4 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 36px 40px;
+  margin-top: 12px;
+}
+.verdict h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.verdict-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.verdict p { font-size: 13px; color: rgba(255,255,255,.8); line-height: 1.85; }
+.verdict strong { color: #fff; font-weight: 700; }
+.verdict-highlight { color: #86efac; font-weight: 700; }
+.verdict-steps { display: flex; flex-direction: column; gap: 8px; }
+.verdict-step {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.verdict-step-prio {
+  font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  color: rgba(255,255,255,.5); text-transform: uppercase;
+  min-width: 30px; margin-top: 2px;
+}
+.verdict-step-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.9); }
+.verdict-step-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+.footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">综合结论报告 · v2 · 2026-03-24 · 已验证</div>
+  <h1>Skill 升级综合结论</h1>
+  <div class="hero-sub">两份调研报告合并去重 · 删除不适用参考 · 基于真实 GitHub Stars 重建参考体系</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="label">With Skill 合规率</div>
+      <div class="value value-green">100%</div>
+      <div class="delta">21/21 断言通过</div>
+    </div>
+    <div class="hero-stat">
+      <div class="label">无 Skill 上限</div>
+      <div class="value value-red">28.9%</div>
+      <div class="delta">通用知识天花板</div>
+    </div>
+    <div class="hero-stat">
+      <div class="label">Skill 提升幅度</div>
+      <div class="value value-yellow">+71.1%</div>
+      <div class="delta">快手专有规范覆盖</div>
+    </div>
+    <div class="hero-stat">
+      <div class="label">本次更新</div>
+      <div class="value" style="font-size:20px;line-height:1.4">删 2 换 3</div>
+      <div class="delta">参考重建完成</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ① 修正说明 -->
+  <div class="section">
+    <div class="section-title">◈  修正说明</div>
+    <div class="alert alert-red">
+      <strong>昨天报告的三个参考 Skill（design-consistency-auditor · axiom-hig · design-system）无法验证真实 Stars 数据</strong>，其中 design-consistency-auditor 的 mcpmarket 页面已返回 404。三个参考均基于方法论推断，而非真实使用数据。
+    </div>
+    <div class="alert alert-yellow">
+      <strong>今天报告的参考选择同样有误：</strong>brand-guidelines（PPT 品牌色）和 frontend-design（C 端创意 UI）均与 B 端规范生成场景不匹配，继续参考会引入错误方向。
+    </div>
+    <div class="alert alert-blue">
+      本报告已重新搜索，用 Snyk Top 8 榜单中有真实 Stars 数据的 Skill 替换全部参考来源。
+    </div>
+  </div>
+
+  <!-- ② 删除的参考 -->
+  <div class="section">
+    <div class="section-title">◈  删除的参考 Skill（2 个）</div>
+    <div class="removed-grid">
+      <div class="removed-card">
+        <div class="removed-chip">✕ 已删除</div>
+        <div class="removed-title">frontend-design · Anthropic · 65,847 ⭐</div>
+        <div class="removed-body">
+          C 端创意 UI Skill，目标是"避免 AI 味"、追求极端审美个性。你的 B 端需要"规范合规"而非"视觉创意"——需求完全反向。高 Star 数 ≠ 适合你的场景。
+        </div>
+        <div class="removed-keep">✓ 保留单点：「禁止项清单」的负向约束写法形式本身有借鉴价值</div>
+      </div>
+      <div class="removed-card">
+        <div class="removed-chip">✕ 已删除</div>
+        <div class="removed-title">brand-guidelines · Anthropic 官方 skills 库</div>
+        <div class="removed-body">
+          PPT 演示文稿品牌 VI Skill，通过 python-pptx 调用，场景是幻灯片品牌一致性。与 B 端 UI 代码生成无任何交集，无独立 Star 数据。
+        </div>
+        <div class="removed-keep">✓ 保留单点：「精确数值集中写在顶部」的格式习惯可直接借鉴</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 新的参考 -->
+  <div class="section">
+    <div class="section-title">◈  真实验证的参考 Skill（3 个）</div>
+    <div class="ref-grid">
+
+      <div class="ref-card">
+        <div class="ref-top">
+          <div class="ref-accent-bar" style="background: linear-gradient(90deg,#1e40af,#3b82f6)"></div>
+          <div class="ref-icon-row">
+            <div class="ref-icon" style="background:#eef3ff">🔍</div>
+            <div>
+              <div class="ref-name">Vercel Web Design Guidelines</div>
+              <div class="ref-src">vercel-labs/agent-skills · MIT · Jan 2026</div>
+              <div class="stars-badge">★ 19,487 Stars</div>
+            </div>
+          </div>
+        </div>
+        <div class="ref-body">
+          <strong>核心机制：</strong>100+ 规则 Audit 流程，fetch 规则 → 读代码 → 逐条检查 → 输出 file:line 报告。<br><br>
+          <strong>借鉴点：</strong>输出后自检 Checklist 结构——你的 Skill 生成界面后直接结束，这个机制正好填补验证缺口。
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <div class="ref-top">
+          <div class="ref-accent-bar" style="background: linear-gradient(90deg,#92400e,#f59e0b)"></div>
+          <div class="ref-icon-row">
+            <div class="ref-icon" style="background:#fef3c7">🎨</div>
+            <div>
+              <div class="ref-name">UI/UX Pro Max</div>
+              <div class="ref-src">nextlevelbuilder · MIT · Feb 2026</div>
+              <div class="stars-badge">★ 29,636 Stars</div>
+            </div>
+          </div>
+        </div>
+        <div class="ref-body">
+          <strong>核心机制：</strong>4 步生成工作流（分析 → 设计系统 → 细节 → 验证）+ MASTER.md 持久化 + 页面级 overrides 分层。<br><br>
+          <strong>借鉴点：</strong>分阶段生成工作流 + 持久化 Token 决策，防止跨会话漂移。
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <div class="ref-top">
+          <div class="ref-accent-bar" style="background: linear-gradient(90deg,#065f46,#059669)"></div>
+          <div class="ref-icon-row">
+            <div class="ref-icon" style="background:#dcfce7">🏗️</div>
+            <div>
+              <div class="ref-name">interface-design</div>
+              <div class="ref-src">Dammyjay93/interface-design · MIT · 2025</div>
+              <div class="stars-badge" style="background:#dcfce7;color:#16a34a;border-color:rgba(22,163,74,.25)">✓ B端专项 已验证</div>
+            </div>
+          </div>
+        </div>
+        <div class="ref-body">
+          <strong>核心机制：</strong>system.md 跨会话记忆，对话开始时自动加载 Token 决策（间距/颜色/深度）防漂移。<br><br>
+          <strong>借鉴点：</strong>明确定位 dashboards/admin panels，排除 marketing sites——与你的 B 端场景高度吻合。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ④ 对比矩阵 -->
+  <div class="section">
+    <div class="section-title">◈  能力对比矩阵</div>
+    <div class="card">
+      <div class="card-header">
+        你的 Skill vs 三个参考
+        <span style="font-size:11px;color:var(--text-muted);font-weight:400">高亮行 = 需补齐的机制缺口</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>维度</th>
+              <th>你的 Skill</th>
+              <th>Vercel Guidelines</th>
+              <th>UI/UX Pro Max</th>
+              <th>interface-design</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>规范知识覆盖</strong></td>
+              <td><span class="tag tag-green">★★★★★ 唯一满分</span></td>
+              <td><span class="tag tag-yellow">★★★</span></td>
+              <td><span class="tag tag-yellow">★★★</span></td>
+              <td><span class="tag tag-yellow">★★★</span></td>
+            </tr>
+            <tr>
+              <td><strong>快手专有规范</strong></td>
+              <td><span class="tag tag-green">100% 覆盖</span></td>
+              <td><span class="tag tag-gray">0%</span></td>
+              <td><span class="tag tag-gray">0%</span></td>
+              <td><span class="tag tag-gray">0%</span></td>
+            </tr>
+            <tr>
+              <td><strong>决策树 / 组件选型</strong></td>
+              <td><span class="tag tag-green">完整 ✓</span></td>
+              <td><span class="tag tag-gray">—</span></td>
+              <td><span class="tag tag-green">有 ✓</span></td>
+              <td><span class="tag tag-yellow">部分</span></td>
+            </tr>
+            <tr class="hl-row">
+              <td><strong>生成后自检 Checklist</strong></td>
+              <td><span class="tag tag-red">⚠ 缺失</span></td>
+              <td><span class="tag tag-green">核心特色 ✓</span></td>
+              <td><span class="tag tag-green">Phase 4 ✓</span></td>
+              <td><span class="tag tag-green">/audit ✓</span></td>
+            </tr>
+            <tr class="hl-row">
+              <td><strong>Core Tokens 精确注入</strong></td>
+              <td><span class="tag tag-red">⚠ 分散</span></td>
+              <td><span class="tag tag-gray">—</span></td>
+              <td><span class="tag tag-green">MASTER.md ✓</span></td>
+              <td><span class="tag tag-green">system.md ✓</span></td>
+            </tr>
+            <tr class="hl-row">
+              <td><strong>页面级生成工作流</strong></td>
+              <td><span class="tag tag-red">⚠ 缺失</span></td>
+              <td><span class="tag tag-gray">—</span></td>
+              <td><span class="tag tag-green">4 步流程 ✓</span></td>
+              <td><span class="tag tag-green">init/build ✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 行动建议 -->
+  <div class="section">
+    <div class="section-title">◈  5 条升级建议（优先级排序）</div>
+    <div class="action-list">
+
+      <div class="action">
+        <div class="action-dot" style="background:var(--red-bg)">🔴</div>
+        <div class="action-body">
+          <div class="action-title">P0-A · Core Design Tokens — SKILL.md 顶部精确注入</div>
+          <div class="action-desc">仿照 interface-design 的 system.md，将最常用数值集中在 SKILL.md 最顶部，AI 无需翻 references 直接执行。</div>
+          <div class="action-code"><span class="c">// 颜色</span>
+主色 #2563F4 · 危险 #E34D59 · 成功 #00B96B · 警告 #FF8C00 · 禁用文字 #9B9EA3
+<span class="c">// 尺寸</span>
+弹框宽度 400px · 按钮高度 32px(M) · 间距 4/8/12/16/24/32px · 圆角 2/4/8px
+<span class="c">// 字体层级</span>
+H1 20/28px · H2 16/24px · Body 14/22px · Caption 12/18px</div>
+          <div class="from-row">
+            <span class="from-chip green">interface-design system.md</span>
+            <span class="from-chip gray">两份报告均提到</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-dot" style="background:var(--red-bg)">🔴</div>
+        <div class="action-body">
+          <div class="action-title">P0-B · 生成后自检 Checklist — 4 类 15-20 条快手专属核查项</div>
+          <div class="action-desc">每次生成 B 端界面后必须过以下检查，不通过则修改，不能直接输出。</div>
+          <div class="action-code">① 色值合规（无非规范硬编码色）
+② 组件选型（标签页类型 · 弹框宽度≤400px · 按钮优先级）
+③ 表单规范（标签末尾冒号 · Placeholder 必填 · 描述用 textarea）
+④ 禁止项（胶囊不用于顶导 · 一区域一主按钮 · 弹框按钮≤3个）</div>
+          <div class="from-row">
+            <span class="from-chip">Vercel Web Design Guidelines Audit</span>
+            <span class="from-chip gray">昨天报告 P1 验证</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-dot" style="background:var(--yellow-bg)">🟠</div>
+        <div class="action-body">
+          <div class="action-title">P1-A · Forbidden Patterns — 代码实现层面禁止清单</div>
+          <div class="action-desc">在现有 ❌ 禁止使用（组件级）之外，补充代码实现层的禁止模式，防止 AI 写出看起来合理但违规的代码。</div>
+          <div class="action-code">「弹框宽度禁止用百分比，必须固定 400px」
+「分页必须四要素：总条数 + 页码 + 跳转输入框 + 条数切换」
+「表单多个输入框必须用 Form 组件包裹，不能散布」</div>
+          <div class="from-row">
+            <span class="from-chip gray">frontend-design 负向约束格式（借鉴形式，不借鉴内容）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-dot" style="background:var(--yellow-bg)">🟠</div>
+        <div class="action-body">
+          <div class="action-title">P1-B · B 端页面 4 步生成工作流</div>
+          <div class="action-desc">收到页面级需求时强制执行，不能直接生成。</div>
+          <div class="action-code">Step 1 需求澄清：页面类型? 核心操作? 数据密度?
+Step 2 组件选型：复用 SKILL.md 现有决策树
+Step 3 按 Token 生成：参照顶部 Core Tokens + 组件规范
+Step 4 跑 Checklist：过 P0-B，不通过则修改</div>
+          <div class="from-row">
+            <span class="from-chip">UI/UX Pro Max 4 步 Workflow</span>
+            <span class="from-chip gray">昨天报告 P3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-dot" style="background:var(--green-bg)">🟢</div>
+        <div class="action-body">
+          <div class="action-title">P2 · 扩展典型页面模式 + 优化 description 触发词</div>
+          <div class="action-desc">
+            新增 5 种 B 端页面骨架（列表页 · 详情页 · 大表单页 · Dashboard · 设置页），每种提供标准 HTML 布局骨架 + 关键尺寸标注。<br>
+            同时在 description 中补充上层场景触发词，让 Skill 对「帮我设计一个 B 端列表页」类请求更稳定触发：<br>
+            <em style="color:var(--text-muted)">「设计符合规范的快手 B 端界面/页面」「实现/审查弹框/表单/列表/导航」「B 端设计稿代码生成」</em>
+          </div>
+          <div class="from-row">
+            <span class="from-chip">Vercel When-to-Use 结构</span>
+            <span class="from-chip gray">昨天报告 P4+P5 合并</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="section">
+    <div class="section-title">◈  最终结论</div>
+    <div class="verdict">
+      <h3>综合结论</h3>
+      <div class="verdict-body">
+        <div>
+          <p>
+            你的 Skill 在<span class="verdict-highlight">「规范知识广度」</span>上是唯一选手——20+ 组件覆盖、决策树、100% 实测合规率，任何公开 Skill 都不具备快手 B 端专有规范的覆盖能力。<br><br>
+            唯三机制缺口（均有高 Star Skill 作参考依据）：<br>
+            <strong>① 视觉锚点</strong> — Core Tokens 精确注入（P0-A）<br>
+            <strong>② 验证闭环</strong> — 生成后 Checklist（P0-B）<br>
+            <strong>③ 执行结构</strong> — 4 步工作流 + Forbidden Patterns（P1）<br><br>
+            两个 P0 完成后，即可从「规范知识仓库」升级为「稳定输出引擎」。
+          </p>
+        </div>
+        <div>
+          <div class="verdict-steps">
+            <div class="verdict-step">
+              <div class="verdict-step-prio">P0-A</div>
+              <div><div class="verdict-step-title">Core Design Tokens 注入</div><div class="verdict-step-sub">约 20 分钟 · 最高 ROI</div></div>
+            </div>
+            <div class="verdict-step">
+              <div class="verdict-step-prio">P0-B</div>
+              <div><div class="verdict-step-title">生成后自检 Checklist</div><div class="verdict-step-sub">约 30 分钟 · 立即可见效果</div></div>
+            </div>
+            <div class="verdict-step">
+              <div class="verdict-step-prio">P1-A</div>
+              <div><div class="verdict-step-title">Forbidden Patterns 章节</div><div class="verdict-step-sub">约 30 分钟</div></div>
+            </div>
+            <div class="verdict-step">
+              <div class="verdict-step-prio">P1-B</div>
+              <div><div class="verdict-step-title">4 步生成工作流</div><div class="verdict-step-sub">约 30 分钟</div></div>
+            </div>
+            <div class="verdict-step">
+              <div class="verdict-step-prio">P2</div>
+              <div><div class="verdict-step-title">典型页面 + description</div><div class="verdict-step-sub">视情况安排</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  综合自：today report (design-skill-research-report.html) + yesterday report (skill-comparison-report.html)<br>
+  删除参考：frontend-design · brand-guidelines &nbsp;|&nbsp; 保留：Vercel Guidelines (19,487★) · UI/UX Pro Max (29,636★) · interface-design (B端专项)<br>
+  v2 · 2026-03-24 · 基于真实 GitHub Stars 验证重建
+</div>
+
+</body>
+</html>

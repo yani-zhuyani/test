@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Skill 升级综合结论 · UI/UX Pro Max 风格</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --navy: #1E3A8A;
+  --blue: #1E40AF;
+  --blue-mid: #3B82F6;
+  --amber: #F59E0B;
+  --amber-lt: #FFFBEB;
+  --bg: #F8FAFC;
+  --white: #ffffff;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text2: #475569;
+  --text3: #94A3B8;
+  --green: #059669;
+  --green-lt: #ECFDF5;
+  --red: #DC2626;
+  --red-lt: #FEF2F2;
+  --r: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Fira Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Header ── */
+.hdr {
+  background: linear-gradient(160deg, #0F2A6E 0%, #1E40AF 60%, #1D4ED8 100%);
+  color: #fff;
+  padding: 60px 0 52px;
+  position: relative;
+  overflow: hidden;
+}
+.hdr::after {
+  content: '';
+  position: absolute;
+  right: -80px; top: -80px;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: rgba(59,130,246,.15);
+  pointer-events: none;
+}
+.hdr-inner { max-width: 1040px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+.hdr-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(245,158,11,.2); border: 1px solid rgba(245,158,11,.4);
+  border-radius: 4px; padding: 4px 12px;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px; font-weight: 500; color: #FDE68A;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;
+}
+.hdr h1 {
+  font-size: 34px; font-weight: 700; letter-spacing: -0.5px;
+  margin-bottom: 12px; line-height: 1.15;
+}
+.hdr-sub { font-size: 15px; opacity: .75; max-width: 580px; margin-bottom: 28px; }
+.hdr-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+.hdr-stat { text-align: left; }
+.hdr-stat .num { font-family: 'Fira Code', monospace; font-size: 28px; font-weight: 700; color: #FDE68A; line-height: 1; }
+.hdr-stat .lbl { font-size: 11px; color: rgba(255,255,255,.6); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── Layout ── */
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
+.sec { padding: 48px 0 0; }
+.sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.sec-label { font-family: 'Fira Code', monospace; font-size: 11px; color: var(--amber); font-weight: 600; background: var(--amber-lt); border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 2px 8px; }
+.sec-title { font-size: 18px; font-weight: 700; color: var(--navy); }
+.sec-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; padding-left: 28px; }
+
+/* ── Removed cards ── */
+.removed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rm-card { background: var(--white); border: 1px dashed #CBD5E1; border-radius: var(--r); padding: 18px 20px; }
+.rm-tag { display: inline-flex; align-items: center; gap: 4px; font-family: 'Fira Code', monospace; font-size: 10px; background: var(--red-lt); color: var(--red); border: 1px solid rgba(220,38,38,.2); border-radius: 3px; padding: 2px 7px; margin-bottom: 10px; }
+.rm-title { font-size: 13px; font-weight: 700; color: #94A3B8; text-decoration: line-through; margin-bottom: 8px; }
+.rm-body { font-size: 12px; color: #94A3B8; line-height: 1.6; }
+.rm-keep { margin-top: 10px; padding: 8px 10px; background: #F8FAFC; border-left: 2px solid #CBD5E1; font-size: 12px; color: var(--text2); }
+
+/* ── Metric badge ── */
+.metric { display: inline-flex; align-items: center; gap: 4px; font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 600; }
+.metric-green { background: var(--green-lt); color: var(--green); border: 1px solid rgba(5,150,105,.2); border-radius: 4px; padding: 2px 8px; }
+.metric-amber { background: var(--amber-lt); color: #92400E; border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 2px 8px; }
+
+/* ── Ref cards ── */
+.ref-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.ref-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; position: relative; overflow: hidden; }
+.ref-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.ref-blue::before { background: linear-gradient(90deg, #1E40AF, #3B82F6); }
+.ref-amber::before { background: linear-gradient(90deg, #B45309, #F59E0B); }
+.ref-green::before { background: linear-gradient(90deg, #065F46, #059669); }
+.ref-icon { width: 40px; height: 40px; border-radius: var(--r); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+.ref-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.ref-card .ref-src { font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+.stars-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--amber-lt); border: 1px solid rgba(245,158,11,.4); border-radius: 4px; padding: 3px 8px; font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 700; color: #92400E; margin-bottom: 12px; }
+.ref-detail { font-size: 12px; color: var(--text2); line-height: 1.65; background: #F8FAFC; border-radius: 6px; padding: 12px; }
+
+/* ── Comparison table ── */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--white); border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); }
+.cmp-table th { padding: 10px 14px; background: #F1F5F9; font-weight: 600; color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; text-align: left; border-bottom: 1px solid var(--border); }
+.cmp-table td { padding: 10px 14px; border-bottom: 1px solid #F1F5F9; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: #F8FAFC; }
+.yes { color: var(--green); font-weight: 600; font-family: 'Fira Code', monospace; font-size: 12px; }
+.no { color: #CBD5E1; font-family: 'Fira Code', monospace; font-size: 12px; }
+.warn { color: var(--amber); font-weight: 600; font-family: 'Fira Code', monospace; font-size: 12px; }
+.hl-row td { background: #EFF6FF !important; color: #1E40AF; font-weight: 600; }
+
+/* ── Action list ── */
+.action-list { display: flex; flex-direction: column; gap: 12px; }
+.action { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; display: flex; gap: 16px; transition: box-shadow .2s; }
+.action:hover { box-shadow: 0 2px 12px rgba(30,64,175,.1); }
+.action-priority { width: 40px; height: 40px; border-radius: var(--r); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.action-body { flex: 1; }
+.action-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.action-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.action-code { margin-top: 8px; font-family: 'Fira Code', monospace; font-size: 11px; background: #F1F5F9; border-radius: 4px; padding: 8px 12px; color: #334155; }
+.from-list { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.from { display: inline-block; padding: 2px 8px; border-radius: 3px; font-family: 'Fira Code', monospace; font-size: 10px; font-weight: 600; }
+.from-blue { background: #EFF6FF; color: var(--blue); }
+.from-green { background: var(--green-lt); color: var(--green); }
+.from-gray { background: #F1F5F9; color: #64748B; }
+
+/* ── Verdict ── */
+.verdict { background: linear-gradient(135deg, #0F2A6E 0%, #1E40AF 100%); color: #fff; border-radius: var(--r); padding: 32px 36px; margin: 48px 0 0; display: flex; gap: 24px; }
+.verdict-icon { font-size: 40px; line-height: 1; flex-shrink: 0; }
+.verdict h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.verdict p { font-size: 13px; opacity: .85; line-height: 1.8; }
+.verdict strong { opacity: 1; color: #FDE68A; }
+.verdict-tip { background: rgba(255,255,255,.1); border-radius: 6px; padding: 12px 16px; margin-top: 14px; font-size: 12px; opacity: .88; line-height: 1.7; font-family: 'Fira Code', monospace; }
+
+.divider { height: 1px; background: var(--border); margin: 48px 0 0; }
+
+.footer { background: var(--white); border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text3); margin-top: 48px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-badge">▶ RESEARCH_REPORT v2 · 2026-03-24</div>
+    <h1>Skill 升级综合结论报告</h1>
+    <div class="hdr-sub">两份调研合并 · 虚构参考删除 · 真实 Stars 数据验证重建</div>
+    <div class="hdr-stats">
+      <div class="hdr-stat"><div class="num">100%</div><div class="lbl">With Skill 规范合规率</div></div>
+      <div class="hdr-stat"><div class="num">28.9%</div><div class="lbl">无 Skill 时上限</div></div>
+      <div class="hdr-stat"><div class="num">+71.1%</div><div class="lbl">Skill 带来的提升</div></div>
+      <div class="hdr-stat"><div class="num">3</div><div class="lbl">验证参考已替换</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ① 删除的参考 -->
+  <div class="sec">
+    <div class="sec-head">
+      <span class="sec-label">01 / REMOVED</span>
+      <span class="sec-title">删除的参考 Skill</span>
+    </div>
+    <div class="sec-sub">场景不匹配 · 继续参考会引入错误方向</div>
+    <div class="removed-grid">
+      <div class="rm-card">
+        <div class="rm-tag">✕ DELETED</div>
+        <div class="rm-title">frontend-design（Anthropic · 65,847 ⭐）</div>
+        <div class="rm-body">C 端创意 UI Skill，目标是"避免 AI 味"追求极端审美个性。B 端需要"规范合规"而非"视觉创意"——二者完全反向。高 Star 数 ≠ 适合你的场景。</div>
+        <div class="rm-keep">✓ 保留单点：「禁止项清单」写法形式（负向约束方式本身有借鉴价值）</div>
+      </div>
+      <div class="rm-card">
+        <div class="rm-tag">✕ DELETED</div>
+        <div class="rm-title">brand-guidelines（Anthropic 官方 skills 库）</div>
+        <div class="rm-body">PPT 演示文稿品牌 VI 色值 Skill，通过 python-pptx 调用，场景是幻灯片制作。与 B 端 UI 代码生成无关，无独立 Star 数据。</div>
+        <div class="rm-keep">✓ 保留单点：「精确数值集中写在顶部」的格式习惯可直接借鉴</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ② 真实参考 -->
+  <div class="sec">
+    <div class="sec-head">
+      <span class="sec-label">02 / REFERENCES</span>
+      <span class="sec-title">真实验证的参考 Skill</span>
+    </div>
+    <div class="sec-sub">均来自 Snyk Top 8 榜单 / 社区真实 GitHub 数据</div>
+    <div class="ref-grid">
+
+      <div class="ref-card ref-blue">
+        <div class="ref-icon" style="background:#EFF6FF">🔍</div>
+        <h4>Vercel Web Design Guidelines</h4>
+        <div class="ref-src">vercel-labs/agent-skills · MIT · Jan 2026</div>
+        <div class="stars-badge">★ 19,487 Stars</div>
+        <div class="ref-detail">
+          <strong>核心机制：</strong>100+ 规则 Audit，fetch 规则 → 读代码 → 逐条检查 → 输出 file:line 报告。<br><br>
+          <strong>借鉴点：</strong>输出后自检 Checklist 的结构设计——你的 Skill 生成后直接结束，这个机制正好补缺。
+        </div>
+      </div>
+
+      <div class="ref-card ref-amber">
+        <div class="ref-icon" style="background:#FFFBEB">🎨</div>
+        <h4>UI/UX Pro Max</h4>
+        <div class="ref-src">nextlevelbuilder · MIT · Feb 2026</div>
+        <div class="stars-badge">★ 29,636 Stars</div>
+        <div class="ref-detail">
+          <strong>核心机制：</strong>4 步生成工作流（分析 → 设计系统 → 细节 → 验证）+ MASTER.md 持久化 + 页面级 overrides 分层。<br><br>
+          <strong>借鉴点：</strong>分阶段生成工作流 + 持久化 Token 决策（防止跨会话漂移）。
+        </div>
+      </div>
+
+      <div class="ref-card ref-green">
+        <div class="ref-icon" style="background:var(--green-lt)">🏗️</div>
+        <h4>interface-design</h4>
+        <div class="ref-src">Dammyjay93/interface-design · MIT · 2025</div>
+        <div class="stars-badge" style="background:var(--green-lt);color:#065F46;border-color:rgba(5,150,105,.3)">✓ B端专项 验证</div>
+        <div class="ref-detail">
+          <strong>核心机制：</strong>system.md 跨会话记忆，对话开始时自动加载已确定的 Token 决策（间距/颜色/深度），防止漂移。<br><br>
+          <strong>借鉴点：</strong>明确排除 marketing sites，专为 dashboards/admin panels 设计——与你的 B 端场景高度匹配。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ③ 比较矩阵 -->
+  <div class="sec">
+    <div class="sec-head">
+      <span class="sec-label">03 / MATRIX</span>
+      <span class="sec-title">你的 Skill vs 三个参考</span>
+    </div>
+    <div class="sec-sub">6 个维度评估 · 高亮行 = 需要补齐的机制缺口</div>
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>你的 Skill</th>
+          <th>Vercel Guidelines</th>
+          <th>UI/UX Pro Max</th>
+          <th>interface-design</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>规范知识覆盖</strong></td>
+          <td><span class="yes">★★★★★ 唯一满分</span></td>
+          <td><span class="warn">★★★</span></td>
+          <td><span class="warn">★★★</span></td>
+          <td><span class="warn">★★★</span></td>
+        </tr>
+        <tr>
+          <td><strong>快手专有规范</strong></td>
+          <td><span class="yes">100% 覆盖</span></td>
+          <td><span class="no">0%</span></td>
+          <td><span class="no">0%</span></td>
+          <td><span class="no">0%</span></td>
+        </tr>
+        <tr>
+          <td><strong>决策树 / 组件选型</strong></td>
+          <td><span class="yes">✓ 完整</span></td>
+          <td><span class="no">—</span></td>
+          <td><span class="yes">✓ 有</span></td>
+          <td><span class="warn">部分</span></td>
+        </tr>
+        <tr class="hl-row">
+          <td><strong>生成后自检 Checklist</strong></td>
+          <td><span class="warn">⚠ 缺失</span></td>
+          <td><span class="yes">✓ 核心特色</span></td>
+          <td><span class="yes">✓ Phase 4</span></td>
+          <td><span class="yes">✓ /audit</span></td>
+        </tr>
+        <tr class="hl-row">
+          <td><strong>Core Tokens 精确注入</strong></td>
+          <td><span class="warn">⚠ 分散</span></td>
+          <td><span class="no">—</span></td>
+          <td><span class="yes">✓ MASTER.md</span></td>
+          <td><span class="yes">✓ system.md</span></td>
+        </tr>
+        <tr class="hl-row">
+          <td><strong>页面级生成工作流</strong></td>
+          <td><span class="warn">⚠ 缺失</span></td>
+          <td><span class="no">—</span></td>
+          <td><span class="yes">✓ 4 步</span></td>
+          <td><span class="yes">✓ init/build</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ④ 行动建议 -->
+  <div class="sec">
+    <div class="sec-head">
+      <span class="sec-label">04 / ACTIONS</span>
+      <span class="sec-title">5 条升级建议（优先级排序）</span>
+    </div>
+    <div class="sec-sub">合并两份报告去重后的最终执行清单</div>
+    <div class="action-list">
+
+      <div class="action">
+        <div class="action-priority" style="background:#FEF2F2">🔴</div>
+        <div class="action-body">
+          <div class="action-title">P0-A · Core Design Tokens — SKILL.md 顶部精确注入</div>
+          <div class="action-desc">将最常用数值集中在 SKILL.md 最顶部，AI 无需翻 references 直接执行。</div>
+          <div class="action-code">
+            主色 #2563F4 · 危险 #E34D59 · 成功 #00B96B · 警告 #FF8C00 · 禁用 #9B9EA3<br>
+            弹框 400px · 按钮高 32px(M) · 间距 4/8/12/16/24/32px · 圆角 2/4/8px<br>
+            H1 20/28 · H2 16/24 · Body 14/22 · Caption 12/18
+          </div>
+          <div class="from-list">
+            <span class="from from-green">interface-design system.md</span>
+            <span class="from from-gray">两份报告均验证</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-priority" style="background:#FEF2F2">🔴</div>
+        <div class="action-body">
+          <div class="action-title">P0-B · 生成后自检 Checklist（4 类 15-20 条）</div>
+          <div class="action-desc">每次生成 B 端界面后必须过检查，不通过则修改，不能直接输出。</div>
+          <div class="action-code">
+            ① 色值合规（无非规范硬编码色）<br>
+            ② 组件选型（标签页类型 · 弹框≤400px · 按钮优先级）<br>
+            ③ 表单规范（标签冒号 · Placeholder · 描述用 textarea）<br>
+            ④ 禁止项（胶囊不用于顶导 · 一区域一主按钮 · 弹框按钮≤3）
+          </div>
+          <div class="from-list">
+            <span class="from from-blue">Vercel Web Design Guidelines</span>
+            <span class="from from-gray">昨天报告 P1 验证</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-priority" style="background:#FFFBEB">🟠</div>
+        <div class="action-body">
+          <div class="action-title">P1-A · Forbidden Patterns 禁止模式章节（代码层面）</div>
+          <div class="action-desc">在现有 ❌ 禁止使用之外，增加代码实现层面的禁止清单，防止 AI 写出看起来合理但违规的实现。</div>
+          <div class="action-code">
+            「弹框宽度禁止百分比，固定 400px」<br>
+            「表格禁止自定义 border，必须用规范 class」<br>
+            「分页必须四要素：总条数+页码+跳转+条数切换」
+          </div>
+          <div class="from-list">
+            <span class="from from-gray">frontend-design 负向约束格式（借鉴形式，不借鉴内容）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-priority" style="background:#FFFBEB">🟠</div>
+        <div class="action-body">
+          <div class="action-title">P1-B · B 端页面 4 步生成工作流</div>
+          <div class="action-desc">收到页面级需求时，强制执行 4 步流程（不能直接生成）。</div>
+          <div class="action-code">
+            Step 1 需求澄清：页面类型? 核心操作? 数据密度?<br>
+            Step 2 组件选型：复用现有决策树<br>
+            Step 3 按 Token 生成：参照顶部 Core Tokens + 组件规范<br>
+            Step 4 跑 Checklist：过 P0-B，不通过则修改
+          </div>
+          <div class="from-list">
+            <span class="from from-blue">UI/UX Pro Max 4 步 Workflow</span>
+            <span class="from from-gray">昨天报告 P3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action">
+        <div class="action-priority" style="background:var(--green-lt)">🟢</div>
+        <div class="action-body">
+          <div class="action-title">P2 · 扩展典型页面 + 优化 description 触发词</div>
+          <div class="action-desc">新增 5 种 B 端页面模式骨架（列表页/详情页/表单页/Dashboard/设置页）；补充上层场景触发词使 Skill 对「帮我设计一个 B 端列表页」类请求更稳定触发。</div>
+          <div class="from-list">
+            <span class="from from-green">Vercel When-to-Use 结构</span>
+            <span class="from from-gray">昨天报告 P4+P5</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <div class="verdict-icon">◈</div>
+    <div>
+      <h3>综合结论</h3>
+      <p>
+        你的 Skill 在<strong>规范知识广度</strong>（20+ 组件 · 决策树 · 100% 实测合规率）上是唯一选手，任何公开 Skill 都不具备快手 B 端专有规范的覆盖能力。<br><br>
+        唯三机制缺口（均有高 Star 数 Skill 作为参考依据）：<br>
+        <strong>① 视觉锚点</strong> — Core Tokens 精确注入（P0-A）<br>
+        <strong>② 验证闭环</strong> — 生成后 Checklist（P0-B）<br>
+        <strong>③ 执行结构</strong> — 4 步工作流 + Forbidden Patterns（P1）
+      </p>
+      <div class="verdict-tip">
+        // exec order: P0-A (~20min) → P0-B (~30min) → P1-A+P1-B (~60min) → P2 (optional)
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  ui-ux-pro-max style · data: Snyk Top 8 + GitHub verified · 2026-03-24<br>
+  refs: Vercel Web Design Guidelines (19,487★) · UI/UX Pro Max (29,636★) · interface-design (B2B verified)
+</div>
+
+</body>
+</html>

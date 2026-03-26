@@ -1,0 +1,29 @@
+<h2>设计走查工具 — 先聊聊你的使用场景</h2>
+<p class="subtitle">帮我理解一下，你们目前的工作流是怎样的？</p>
+
+<div class="section">
+  <h3>设计稿的来源是？</h3>
+  <div class="options">
+    <div class="option" data-choice="figma" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Figma</h3>
+        <p>设计师出图在 Figma，前端用 Figma URL 或导出图片还原</p>
+      </div>
+    </div>
+    <div class="option" data-choice="screenshot" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>截图 / 图片</h3>
+        <p>设计稿以 PNG/JPG 形式交付，走查时对比静态图</p>
+      </div>
+    </div>
+    <div class="option" data-choice="both" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>两者都有</h3>
+        <p>Figma 是源头，但走查时通常截图对比更方便</p>
+      </div>
+    </div>
+  </div>
+</div>

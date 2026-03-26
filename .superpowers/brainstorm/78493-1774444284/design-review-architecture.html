@@ -1,0 +1,65 @@
+<h2>设计走查平台 — 系统架构</h2>
+<p class="subtitle">整体分 4 个模块，核心流程：输入 → 截图 → Diff → 报告</p>
+
+<div class="section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+    <div style="background:#1e1e2e;border-radius:12px;padding:20px;border:1px solid rgba(99,102,241,0.3);">
+      <div style="color:#818cf8;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:12px;">FRONTEND — 设计师侧</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:rgba(99,102,241,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">📋 走查任务创建<br><span style="color:#94a3b8;font-size:11px;">填 Figma URL + 页面 URL + 视口</span></div>
+        <div style="background:rgba(99,102,241,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">📊 对比报告查看<br><span style="color:#94a3b8;font-size:11px;">左设计稿 / 右实现 / diff 高亮叠加</span></div>
+        <div style="background:rgba(99,102,241,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">📝 问题标注 & 导出<br><span style="color:#94a3b8;font-size:11px;">标注问题，生成给前端的反馈清单</span></div>
+        <div style="background:rgba(99,102,241,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">📈 走查历史 & 趋势<br><span style="color:#94a3b8;font-size:11px;">各页面还原分数走势，回归对比</span></div>
+      </div>
+    </div>
+
+    <div style="background:#1e1e2e;border-radius:12px;padding:20px;border:1px solid rgba(5,150,105,0.3);">
+      <div style="color:#34d399;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:12px;">BACKEND — 核心引擎</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:rgba(5,150,105,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🎭 Playwright 截图服务<br><span style="color:#94a3b8;font-size:11px;">Headless 浏览器，指定 URL + 视口截全屏</span></div>
+        <div style="background:rgba(5,150,105,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🎨 Figma API 取图<br><span style="color:#94a3b8;font-size:11px;">解析 Figma URL → 拉取对应 Frame 导出 PNG</span></div>
+        <div style="background:rgba(5,150,105,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🔍 图像 Diff 引擎<br><span style="color:#94a3b8;font-size:11px;">pixelmatch 逐像素对比，生成差异热力图</span></div>
+        <div style="background:rgba(5,150,105,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🤖 AI 问题归因（可选）<br><span style="color:#94a3b8;font-size:11px;">Vision 模型分析差异区域，给出文字描述</span></div>
+      </div>
+    </div>
+
+    <div style="background:#1e1e2e;border-radius:12px;padding:20px;border:1px solid rgba(217,119,6,0.3);">
+      <div style="color:#fbbf24;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:12px;">OUTPUT — 报告推送</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:rgba(217,119,6,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🌐 HTML 可视化报告</div>
+        <div style="background:rgba(217,119,6,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">💬 PR Comment（GitHub/GitLab）</div>
+        <div style="background:rgba(217,119,6,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">🔔 飞书 / 钉钉卡片推送</div>
+      </div>
+    </div>
+
+    <div style="background:#1e1e2e;border-radius:12px;padding:20px;border:1px solid rgba(139,92,246,0.3);">
+      <div style="color:#a78bfa;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:12px;">TECH STACK — 技术选型</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:rgba(139,92,246,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">Frontend: <strong>Next.js + React</strong></div>
+        <div style="background:rgba(139,92,246,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">Backend: <strong>Node.js + Express</strong></div>
+        <div style="background:rgba(139,92,246,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">截图: <strong>Playwright</strong></div>
+        <div style="background:rgba(139,92,246,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">Diff: <strong>pixelmatch / jimp</strong></div>
+        <div style="background:rgba(139,92,246,0.15);border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;">DB: <strong>SQLite</strong>（轻量，单机部署）</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>核心流程（5步）</h3>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;">
+    <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:8px;padding:10px 16px;color:#e2e8f0;font-size:13px;text-align:center;">① 输入<br><span style="color:#94a3b8;font-size:11px;">Figma URL<br>+ 页面 URL</span></div>
+    <div style="color:#6366f1;font-size:20px;">→</div>
+    <div style="background:rgba(5,150,105,0.2);border:1px solid rgba(5,150,105,0.4);border-radius:8px;padding:10px 16px;color:#e2e8f0;font-size:13px;text-align:center;">② 双截图<br><span style="color:#94a3b8;font-size:11px;">Figma Export<br>+ Playwright</span></div>
+    <div style="color:#6366f1;font-size:20px;">→</div>
+    <div style="background:rgba(217,119,6,0.2);border:1px solid rgba(217,119,6,0.4);border-radius:8px;padding:10px 16px;color:#e2e8f0;font-size:13px;text-align:center;">③ Diff<br><span style="color:#94a3b8;font-size:11px;">pixelmatch<br>差异热力图</span></div>
+    <div style="color:#6366f1;font-size:20px;">→</div>
+    <div style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:10px 16px;color:#e2e8f0;font-size:13px;text-align:center;">④ AI 归因<br><span style="color:#94a3b8;font-size:11px;">Vision 模型<br>描述差异</span></div>
+    <div style="color:#6366f1;font-size:20px;">→</div>
+    <div style="background:rgba(236,72,153,0.2);border:1px solid rgba(236,72,153,0.4);border-radius:8px;padding:10px 16px;color:#e2e8f0;font-size:13px;text-align:center;">⑤ 推送<br><span style="color:#94a3b8;font-size:11px;">HTML + PR<br>+ 飞书</span></div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">这个架构方向 OK 吗？确认后我来展示 UI 交互的具体设计</p>

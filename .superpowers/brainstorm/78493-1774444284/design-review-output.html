@@ -1,0 +1,35 @@
+<h2>走查结果如何消费？</h2>
+<p class="subtitle">报告产出后，谁来看、怎么用？</p>
+
+<div class="section">
+  <div class="options">
+    <div class="option" data-choice="html-report" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>HTML 可视化报告</h3>
+        <p>生成一个 HTML 页面，设计师在浏览器打开，看到对比图 + 差异高亮 + 问题清单</p>
+      </div>
+    </div>
+    <div class="option" data-choice="comment" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>直接写到 PR / 评论</h3>
+        <p>把差异问题自动 comment 到 PR，前端在代码平台直接看到反馈</p>
+      </div>
+    </div>
+    <div class="option" data-choice="im" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>IM 推送（飞书/钉钉）</h3>
+        <p>走查完成后推送卡片消息，附截图和问题摘要，前端直接在群里收到</p>
+      </div>
+    </div>
+    <div class="option" data-choice="multi" onclick="toggleSelect(this)">
+      <div class="letter">D</div>
+      <div class="content">
+        <h3>都要</h3>
+        <p>HTML 报告为主，同时推送 IM 通知 + 写 PR comment</p>
+      </div>
+    </div>
+  </div>
+</div>

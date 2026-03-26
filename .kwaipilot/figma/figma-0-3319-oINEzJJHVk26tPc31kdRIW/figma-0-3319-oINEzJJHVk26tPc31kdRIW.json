@@ -1,0 +1,13 @@
+{
+  "id": "0:3319",
+  "nodeType": "image",
+  "styles": {
+    "boxSizing": "border-box",
+    "overflow": "hidden",
+    "height": "3758px",
+    "width": "1440px",
+    "background": "#FFFFFF"
+  },
+  "zIndex": 1,
+  "imageUrl": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/2cf26ecf-23ba-4756-9493-04c08e669e1a"
+}

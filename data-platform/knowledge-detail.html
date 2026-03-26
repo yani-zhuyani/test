@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识库详情 — Material Design</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400&family=Material+Icons&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* =============================================
+       Material Design 2 Design Tokens
+       ============================================= */
+    :root {
+      /* Theme Colors */
+      --color-primary:           #6200EA;
+      --color-primary-variant:   #7C4DFF;
+      --color-secondary:         #1DE9B6;
+      --color-surface:           #FFFFFF;
+      --color-background:        #F5F5F5;
+      --color-on-primary:        #FFFFFF;
+      --color-on-surface:        #212121;
+      --color-on-surface-medium: #424242;
+      --color-on-surface-hint:   #757575;
+      --color-on-surface-disabled: #9E9E9E;
+      --color-divider:           #E0E0E0;
+      --color-input-bg:          #EEEEEE;
+      --color-error:             #B00020;
+      --color-success:           #4CAF50;
+
+      /* Emphasis */
+      --color-emphasis-high:    rgba(0, 0, 0, 0.87);
+      --color-emphasis-medium:  rgba(0, 0, 0, 0.60);
+      --color-emphasis-disabled:rgba(0, 0, 0, 0.38);
+
+      /* Elevation */
+      --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      --elevation-2: 0 2px 4px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.16);
+      --elevation-4: 0 4px 6px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.12);
+      --elevation-8: 0 8px 10px rgba(0,0,0,0.14), 0 3px 14px rgba(0,0,0,0.12);
+      --elevation-24: 0 11px 15px rgba(0,0,0,0.20), 0 24px 38px rgba(0,0,0,0.14);
+
+      /* Radius */
+      --border-radius-card: 4px;
+      --border-radius-btn:  4px;
+      --border-radius-chip: 16px;
+
+      /* Font */
+      --font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+    }
+
+    /* =============================================
+       Reset & Base
+       ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; height: 100%; }
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-background);
+      color: var(--color-on-surface);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* =============================================
+       App Bar (Top Nav) — 56px, Primary bg
+       ============================================= */
+    .app-bar {
+      background-color: var(--color-primary);
+      height: 56px;
+      padding: 0 16px;
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: var(--elevation-4);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .app-bar__icon {
+      color: var(--color-on-primary);
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background-color 0.15s;
+    }
+    .app-bar__icon:hover { background-color: rgba(255,255,255,0.08); }
+    .app-bar__title {
+      font-weight: 500; font-size: 20px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-on-primary); flex: 1;
+    }
+
+    /* =============================================
+       Layout Container
+       ============================================= */
+    .layout {
+      display: flex; flex: 1; overflow: hidden;
+    }
+    .main-content {
+      flex: 1; display: flex; flex-direction: column;
+      overflow-y: auto; overflow-x: hidden;
+      position: relative;
+    }
+
+    /* =============================================
+       Page Header (Breadcrumb, Title)
+       ============================================= */
+    .page-header {
+      padding: 16px 24px 0;
+      background-color: var(--color-surface);
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 400; letter-spacing: 0.25px;
+      color: var(--color-on-surface-hint);
+      margin-bottom: 12px;
+    }
+    .breadcrumb a {
+      color: var(--color-on-surface-hint); text-decoration: none;
+      transition: color 0.15s; cursor: pointer;
+    }
+    .breadcrumb a:hover { color: var(--color-primary-variant); }
+    .breadcrumb .material-icons { font-size: 16px; }
+    
+    .page-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .page-title {
+      font-weight: 400; font-size: 24px; line-height: 32px; /* Headline 5 */
+      color: var(--color-emphasis-high);
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* =============================================
+       Tab Bar (MD Spec: 48px height)
+       ============================================= */
+    .tab-bar {
+      height: 48px; display: flex; border-bottom: 1px solid var(--color-divider);
+      background-color: var(--color-surface);
+      padding: 0 24px;
+    }
+    .tab {
+      height: 100%; padding: 0 16px; min-width: 90px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 500; font-size: 14px; letter-spacing: 1.25px;
+      text-transform: uppercase; color: var(--color-on-surface-medium);
+      cursor: pointer; position: relative; transition: color 0.15s;
+    }
+    .tab:hover { color: var(--color-emphasis-high); background: rgba(0,0,0,0.04); }
+    .tab--active { color: var(--color-primary-variant) !important; }
+    .tab--active::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background-color: var(--color-primary-variant);
+    }
+
+    /* =============================================
+       Tab Content Area
+       ============================================= */
+    .tab-content-container {
+      padding: 24px; flex: 1; display: flex; flex-direction: column;
+    }
+    .tab-pane { display: none; flex-direction: column; flex: 1; }
+    .tab-pane.is-active { display: flex; }
+
+    /* =============================================
+       Card Surface (For Settings Tab)
+       ============================================= */
+    .md-card {
+      background: var(--color-surface); border-radius: var(--border-radius-card);
+      box-shadow: var(--elevation-1); padding: 24px;
+      max-width: 800px;
+    }
+
+    /* =============================================
+       Form Elements (MD Filled Text Field)
+       ============================================= */
+    .form-group { margin-bottom: 24px; }
+    .form-label {
+      display: block; font-size: 12px; color: var(--color-on-surface-hint);
+      margin-bottom: 4px; padding-left: 12px;
+    }
+    .form-label .required { color: var(--color-error); margin-left: 2px; }
+    
+    .md-text-field {
+      width: 100%; min-height: 56px; background: var(--color-input-bg);
+      border: none; border-bottom: 1px solid var(--color-on-surface-hint);
+      border-radius: 4px 4px 0 0; padding: 16px 16px 8px;
+      font-family: var(--font-family); font-size: 16px; color: var(--color-emphasis-high);
+      outline: none; transition: border-bottom 0.15s;
+    }
+    .md-text-field:focus { border-bottom: 2px solid var(--color-primary-variant); }
+    
+    textarea.md-text-field { resize: vertical; min-height: 120px; }
+
+    /* Radio Group */
+    .radio-group { display: flex; gap: 24px; padding: 12px; }
+    .radio-label {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      font-size: 16px; color: var(--color-emphasis-high);
+    }
+    .radio-label input { display: none; }
+    .radio-custom {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--color-on-surface-disabled);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s; position: relative;
+    }
+    .radio-inner {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--color-primary-variant); transform: scale(0);
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .radio-label input:checked + .radio-custom { border-color: var(--color-primary-variant); }
+    .radio-label input:checked + .radio-custom .radio-inner { transform: scale(1); }
+
+    /* =============================================
+       Buttons
+       ============================================= */
+    .btn {
+      height: 36px; border-radius: var(--border-radius-btn); padding: 0 16px;
+      font-family: var(--font-family); font-weight: 500; font-size: 14px;
+      letter-spacing: 1.25px; text-transform: uppercase; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: none; position: relative; overflow: hidden;
+      transition: background-color 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .btn::before {
+      content: ''; position: absolute; inset: 0; background-color: currentColor;
+      opacity: 0; pointer-events: none; transition: opacity 0.1s;
+    }
+    .btn:hover::before { opacity: 0.04; }
+    .btn:active::before { opacity: 0.12; }
+    .btn .material-icons { font-size: 18px; }
+
+    .btn-primary {
+      background-color: var(--color-primary-variant); color: var(--color-on-primary);
+      box-shadow: var(--elevation-2);
+    }
+    .btn-primary:hover { box-shadow: var(--elevation-4); }
+    .btn-primary:hover::before { opacity: 0.08; background-color: #fff; }
+
+    .btn-outlined {
+      background-color: transparent; border: 1px solid var(--color-divider);
+      color: var(--color-on-surface-medium);
+    }
+    .btn-text {
+      background-color: transparent; color: var(--color-primary-variant); padding: 0 8px;
+    }
+    .btn-text:hover::before { opacity: 0.08; }
+
+    /* =============================================
+       Data Table (MD Spec)
+       ============================================= */
+    .table-container {
+      background: var(--color-surface); border-radius: var(--border-radius-card);
+      box-shadow: var(--elevation-1); flex: 1; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .table-toolbar {
+      height: 64px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .table-search {
+      display: flex; align-items: center; background: var(--color-input-bg);
+      height: 40px; border-radius: 4px 4px 0 0; border-bottom: 1px solid var(--color-on-surface-hint);
+      padding: 0 16px; width: 300px; transition: border-bottom 0.15s;
+    }
+    .table-search:focus-within { border-bottom: 2px solid var(--color-primary-variant); }
+    .table-search input {
+      border: none; background: transparent; outline: none; flex: 1; margin-left: 8px;
+      font-family: var(--font-family); font-size: 14px;
+    }
+    .table-search .material-icons { color: var(--color-on-surface-hint); font-size: 20px; }
+
+    .md-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .md-table th {
+      height: 56px; padding: 0 16px; font-weight: 500; font-size: 12px;
+      color: var(--color-on-surface-hint); border-bottom: 1px solid var(--color-divider);
+      white-space: nowrap;
+    }
+    .md-table td {
+      height: 52px; padding: 8px 16px; font-size: 14px; color: var(--color-emphasis-high);
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .md-table tbody tr { transition: background-color 0.15s; }
+    .md-table tbody tr:hover { background-color: rgba(0,0,0,0.04); }
+    
+    /* Table Checkbox */
+    .md-checkbox { display: flex; align-items: center; cursor: pointer; position: relative; }
+    .md-checkbox input { display: none; }
+    .md-checkbox__box {
+      width: 18px; height: 18px; border: 2px solid var(--color-on-surface-hint);
+      border-radius: 2px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .md-checkbox__box .material-icons { font-size: 16px; color: white; opacity: 0; transform: scale(0); transition: all 0.2s; }
+    .md-checkbox input:checked + .md-checkbox__box { background: var(--color-primary-variant); border-color: var(--color-primary-variant); }
+    .md-checkbox input:checked + .md-checkbox__box .material-icons { opacity: 1; transform: scale(1); }
+
+    /* Status Chip */
+    .status-chip {
+      height: 24px; padding: 0 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 500;
+    }
+    .status-chip--success { background: rgba(76, 175, 80, 0.12); color: #2E7D32; }
+    .status-chip--warning { background: rgba(255, 152, 0, 0.12); color: #E65100; }
+    .status-chip--error { background: rgba(176, 0, 32, 0.12); color: var(--color-error); }
+    .status-chip--default { background: var(--color-input-bg); color: var(--color-on-surface-medium); }
+
+    .status-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-chip--success .dot { background: #4CAF50; }
+    .status-chip--warning .dot { background: #FF9800; }
+    .status-chip--error .dot { background: var(--color-error); }
+    .status-chip--default .dot { background: var(--color-on-surface-disabled); }
+
+    /* Action Links in Table */
+    .table-actions { display: flex; gap: 16px; }
+    .table-action-link {
+      color: var(--color-primary-variant); font-size: 14px; font-weight: 500; cursor: pointer;
+      text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: background 0.15s;
+    }
+    .table-action-link:hover { background: rgba(124, 77, 255, 0.08); }
+    .table-action-link.danger { color: var(--color-error); }
+    .table-action-link.danger:hover { background: rgba(176, 0, 32, 0.08); }
+
+    /* =============================================
+       Dialog (Modal) — MD 2 Spec
+       ============================================= */
+    .dialog-scrim {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.32); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .dialog-scrim.is-open { opacity: 1; pointer-events: auto; }
+    
+    .dialog {
+      background: var(--color-surface); border-radius: 4px; box-shadow: var(--elevation-24);
+      width: 100%; max-width: 560px; display: flex; flex-direction: column;
+      transform: scale(0.9); opacity: 0; transition: transform 0.2s, opacity 0.2s;
+    }
+    .dialog-scrim.is-open .dialog { transform: scale(1); opacity: 1; }
+    
+    .dialog__header { padding: 24px 24px 0; display: flex; justify-content: space-between; align-items: center; }
+    .dialog__title { font-size: 20px; font-weight: 500; color: var(--color-emphasis-high); }
+    .dialog__close { background: none; border: none; cursor: pointer; color: var(--color-on-surface-hint); width: 24px; height: 24px; }
+    
+    .dialog__content { padding: 20px 24px 0; }
+    .dialog__actions { padding: 8px 16px 8px; display: flex; justify-content: flex-end; gap: 8px; }
+
+    /* Data source type selection in dialog */
+    .source-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .source-type-card {
+      border: 1px solid var(--color-divider); border-radius: 4px; padding: 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer;
+      transition: all 0.2s; position: relative;
+    }
+    .source-type-card:hover { background: rgba(0,0,0,0.02); }
+    .source-type-card.selected { border-color: var(--color-primary-variant); background: rgba(124, 77, 255, 0.04); }
+    .source-type-card .material-icons { font-size: 32px; color: var(--color-primary-variant); }
+    .source-type-card .title { font-size: 14px; font-weight: 500; color: var(--color-emphasis-high); }
+
+  </style>
+</head>
+<body>
+
+  <!-- App Bar -->
+  <header class="app-bar">
+    <div class="app-bar__icon"><span class="material-icons">menu</span></div>
+    <div class="app-bar__title">KATE 数据平台</div>
+    <div style="display: flex; gap: 8px;">
+      <div class="app-bar__icon"><span class="material-icons">notifications</span></div>
+      <div class="app-bar__icon"><span class="material-icons">account_circle</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="main-content">
+      
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="#">知识库</a>
+          <span class="material-icons">chevron_right</span>
+          <span style="color: var(--color-emphasis-high);">KATE 服务端开发知识库</span>
+        </div>
+        <div class="page-title-row">
+          <h1 class="page-title">
+            <span class="material-icons" style="color: #9E9E9E; font-size: 32px;">folder</span>
+            KATE 服务端开发知识库
+          </h1>
+          <button class="btn btn-outlined">
+            <span class="material-icons">share</span>分享
+          </button>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <div class="tab" data-target="tab-settings">基础信息</div>
+          <div class="tab tab--active" data-target="tab-content">知识内容</div>
+        </div>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="tab-content-container">
+        
+        <!-- Tab 1: 知识内容 (Active) -->
+        <div class="tab-pane is-active" id="tab-content">
+          <div class="table-container">
+            <!-- Toolbar -->
+            <div class="table-toolbar">
+              <div class="table-search">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="搜索知识名称或路径">
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button class="btn btn-outlined">批量删除</button>
+                <button class="btn btn-primary" id="btn-import">
+                  <span class="material-icons">add</span>导入知识
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <table class="md-table">
+              <thead>
+                <tr>
+                  <th style="width: 48px;">
+                    <label class="md-checkbox"><input type="checkbox"><div class="md-checkbox__box"><span class="material-icons">check</span></div></label>
+                  </th>
+                  <th>知识名称</th>
+                  <th>知识来源</th>
+                  <th>知识类型</th>
+                  <th>解析状态</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><label class="md-checkbox"><input type="checkbox"><div class="md-checkbox__box"><span class="material-icons">check</span></div></label></td>
+                  <td><span style="font-weight: 500; color: var(--color-primary-variant); cursor: pointer;">KATE架构设计设计方案.pdf</span></td>
+                  <td>本地上传</td>
+                  <td>PDF</td>
+                  <td><div class="status-chip status-chip--success"><span class="dot"></span>解析成功</div></td>
+                  <td>2024-03-23 10:30</td>
+                  <td>
+                    <div class="table-actions">
+                      <a class="table-action-link">预览</a>
+                      <a class="table-action-link">重新解析</a>
+                      <a class="table-action-link danger">删除</a>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><label class="md-checkbox"><input type="checkbox"><div class="md-checkbox__box"><span class="material-icons">check</span></div></label></td>
+                  <td><span style="font-weight: 500; color: var(--color-primary-variant); cursor: pointer;">KATE 开发规范说明文档</span></td>
+                  <td>在线文档</td>
+                  <td>Wiki</td>
+                  <td><div class="status-chip status-chip--warning"><span class="dot"></span>解析中</div></td>
+                  <td>2024-03-22 15:45</td>
+                  <td>
+                    <div class="table-actions">
+                      <a class="table-action-link">预览</a>
+                      <a class="table-action-link" style="color: var(--color-on-surface-disabled); pointer-events: none;">重新解析</a>
+                      <a class="table-action-link danger">删除</a>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><label class="md-checkbox"><input type="checkbox"><div class="md-checkbox__box"><span class="material-icons">check</span></div></label></td>
+                  <td><span style="font-weight: 500; color: var(--color-primary-variant); cursor: pointer;">https://github.com/example/repo</span></td>
+                  <td>Git 仓库</td>
+                  <td>Code</td>
+                  <td><div class="status-chip status-chip--error"><span class="dot"></span>解析失败</div></td>
+                  <td>2024-03-21 09:12</td>
+                  <td>
+                    <div class="table-actions">
+                      <a class="table-action-link">错误详情</a>
+                      <a class="table-action-link">重新解析</a>
+                      <a class="table-action-link danger">删除</a>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><label class="md-checkbox"><input type="checkbox"><div class="md-checkbox__box"><span class="material-icons">check</span></div></label></td>
+                  <td><span style="font-weight: 500; color: var(--color-primary-variant); cursor: pointer;">API 接口说明文档.docx</span></td>
+                  <td>本地上传</td>
+                  <td>Word</td>
+                  <td><div class="status-chip status-chip--default"><span class="dot"></span>未解析</div></td>
+                  <td>2024-03-20 14:20</td>
+                  <td>
+                    <div class="table-actions">
+                      <a class="table-action-link">预览</a>
+                      <a class="table-action-link">开始解析</a>
+                      <a class="table-action-link danger">删除</a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: 基础信息 -->
+        <div class="tab-pane" id="tab-settings">
+          <div class="md-card">
+            <form>
+              <div class="form-group">
+                <label class="form-label">知识库名称<span class="required">*</span></label>
+                <input type="text" class="md-text-field" value="KATE 服务端开发知识库">
+              </div>
+              <div class="form-group">
+                <label class="form-label">描述信息</label>
+                <textarea class="md-text-field">知识库的描述是XXXXXXXXXXXXXX，用于存放 KATE 项目服务端相关的架构文档、接口说明、开发规范等资料。</textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">可见权限<span class="required">*</span></label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="visibility" value="company" checked>
+                    <div class="radio-custom"><div class="radio-inner"></div></div>
+                    公司共享
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="visibility" value="dept">
+                    <div class="radio-custom"><div class="radio-inner"></div></div>
+                    部门共享
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="visibility" value="private">
+                    <div class="radio-custom"><div class="radio-inner"></div></div>
+                    指定人员
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">维护者<span class="required">*</span></label>
+                <input type="text" class="md-text-field" value="慧芳, 张三, 李四">
+              </div>
+              
+              <div style="margin-top: 32px; display: flex; gap: 16px;">
+                <button type="button" class="btn btn-primary">保存修改</button>
+                <button type="button" class="btn btn-outlined">取消</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /.tab-content-container -->
+    </main>
+  </div>
+
+  <!-- Dialog: Import Knowledge -->
+  <div class="dialog-scrim" id="import-dialog-scrim">
+    <div class="dialog" id="import-dialog">
+      <div class="dialog__header">
+        <h2 class="dialog__title">导入知识</h2>
+        <button class="dialog__close" id="btn-close-dialog"><span class="material-icons">close</span></button>
+      </div>
+      <div class="dialog__content">
+        <div class="form-group">
+          <label class="form-label">选择数据源<span class="required">*</span></label>
+          <div class="source-type-grid">
+            <div class="source-type-card selected">
+              <span class="material-icons">upload_file</span>
+              <span class="title">本地文件</span>
+            </div>
+            <div class="source-type-card">
+              <span class="material-icons">link</span>
+              <span class="title">在线网页</span>
+            </div>
+            <div class="source-type-card">
+              <span class="material-icons">code</span>
+              <span class="title">Git 代码库</span>
+            </div>
+            <div class="source-type-card">
+              <span class="material-icons">api</span>
+              <span class="title">API 接口</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">上传文件<span class="required">*</span></label>
+          <div style="border: 1px dashed var(--color-on-surface-hint); border-radius: 4px; padding: 32px; text-align: center; background: var(--color-input-bg); cursor: pointer;">
+            <span class="material-icons" style="font-size: 32px; color: var(--color-primary-variant); margin-bottom: 8px;">cloud_upload</span>
+            <div style="font-size: 14px; color: var(--color-emphasis-high); font-weight: 500;">点击上传或拖拽文件到此处</div>
+            <div style="font-size: 12px; color: var(--color-on-surface-hint); margin-top: 4px;">支持 PDF, Word, TXT, Markdown 格式，单个文件不超过 50MB</div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog__actions">
+        <button class="btn btn-outlined" id="btn-cancel-dialog">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-import">开始导入</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab Switching Logic
+    const tabs = document.querySelectorAll('.tab');
+    const panes = document.querySelectorAll('.tab-pane');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('tab--active'));
+        panes.forEach(p => p.classList.remove('is-active'));
+        
+        tab.classList.add('tab--active');
+        document.getElementById(tab.dataset.target).classList.add('is-active');
+      });
+    });
+
+    // Dialog Logic
+    const btnImport = document.getElementById('btn-import');
+    const scrim = document.getElementById('import-dialog-scrim');
+    const btnClose = document.getElementById('btn-close-dialog');
+    const btnCancel = document.getElementById('btn-cancel-dialog');
+    const btnConfirm = document.getElementById('btn-confirm-import');
+
+    const openDialog = () => scrim.classList.add('is-open');
+    const closeDialog = () => scrim.classList.remove('is-open');
+
+    btnImport.addEventListener('click', openDialog);
+    btnClose.addEventListener('click', closeDialog);
+    btnCancel.addEventListener('click', closeDialog);
+    btnConfirm.addEventListener('click', () => {
+      // Mock import action
+      btnConfirm.innerHTML = '<span class="material-icons" style="animation: spin 1s linear infinite;">sync</span>导入中...';
+      setTimeout(() => {
+        btnConfirm.innerHTML = '开始导入';
+        closeDialog();
+      }, 1500);
+    });
+
+    scrim.addEventListener('click', (e) => {
+      if (e.target === scrim) closeDialog();
+    });
+
+    // Source Type Selection
+    const sourceCards = document.querySelectorAll('.source-type-card');
+    sourceCards.forEach(card => {
+      card.addEventListener('click', () => {
+        sourceCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+
+    // Ripple Effect
+    function addRipple(el) {
+      el.addEventListener('mousedown', function(e) {
+        const rect = el.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 2;
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        const ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.borderRadius = '50%';
+        ripple.style.transform = 'scale(0)';
+        ripple.style.pointerEvents = 'none';
+        
+        const isDark = el.classList.contains('btn-primary') || el.classList.contains('md-checkbox__box');
+        ripple.style.backgroundColor = isDark ? 'rgba(255,255,255,0.24)' : 'rgba(0,0,0,0.12)';
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out';
+        
+        el.appendChild(ripple);
+        
+        requestAnimationFrame(() => {
+          ripple.style.transform = 'scale(1)';
+        });
+        
+        setTimeout(() => {
+          ripple.style.opacity = '0';
+          setTimeout(() => ripple.remove(), 400);
+        }, 300);
+      });
+    }
+    
+    document.querySelectorAll('.btn, .tab, .table-action-link').forEach(addRipple);
+
+    // CSS for spinner animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

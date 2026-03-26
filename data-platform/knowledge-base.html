@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Base — Material Design</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400&family=Material+Icons&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* =============================================
+       Material Design 2 Design Tokens
+       ============================================= */
+    :root {
+      /* Theme Colors — MD Baseline */
+      --color-primary:           #6200EA;
+      --color-primary-variant:   #7C4DFF;
+      --color-secondary:         #1DE9B6;
+      --color-surface:           #FFFFFF;
+      --color-background:        #F5F5F5;
+      --color-on-primary:        #FFFFFF;
+      --color-on-surface:        #212121;
+      --color-on-surface-medium: #424242;
+      --color-on-surface-hint:   #757575;
+      --color-on-surface-disabled: #9E9E9E;
+      --color-divider:           #E0E0E0;
+      --color-image-placeholder: #BDBDBD;
+      --color-input-bg:          #EEEEEE;
+      --color-selected-overlay:  rgba(124, 77, 255, 0.12);
+      --color-selected-bg:       rgba(124, 77, 255, 0.08);
+
+      /* High/Medium/Disabled emphasis (On Surface) */
+      --color-emphasis-high:    rgba(0, 0, 0, 0.87);
+      --color-emphasis-medium:  rgba(0, 0, 0, 0.60);
+      --color-emphasis-disabled:rgba(0, 0, 0, 0.38);
+
+      /* Elevation / Shadow */
+      --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      --elevation-2: 0 2px 4px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.16);
+      --elevation-4: 0 4px 6px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.12);
+      --elevation-6: 0 6px 10px rgba(0,0,0,0.14), 0 1px 18px rgba(0,0,0,0.12);
+
+      /* Border Radius */
+      --border-radius-card:  4px;
+      --border-radius-chip:  16px;
+      --border-radius-btn:   4px;
+
+      /* Spacing (8dp grid) */
+      --sp-1:  4px;
+      --sp-2:  8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 20px;
+      --sp-6: 24px;
+      --sp-8: 32px;
+
+      /* Font */
+      --font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+    }
+
+    /* =============================================
+       Reset & Base
+       ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-background);
+      color: var(--color-on-surface);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* =============================================
+       Typography Scale — MD 2
+       ============================================= */
+    .md-h6 {
+      font-weight: 500; font-size: 20px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-on-surface);
+    }
+    .md-subtitle1 {
+      font-weight: 400; font-size: 16px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-emphasis-high);
+    }
+    .md-subtitle2 {
+      font-weight: 500; font-size: 14px; line-height: 24px;
+      letter-spacing: 0.10px; color: var(--color-on-surface-medium);
+    }
+    .md-body1 {
+      font-weight: 400; font-size: 16px; line-height: 24px;
+      letter-spacing: 0.50px; color: var(--color-emphasis-high);
+    }
+    .md-body2 {
+      font-weight: 400; font-size: 14px; line-height: 20px;
+      letter-spacing: 0.25px; color: var(--color-on-surface-hint);
+    }
+    .md-button-text {
+      font-weight: 500; font-size: 14px; line-height: 16px;
+      letter-spacing: 1.25px; text-transform: uppercase;
+    }
+    .md-caption {
+      font-weight: 400; font-size: 12px; line-height: 16px;
+      letter-spacing: 0.40px; color: var(--color-on-surface-hint);
+    }
+    .md-overline {
+      font-weight: 400; font-size: 10px; line-height: 16px;
+      letter-spacing: 1.50px; text-transform: uppercase;
+      color: var(--color-on-surface-hint);
+    }
+
+    /* =============================================
+       App Bar — 56px height, Primary background
+       ============================================= */
+    .app-bar {
+      background-color: var(--color-primary);
+      height: 56px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--elevation-4);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .app-bar__icon {
+      color: var(--color-on-primary);
+      width: 24px; height: 24px;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .app-bar__icon:hover { background-color: rgba(255,255,255,0.08); }
+    .app-bar__title {
+      font-weight: 500; font-size: 20px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-on-primary);
+      flex: 1;
+    }
+    .app-bar__actions {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .app-bar__action-btn {
+      color: var(--color-on-primary);
+      background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .app-bar__action-btn:hover { background-color: rgba(255,255,255,0.08); }
+    .app-bar__action-btn .material-icons { font-size: 24px; }
+
+    /* =============================================
+       Layout: Side Drawer + Main Content
+       ============================================= */
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* =============================================
+       Navigation Drawer — 256dp wide, Surface bg
+       MD Spec: Navigation Drawer 256px wide
+       ============================================= */
+    .nav-drawer {
+      width: 256px;
+      background-color: var(--color-surface);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--elevation-1);
+      overflow-y: auto;
+      padding-bottom: 16px;
+    }
+
+    /* Drawer Header */
+    .nav-drawer__header {
+      height: 56px;
+      padding: 0 16px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .nav-drawer__logo {
+      width: 40px; height: 40px; border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-drawer__logo .material-icons { color: #fff; font-size: 20px; }
+    .nav-drawer__brand {
+      font-weight: 500; font-size: 20px; letter-spacing: 0.15px;
+      color: var(--color-emphasis-high);
+    }
+    .nav-drawer__badge {
+      width: 20px; height: 20px; border-radius: 4px;
+      background-color: var(--color-divider);
+      margin-left: auto;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-drawer__badge .material-icons { font-size: 14px; color: var(--color-on-surface-hint); }
+
+    /* Primary Action Item */
+    .nav-drawer__primary-action {
+      margin: 8px 16px;
+      height: 40px; border-radius: var(--border-radius-btn);
+      border: 1px solid var(--color-divider);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; cursor: pointer;
+      color: var(--color-on-surface-hint);
+      font-size: 14px; font-weight: 400;
+      background: var(--color-surface);
+      transition: background-color 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .nav-drawer__primary-action:hover { background-color: rgba(0,0,0,0.04); }
+    .nav-drawer__primary-action .material-icons { font-size: 20px; color: var(--color-on-surface-hint); }
+
+    /* Nav Section subheader */
+    .nav-section-header {
+      padding: 16px 16px 4px;
+      font-weight: 400; font-size: 10px;
+      letter-spacing: 1.50px; text-transform: uppercase;
+      color: var(--color-on-surface-hint);
+    }
+
+    /* Nav Drawer Item — 48px single-line list item */
+    .nav-item {
+      height: 48px;
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 16px;
+      cursor: pointer;
+      border-radius: 0;
+      position: relative; overflow: hidden;
+      color: var(--color-on-surface-medium);
+      font-size: 14px; font-weight: 400; letter-spacing: 0.25px;
+      transition: background-color 0.15s;
+    }
+    .nav-item::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .nav-item:hover::before { opacity: 0.04; }
+    .nav-item:active::before { opacity: 0.12; }
+    .nav-item .material-icons {
+      font-size: 24px;
+      color: var(--color-on-surface-hint);
+    }
+
+    /* Active Nav Item */
+    .nav-item--active {
+      background-color: var(--color-selected-bg);
+      color: var(--color-primary-variant);
+      font-weight: 500;
+      border-radius: 0;
+    }
+    .nav-item--active::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background-color: var(--color-primary-variant);
+    }
+    .nav-item--active .material-icons {
+      color: var(--color-primary-variant);
+    }
+
+    /* Nav Divider */
+    .nav-divider {
+      height: 1px;
+      background-color: var(--color-divider);
+      margin: 8px 0;
+    }
+
+    /* Filter Chips in drawer */
+    .nav-drawer__chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 8px 16px;
+    }
+    .chip {
+      height: 32px; border-radius: 16px;
+      background: var(--color-input-bg);
+      color: var(--color-on-surface-medium);
+      font-size: 14px; font-weight: 400; letter-spacing: 0.25px;
+      padding: 0 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; border: none;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .chip::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .chip:hover::before { opacity: 0.04; }
+    .chip--selected {
+      background-color: var(--color-primary-variant);
+      color: var(--color-on-primary);
+    }
+
+    /* Clock icon area */
+    .nav-drawer__history {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; margin-top: 4px;
+    }
+    .nav-drawer__history .material-icons {
+      font-size: 20px; color: var(--color-on-surface-hint); cursor: pointer;
+    }
+
+    /* Recent items in drawer */
+    .nav-item--recent {
+      height: 48px;
+      display: flex; align-items: center;
+      padding: 0 16px;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      color: var(--color-on-surface-medium);
+      font-size: 14px; letter-spacing: 0.25px;
+      transition: background-color 0.15s;
+    }
+    .nav-item--recent:hover { background-color: rgba(0,0,0,0.04); }
+
+    /* Drawer Footer */
+    .nav-drawer__footer {
+      margin-top: auto;
+      padding: 12px 16px;
+      border-top: 1px solid var(--color-divider);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-drawer__avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background-color: var(--color-image-placeholder);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-drawer__avatar .material-icons { font-size: 24px; color: #fff; }
+    .nav-drawer__user-name {
+      font-size: 14px; font-weight: 400; color: var(--color-emphasis-high);
+      letter-spacing: 0.25px;
+    }
+    .nav-drawer__footer-icons {
+      margin-left: auto;
+      display: flex; gap: 4px;
+    }
+    .nav-drawer__footer-icons .material-icons {
+      font-size: 20px; color: var(--color-on-surface-hint); cursor: pointer;
+    }
+
+    /* =============================================
+       Main Content Area
+       ============================================= */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      display: flex; flex-direction: column;
+    }
+
+    /* =============================================
+       Tab Bar — 48px, on Surface, Primary indicator
+       ============================================= */
+    .tab-bar {
+      background-color: var(--color-surface);
+      height: 48px;
+      display: flex;
+      border-bottom: 1px solid var(--color-divider);
+      flex-shrink: 0;
+      padding: 0 24px;
+    }
+    .tab-bar__tab {
+      position: relative;
+      display: flex; align-items: center;
+      padding: 0 16px;
+      font-weight: 500; font-size: 14px;
+      letter-spacing: 1.25px; text-transform: uppercase;
+      color: rgba(0,0,0,0.60);
+      cursor: pointer;
+      border: none; background: none;
+      transition: color 0.15s;
+      min-width: 90px; justify-content: center;
+    }
+    .tab-bar__tab--active {
+      color: var(--color-primary-variant);
+    }
+    .tab-bar__tab--active::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background-color: var(--color-primary-variant);
+    }
+    .tab-bar__tab:hover { color: var(--color-on-surface-medium); }
+
+    /* =============================================
+       Content Toolbar (filter row + action)
+       ============================================= */
+    .content-toolbar {
+      padding: 16px 24px 8px;
+      display: flex; align-items: center; gap: 16px;
+      flex-wrap: wrap;
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .content-toolbar__chips {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    /* Outlined Chip for filters */
+    .chip-filter {
+      height: 32px; border-radius: 16px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      color: var(--color-on-surface-medium);
+      font-size: 14px; letter-spacing: 0.25px;
+      padding: 0 12px;
+      display: inline-flex; align-items: center;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .chip-filter:hover { background-color: rgba(0,0,0,0.04); }
+    .chip-filter--selected {
+      background-color: var(--color-primary-variant);
+      border-color: var(--color-primary-variant);
+      color: var(--color-on-primary);
+      font-weight: 500;
+    }
+
+    /* Search Text Field — Filled style, 40px height */
+    .search-field {
+      flex: 1; max-width: 400px; min-width: 200px;
+      height: 40px;
+      background: var(--color-input-bg);
+      border: none; border-bottom: 1px solid var(--color-on-surface-hint);
+      border-radius: 4px 4px 0 0;
+      padding: 0 12px 0 40px;
+      font-size: 14px; letter-spacing: 0.25px;
+      color: var(--color-emphasis-high);
+      position: relative;
+      display: flex; align-items: center;
+    }
+    .search-wrapper {
+      position: relative; flex: 1; max-width: 400px; min-width: 200px;
+    }
+    .search-wrapper input {
+      width: 100%; height: 40px;
+      background: var(--color-input-bg);
+      border: none; border-bottom: 1px solid var(--color-on-surface-hint);
+      border-radius: 4px 4px 0 0;
+      padding: 0 12px 0 40px;
+      font-size: 14px; letter-spacing: 0.25px;
+      color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+      outline: none;
+      transition: border-bottom-color 0.15s;
+    }
+    .search-wrapper input::placeholder { color: var(--color-on-surface-hint); }
+    .search-wrapper input:focus { border-bottom: 2px solid var(--color-primary-variant); }
+    .search-wrapper .search-icon {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px; color: var(--color-on-surface-hint);
+    }
+
+    /* Action Button — Contained */
+    .btn-contained {
+      height: 36px; border-radius: var(--border-radius-btn);
+      background-color: var(--color-primary-variant);
+      border: none; color: var(--color-on-primary);
+      font-family: var(--font-family);
+      font-weight: 500; font-size: 14px; letter-spacing: 1.25px;
+      text-transform: uppercase;
+      padding: 0 16px;
+      display: inline-flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      box-shadow: var(--elevation-2);
+      margin-left: auto;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s, box-shadow 0.15s;
+    }
+    .btn-contained::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-color: var(--color-on-primary);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .btn-contained:hover::before { opacity: 0.08; }
+    .btn-contained:hover { box-shadow: var(--elevation-6); }
+    .btn-contained:active::before { opacity: 0.12; }
+    .btn-contained .material-icons { font-size: 18px; }
+
+    /* =============================================
+       Card Grid
+       ============================================= */
+    .card-grid {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* =============================================
+       Knowledge Card — MD Card spec
+       background: #FFFFFF, radius: 4px
+       ============================================= */
+    .kb-card {
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-card);
+      box-shadow: var(--elevation-1);
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 8px;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+    .kb-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-color: var(--color-on-surface);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .kb-card:hover { box-shadow: var(--elevation-4); }
+    .kb-card:hover::before { opacity: 0.04; }
+    .kb-card:active::before { opacity: 0.12; }
+
+    /* Card Header: Logo + Title Area */
+    .kb-card__header {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .kb-card__logo {
+      width: 56px; height: 56px; border-radius: var(--border-radius-card);
+      background-color: var(--color-image-placeholder);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .kb-card__logo span {
+      font-size: 11px; color: var(--color-surface);
+      font-weight: 400; letter-spacing: 0.5px;
+    }
+    .kb-card__meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .kb-card__title {
+      font-weight: 500; font-size: 16px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-emphasis-high);
+    }
+    .kb-card__stats {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .kb-card__stat {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .kb-card__stat .material-icons { font-size: 14px; color: var(--color-on-surface-hint); }
+    .kb-card__stat-value {
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.40px; color: var(--color-on-surface-hint);
+    }
+
+    /* Card Description — Body 2 */
+    .kb-card__description {
+      font-size: 14px; font-weight: 400; line-height: 20px;
+      letter-spacing: 0.25px; color: var(--color-on-surface-medium);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Card Divider */
+    .kb-card__divider {
+      height: 1px; background-color: var(--color-divider);
+      margin: 4px 0;
+    }
+
+    /* Card Footer */
+    .kb-card__footer {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .kb-card__update {
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.40px; color: var(--color-on-surface-hint);
+    }
+    .kb-card__maintainers {
+      display: flex; align-items: center;
+    }
+    .maintainer-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background-color: var(--color-image-placeholder);
+      border: 2px solid var(--color-surface);
+      margin-left: -8px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .maintainer-avatar:first-child { margin-left: 0; }
+    .maintainer-avatar .material-icons { font-size: 14px; color: rgba(255,255,255,0.8); }
+    /* Colored avatars for visual distinction */
+    .maintainer-avatar:nth-child(1) { background-color: #7C4DFF; }
+    .maintainer-avatar:nth-child(2) { background-color: #1DE9B6; }
+    .maintainer-avatar:nth-child(3) { background-color: #FF5722; }
+    .maintainer-avatar:nth-child(4) { background-color: #FFC107; }
+    .maintainer-avatar:nth-child(5) { background-color: #607D8B; }
+
+    /* =============================================
+       Pagination Footer
+       MD: Use Surface bg, elevation-4
+       ============================================= */
+    .pagination-bar {
+      padding: 8px 24px;
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--color-divider);
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .pagination-info {
+      font-size: 12px; color: var(--color-on-surface-hint);
+      letter-spacing: 0.40px;
+    }
+
+    /* Page size selector */
+    .page-size-select {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--color-on-surface-hint);
+      cursor: pointer;
+    }
+    .page-size-select select {
+      border: none; background: none; font-size: 12px;
+      color: var(--color-on-surface-medium);
+      font-family: var(--font-family);
+      cursor: pointer; outline: none;
+    }
+
+    /* Page buttons */
+    .pagination-pages {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .page-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: transparent;
+      font-size: 12px; letter-spacing: 0.40px;
+      color: var(--color-on-surface-medium);
+      cursor: pointer; font-family: var(--font-family);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .page-btn::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .page-btn:hover::before { opacity: 0.04; }
+    .page-btn--active {
+      background-color: var(--color-primary-variant);
+      color: var(--color-on-primary);
+      box-shadow: var(--elevation-1);
+    }
+    .page-btn--active:hover::before { opacity: 0.08; }
+    .page-btn-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: transparent;
+      color: var(--color-on-surface-hint);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .page-btn-icon::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .page-btn-icon:hover::before { opacity: 0.04; }
+    .page-btn-icon .material-icons { font-size: 18px; }
+    .page-btn-icon:disabled { opacity: 0.38; pointer-events: none; }
+
+    .pagination-jump {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--color-on-surface-hint);
+    }
+    .pagination-jump input {
+      width: 40px; height: 28px;
+      border: 1px solid var(--color-divider);
+      border-radius: 4px; text-align: center;
+      font-size: 12px; font-family: var(--font-family);
+      color: var(--color-emphasis-high); outline: none;
+    }
+    .pagination-jump input:focus {
+      border-color: var(--color-primary-variant);
+    }
+
+    /* =============================================
+       Dialog — MD 2 Full Spec
+       Background: Surface #FFFFFF
+       border-radius: 4px (Medium shape)
+       elevation: 24dp
+       min-width: 280px, max-width: 560px
+       padding: Title 24px top, Actions 8px bottom
+       ============================================= */
+
+    /* Scrim / Backdrop — rgba(0,0,0,0.32) */
+    .dialog-scrim {
+      position: fixed; inset: 0;
+      background-color: rgba(0, 0, 0, 0.32);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .dialog-scrim.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Dialog Container */
+    .dialog {
+      background-color: var(--color-surface);
+      border-radius: 4px;
+      /* 24dp elevation */
+      box-shadow:
+        0 11px 15px rgba(0,0,0,0.20),
+        0 9px 46px rgba(0,0,0,0.12),
+        0 24px 38px rgba(0,0,0,0.14);
+      min-width: 280px;
+      max-width: 560px;
+      width: 100%;
+      max-height: calc(100vh - 96px);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      /* Enter animation */
+      transform: scale(0.9);
+      transition:
+        transform 250ms cubic-bezier(0.0, 0.0, 0.2, 1),
+        opacity 250ms cubic-bezier(0.0, 0.0, 0.2, 1);
+      opacity: 0;
+    }
+    .dialog-scrim.is-open .dialog {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* Dialog Header — 24px padding top, 16px sides, Headline 6 */
+    .dialog__header {
+      padding: 24px 24px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .dialog__title {
+      font-weight: 500; font-size: 20px; line-height: 24px;
+      letter-spacing: 0.15px; color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+    }
+    .dialog__close-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-on-surface-hint);
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+      flex-shrink: 0;
+    }
+    .dialog__close-btn::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .dialog__close-btn:hover::before { opacity: 0.04; }
+    .dialog__close-btn:active::before { opacity: 0.12; }
+    .dialog__close-btn .material-icons { font-size: 20px; }
+
+    /* Dialog Body — scrollable, 20px padding top, 24px sides */
+    .dialog__body {
+      padding: 20px 24px 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Form row: label + field */
+    .dialog-form__row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .dialog-form__label {
+      flex-shrink: 0;
+      width: 80px;
+      padding-top: 16px; /* align with filled text field label */
+      font-size: 14px; font-weight: 400; line-height: 20px;
+      letter-spacing: 0.25px; color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+      text-align: right;
+    }
+    .dialog-form__label .required-star {
+      color: #B00020; /* MD Error color */
+      margin-left: 2px;
+    }
+    .dialog-form__field {
+      flex: 1;
+    }
+
+    /* Filled Text Field — MD Spec: bg #EEEEEE, bottom border, radius 4px 4px 0 0 */
+    .md-text-field {
+      width: 100%;
+      height: 56px;
+      background: var(--color-input-bg);
+      border: none;
+      border-bottom: 1px solid var(--color-on-surface-hint);
+      border-radius: 4px 4px 0 0;
+      padding: 20px 16px 6px;
+      font-size: 16px; /* Body 1 */
+      font-weight: 400; line-height: 24px; letter-spacing: 0.50px;
+      color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+      outline: none;
+      box-sizing: border-box;
+      transition: border-bottom-color 0.15s, border-bottom-width 0.05s;
+    }
+    .md-text-field::placeholder { color: transparent; }
+    .md-text-field:focus {
+      border-bottom: 2px solid var(--color-primary-variant);
+    }
+    .md-text-field:focus + .md-text-field__label { color: var(--color-primary-variant); }
+
+    /* Filled Textarea — same style, taller */
+    .md-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--color-input-bg);
+      border: none;
+      border-bottom: 1px solid var(--color-on-surface-hint);
+      border-radius: 4px 4px 0 0;
+      padding: 16px;
+      font-size: 16px; font-weight: 400;
+      line-height: 24px; letter-spacing: 0.50px;
+      color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+      outline: none;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-bottom-color 0.15s;
+    }
+    .md-textarea::placeholder {
+      color: var(--color-on-surface-hint);
+      font-size: 14px;
+    }
+    .md-textarea:focus {
+      border-bottom: 2px solid var(--color-primary-variant);
+    }
+
+    /* Icon Upload Row */
+    .icon-upload-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 0;
+    }
+    .icon-upload-row__preview {
+      width: 48px; height: 48px; border-radius: 4px;
+      background-color: var(--color-input-bg);
+      border: 1px dashed var(--color-divider);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .icon-upload-row__preview .material-icons { font-size: 24px; color: var(--color-on-surface-disabled); }
+    .icon-upload-row__preview img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: none;
+    }
+    .icon-upload-row__preview img.has-image { display: block; }
+    .icon-upload-actions { display: flex; align-items: center; gap: 0; }
+
+    /* Text Button — MD Spec */
+    .btn-text {
+      height: 36px; border-radius: 4px;
+      background: transparent; border: none;
+      color: var(--color-primary-variant);
+      font-family: var(--font-family);
+      font-weight: 500; font-size: 14px;
+      letter-spacing: 1.25px; text-transform: uppercase;
+      padding: 0 8px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s;
+    }
+    .btn-text::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      background-color: var(--color-primary-variant);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .btn-text:hover::before { opacity: 0.08; }
+    .btn-text:active::before { opacity: 0.12; }
+    .btn-text .material-icons { font-size: 16px; }
+    .btn-text--separator {
+      color: var(--color-divider);
+      margin: 0 4px; font-size: 16px;
+      user-select: none; pointer-events: none;
+    }
+
+    /* Radio Button — MD Spec */
+    .radio-group {
+      display: flex; align-items: center; gap: 24px;
+      flex-wrap: wrap;
+      padding: 8px 0;
+    }
+    .radio-option {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .radio-option input[type="radio"] { display: none; }
+    .radio-option__button {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--color-on-surface-disabled);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .radio-option__inner {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--color-primary-variant);
+      transform: scale(0);
+      transition: transform 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+    .radio-option input[type="radio"]:checked + .radio-option__button {
+      border-color: var(--color-primary-variant);
+    }
+    .radio-option input[type="radio"]:checked + .radio-option__button .radio-option__inner {
+      transform: scale(1);
+    }
+    .radio-option__label {
+      font-size: 16px; font-weight: 400; line-height: 24px;
+      letter-spacing: 0.50px; color: var(--color-emphasis-high);
+      font-family: var(--font-family);
+    }
+
+    /* Hover ripple on radio option */
+    .radio-option:hover .radio-option__button::before {
+      content: '';
+      position: absolute; inset: -8px; border-radius: 50%;
+      background-color: var(--color-primary-variant);
+      opacity: 0.08;
+    }
+
+    /* Dialog Actions — 8px bottom padding, right-aligned, gap: 8px */
+    .dialog__actions {
+      padding: 8px 16px 8px;
+      display: flex; justify-content: flex-end; align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Outlined Button for Cancel in dialog */
+    .btn-outlined-cancel {
+      height: 36px; border-radius: 4px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      color: var(--color-on-surface-medium);
+      font-family: var(--font-family);
+      font-weight: 500; font-size: 14px;
+      letter-spacing: 1.25px; text-transform: uppercase;
+      padding: 0 16px;
+      cursor: pointer;
+      display: inline-flex; align-items: center;
+      position: relative; overflow: hidden;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+    .btn-outlined-cancel::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .btn-outlined-cancel:hover::before { opacity: 0.04; }
+    .btn-outlined-cancel:active::before { opacity: 0.12; }
+
+    /* Form validation: error state */
+    .md-text-field.is-error {
+      border-bottom: 2px solid #B00020 !important;
+    }
+    .field-error-msg {
+      display: none;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.40px; color: #B00020;
+      margin-top: 4px; padding-left: 16px;
+    }
+    .field-error-msg.visible { display: block; }
+
+    /* Hidden file input */
+    #icon-file-input { display: none; }
+
+    /* =============================================
+       Scrollbar Styling
+       ============================================= */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.12);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.24); }
+
+    /* =============================================
+       Ripple Animation
+       ============================================= */
+    @keyframes ripple-expand {
+      from { transform: scale(0); opacity: 0.16; }
+      to   { transform: scale(2.5); opacity: 0; }
+    }
+    .ripple-element {
+      position: absolute; border-radius: 50%;
+      pointer-events: none;
+      animation: ripple-expand 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Bar -->
+  <header class="app-bar" role="banner">
+    <span class="app-bar__icon material-icons" aria-label="Menu">menu</span>
+    <h1 class="app-bar__title">KATE</h1>
+    <nav class="app-bar__actions" aria-label="App actions">
+      <button class="app-bar__action-btn" aria-label="Account">
+        <span class="material-icons">account_circle</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="layout">
+
+    <!-- Navigation Drawer -->
+    <nav class="nav-drawer" role="navigation" aria-label="Main navigation">
+
+      <!-- Primary Action -->
+      <button class="nav-drawer__primary-action md-interactive" aria-label="Create task">
+        <span class="material-icons">add_circle_outline</span>
+        <span class="md-body2" style="color: var(--color-on-surface-medium); font-size: 14px;">创建工作任务</span>
+      </button>
+
+      <div class="nav-divider"></div>
+
+      <!-- Nav Items -->
+      <div class="nav-item nav-item--active md-interactive" role="menuitem" aria-current="page">
+        <span class="material-icons">inbox</span>
+        <span>研发知识</span>
+      </div>
+      <div class="nav-item md-interactive" role="menuitem">
+        <span class="material-icons">space_dashboard</span>
+        <span>研发空间</span>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Filter Chips -->
+      <div class="nav-drawer__chips">
+        <button class="chip chip--selected md-interactive">工作任务</button>
+        <button class="chip md-interactive">研发流程</button>
+      </div>
+
+      <!-- History Icon Row -->
+      <div class="nav-drawer__history">
+        <span class="md-overline" style="font-size: 10px; letter-spacing: 1.5px; color: var(--color-on-surface-hint);">最近</span>
+        <span class="material-icons" style="font-size: 18px; color: var(--color-on-surface-hint);">history</span>
+      </div>
+
+      <!-- Recent Items — single-line list, 48px each -->
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">用户体验优化 可配置操作按钮的样式</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">导入PRD识别报错</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">需求理解节点会话区域输入指令未生效</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">天工—品牌智能化落地推进</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">区块链在供应链中的应用</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">天工—品牌智能化落地推进</span>
+      </div>
+      <div class="nav-item--recent md-interactive" role="menuitem">
+        <span class="md-body2" style="color: var(--color-on-surface-medium);">大数据分析助力市场决策</span>
+      </div>
+
+      <!-- Footer -->
+      <div class="nav-drawer__footer">
+        <div class="nav-drawer__avatar">
+          <span class="material-icons">person</span>
+        </div>
+        <span class="nav-drawer__user-name">慧芳</span>
+        <div class="nav-drawer__footer-icons">
+          <span class="material-icons">headset_mic</span>
+          <span class="material-icons">menu_book</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+
+      <!-- Tab Bar -->
+      <div class="tab-bar" role="tablist" aria-label="Content tabs">
+        <button class="tab-bar__tab tab-bar__tab--active" role="tab" aria-selected="true">知识库</button>
+        <button class="tab-bar__tab" role="tab" aria-selected="false">知识</button>
+      </div>
+
+      <!-- Content Toolbar -->
+      <div class="content-toolbar">
+        <!-- Filter Chips -->
+        <div class="content-toolbar__chips" role="group" aria-label="Filter by">
+          <button class="chip-filter chip-filter--selected">全部</button>
+          <button class="chip-filter">公司共享</button>
+          <button class="chip-filter">部门共享</button>
+          <button class="chip-filter">我创建的</button>
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-wrapper" role="search">
+          <span class="search-icon material-icons" aria-hidden="true">search</span>
+          <input
+            type="search"
+            placeholder="请输入知识库名称，回车执行搜索"
+            aria-label="Search knowledge base"
+          >
+        </div>
+
+        <!-- Action Button — Contained -->
+        <button class="btn-contained" id="btn-open-create-dialog" aria-label="Create knowledge base" aria-haspopup="dialog">
+          <span class="material-icons">add</span>
+          新建知识库
+        </button>
+      </div>
+
+      <!-- Card Grid -->
+      <div class="card-grid" role="list" aria-label="Knowledge base list">
+
+        <!-- Card: KATE 服务端开发知识库 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" aria-label="Logo" style="background-color: #BDBDBD;">
+              <span>logo</span>
+            </div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KATE 服务端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">bar_chart</span>
+                  <span class="kb-card__stat-value">2088次</span>
+                </div>
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">folder_open</span>
+                  <span class="kb-card__stat-value">121个</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers" aria-label="Maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card: KFC 前端开发知识库 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" aria-label="Logo" style="background-color: #BDBDBD;">
+              <span>logo</span>
+            </div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KFC 前端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">bar_chart</span>
+                  <span class="kb-card__stat-value">2088次</span>
+                </div>
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">folder_open</span>
+                  <span class="kb-card__stat-value">10个</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers" aria-label="Maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card: LHF 个人开发知识库 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" aria-label="Logo" style="background-color: #BDBDBD;">
+              <span>logo</span>
+            </div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">LHF 个人开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">bar_chart</span>
+                  <span class="kb-card__stat-value">2088次</span>
+                </div>
+                <div class="kb-card__stat">
+                  <span class="material-icons" aria-hidden="true">folder_open</span>
+                  <span class="kb-card__stat-value">10个</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers" aria-label="Maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Row 2 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KATE 服务端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">121个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KFC 前端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">LHF 个人开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Row 3 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KATE 服务端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">121个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KFC 前端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">LHF 个人开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Row 4 -->
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KATE 服务端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">121个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">KFC 前端开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kb-card md-interactive" role="listitem">
+          <div class="kb-card__header">
+            <div class="kb-card__logo" style="background-color: #BDBDBD;"><span>logo</span></div>
+            <div class="kb-card__meta">
+              <h2 class="kb-card__title">LHF 个人开发知识库</h2>
+              <div class="kb-card__stats">
+                <div class="kb-card__stat"><span class="material-icons">bar_chart</span><span class="kb-card__stat-value">2088次</span></div>
+                <div class="kb-card__stat"><span class="material-icons">folder_open</span><span class="kb-card__stat-value">10个</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="kb-card__description">知识库的描述是XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+          <div class="kb-card__divider"></div>
+          <div class="kb-card__footer">
+            <span class="kb-card__update">更新时间：2024.09.12</span>
+            <div class="kb-card__maintainers">
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+              <div class="maintainer-avatar"><span class="material-icons">person</span></div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /.card-grid -->
+
+      <!-- Pagination Bar -->
+      <div class="pagination-bar" role="navigation" aria-label="Pagination">
+        <span class="pagination-info">共 1374 条</span>
+        <div class="page-size-select">
+          <span>每页</span>
+          <select aria-label="Items per page">
+            <option value="20">20条</option>
+            <option value="50">50条</option>
+            <option value="100">100条</option>
+          </select>
+        </div>
+        <nav class="pagination-pages" aria-label="Page navigation">
+          <button class="page-btn-icon" disabled aria-label="Previous page">
+            <span class="material-icons">chevron_left</span>
+          </button>
+          <button class="page-btn page-btn--active" aria-label="Page 1" aria-current="page">1</button>
+          <button class="page-btn" aria-label="Page 2">2</button>
+          <button class="page-btn" aria-label="Page 3">3</button>
+          <button class="page-btn" aria-label="Page 4">4</button>
+          <button class="page-btn" aria-label="Page 5">5</button>
+          <button class="page-btn" aria-label="Page 6">6</button>
+          <span class="page-btn" aria-hidden="true" style="cursor: default;">···</span>
+          <button class="page-btn" aria-label="Page 69">69</button>
+          <button class="page-btn-icon" aria-label="Next page">
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </nav>
+        <div class="pagination-jump" aria-label="Go to page">
+          <span>前往</span>
+          <input type="number" min="1" max="69" value="" aria-label="Page number">
+          <span>页</span>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /.layout -->
+
+  <!-- =============================================
+       Dialog: Create Knowledge Base
+       MD 2 Dialog Spec — Surface bg, 24dp elevation
+       Title: Headline 6, Body: scrollable, Actions: Text+Contained buttons
+       ============================================= -->
+  <div class="dialog-scrim" id="create-dialog-scrim" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-hidden="true">
+    <div class="dialog" id="create-dialog">
+
+      <!-- Dialog Header -->
+      <div class="dialog__header">
+        <h2 class="dialog__title" id="dialog-title">新建知识库</h2>
+        <button class="dialog__close-btn" id="btn-close-dialog" aria-label="关闭">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Dialog Body -->
+      <div class="dialog__body">
+        <form id="create-kb-form" novalidate>
+
+          <!-- 知识库名称 -->
+          <div class="dialog-form__row">
+            <label class="dialog-form__label" for="kb-name">
+              知识库名称<span class="required-star" aria-hidden="true">*</span>
+            </label>
+            <div class="dialog-form__field">
+              <input
+                type="text"
+                id="kb-name"
+                class="md-text-field"
+                placeholder="请输入知识库名称"
+                autocomplete="off"
+                maxlength="50"
+                aria-required="true"
+                aria-describedby="kb-name-error"
+              >
+              <span class="field-error-msg" id="kb-name-error" role="alert">知识库名称不能为空</span>
+            </div>
+          </div>
+
+          <!-- 知识库描述 -->
+          <div class="dialog-form__row">
+            <label class="dialog-form__label" for="kb-desc">知识库描述</label>
+            <div class="dialog-form__field">
+              <textarea
+                id="kb-desc"
+                class="md-textarea"
+                placeholder="输入内容描述知识库的具体用途..."
+                rows="4"
+                maxlength="500"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- 知识库图标 -->
+          <div class="dialog-form__row">
+            <div class="dialog-form__label" style="padding-top: 20px;">
+              知识库图标<span class="required-star" aria-hidden="true">*</span>
+            </div>
+            <div class="dialog-form__field">
+              <div class="icon-upload-row">
+                <div class="icon-upload-row__preview" id="icon-preview">
+                  <span class="material-icons">image</span>
+                  <img src="" alt="已选图标" id="icon-preview-img">
+                </div>
+                <div class="icon-upload-actions">
+                  <button type="button" class="btn-text" id="btn-upload-icon" aria-label="本地上传图标">
+                    <span class="material-icons">upload</span>
+                    本地上传
+                  </button>
+                  <span class="btn-text--separator" aria-hidden="true">|</span>
+                  <button type="button" class="btn-text" id="btn-ai-icon" aria-label="智能生成图标">
+                    <span class="material-icons">auto_awesome</span>
+                    智能生成
+                  </button>
+                </div>
+                <input type="file" id="icon-file-input" accept="image/*" tabindex="-1" aria-label="选择图标文件">
+              </div>
+            </div>
+          </div>
+
+          <!-- 维护者 -->
+          <div class="dialog-form__row">
+            <label class="dialog-form__label" for="kb-maintainer">
+              维护者<span class="required-star" aria-hidden="true">*</span>
+            </label>
+            <div class="dialog-form__field">
+              <input
+                type="text"
+                id="kb-maintainer"
+                class="md-text-field"
+                placeholder="请输入维护者姓名或邮箱"
+                autocomplete="off"
+                aria-required="true"
+                aria-describedby="kb-maintainer-error"
+              >
+              <span class="field-error-msg" id="kb-maintainer-error" role="alert">维护者不能为空</span>
+            </div>
+          </div>
+
+          <!-- 可见权限 -->
+          <div class="dialog-form__row" style="margin-bottom: 16px;">
+            <div class="dialog-form__label" style="padding-top: 12px;">
+              可见权限<span class="required-star" aria-hidden="true">*</span>
+            </div>
+            <div class="dialog-form__field">
+              <div class="radio-group" role="radiogroup" aria-label="可见权限">
+                <label class="radio-option">
+                  <input type="radio" name="visibility" value="company" checked>
+                  <span class="radio-option__button"><span class="radio-option__inner"></span></span>
+                  <span class="radio-option__label">公司共享</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="visibility" value="department">
+                  <span class="radio-option__button"><span class="radio-option__inner"></span></span>
+                  <span class="radio-option__label">指定部门共享</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="visibility" value="people">
+                  <span class="radio-option__button"><span class="radio-option__inner"></span></span>
+                  <span class="radio-option__label">指定人员共享</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div><!-- /.dialog__body -->
+
+      <!-- Dialog Actions — right-aligned: Cancel(outlined) + Confirm(contained) -->
+      <div class="dialog__actions">
+        <button type="button" class="btn-outlined-cancel" id="btn-cancel-dialog">取消</button>
+        <button type="button" class="btn-contained" id="btn-confirm-create" style="margin-left: 0;">新建</button>
+      </div>
+
+    </div><!-- /.dialog -->
+  </div><!-- /.dialog-scrim -->
+
+  <script>
+    // =============================================
+    // Ripple Effect — Material Design Pressed State
+    // =============================================
+    function addRipple(el) {
+      el.addEventListener('click', function(e) {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const size = Math.max(rect.width, rect.height) * 2;
+
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple-element');
+
+        // Determine overlay color based on background
+        const bg = window.getComputedStyle(el).backgroundColor;
+        const isDark = (
+          el.classList.contains('btn-contained') ||
+          el.classList.contains('chip--selected') ||
+          el.classList.contains('page-btn--active')
+        );
+        ripple.style.backgroundColor = isDark ? 'rgba(255,255,255,0.24)' : 'rgba(0,0,0,0.12)';
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = (x - size / 2) + 'px';
+        ripple.style.top  = (y - size / 2) + 'px';
+
+        el.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+      });
+    }
+
+    document.querySelectorAll('.md-interactive, .btn-contained, .chip, .chip-filter, .page-btn, .page-btn-icon, .tab-bar__tab, .btn-text, .btn-outlined-cancel, .dialog__close-btn').forEach(addRipple);
+
+    // =============================================
+    // Tab switching
+    // =============================================
+    document.querySelectorAll('.tab-bar__tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab-bar__tab').forEach(t => {
+          t.classList.remove('tab-bar__tab--active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('tab-bar__tab--active');
+        this.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    // =============================================
+    // Filter chip interaction
+    // =============================================
+    document.querySelectorAll('.chip-filter').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('chip-filter--selected'));
+        this.classList.add('chip-filter--selected');
+      });
+    });
+
+    // =============================================
+    // Nav drawer chip interaction
+    // =============================================
+    document.querySelectorAll('.nav-drawer__chips .chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.nav-drawer__chips .chip').forEach(c => c.classList.remove('chip--selected'));
+        this.classList.add('chip--selected');
+      });
+    });
+
+    // =============================================
+    // Pagination
+    // =============================================
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.style.cursor === 'default') return;
+        document.querySelectorAll('.page-btn').forEach(b => {
+          b.classList.remove('page-btn--active');
+          b.removeAttribute('aria-current');
+        });
+        this.classList.add('page-btn--active');
+        this.setAttribute('aria-current', 'page');
+      });
+    });
+
+    // =============================================
+    // Dialog: Create Knowledge Base
+    // MD 2 Dialog — open/close with animation
+    // =============================================
+    const scrim    = document.getElementById('create-dialog-scrim');
+    const btnOpen  = document.getElementById('btn-open-create-dialog');
+    const btnClose = document.getElementById('btn-close-dialog');
+    const btnCancel= document.getElementById('btn-cancel-dialog');
+    const btnConfirm = document.getElementById('btn-confirm-create');
+    const form     = document.getElementById('create-kb-form');
+
+    // Keep track of last focused element before dialog opens
+    let lastFocused = null;
+
+    function openDialog() {
+      lastFocused = document.activeElement;
+      scrim.classList.add('is-open');
+      scrim.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden'; // prevent scroll behind scrim
+      // Focus first focusable element — knowledge base name input
+      setTimeout(() => {
+        document.getElementById('kb-name').focus();
+      }, 50);
+    }
+
+    function closeDialog() {
+      scrim.classList.remove('is-open');
+      scrim.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      // Restore focus
+      if (lastFocused) lastFocused.focus();
+    }
+
+    function resetForm() {
+      form.reset();
+      // Reset icon preview
+      document.getElementById('icon-preview-img').classList.remove('has-image');
+      document.getElementById('icon-preview-img').src = '';
+      document.querySelector('#icon-preview .material-icons').style.display = '';
+      // Clear errors
+      document.querySelectorAll('.md-text-field').forEach(f => f.classList.remove('is-error'));
+      document.querySelectorAll('.field-error-msg').forEach(m => m.classList.remove('visible'));
+      // Reset radio to first option
+      document.querySelector('input[name="visibility"][value="company"]').checked = true;
+    }
+
+    // Open dialog
+    btnOpen.addEventListener('click', openDialog);
+
+    // Close via ✕ button
+    btnClose.addEventListener('click', () => {
+      closeDialog();
+      resetForm();
+    });
+
+    // Cancel button
+    btnCancel.addEventListener('click', () => {
+      closeDialog();
+      resetForm();
+    });
+
+    // Close on scrim click (clicking backdrop)
+    scrim.addEventListener('click', (e) => {
+      if (e.target === scrim) {
+        closeDialog();
+        resetForm();
+      }
+    });
+
+    // Close on Escape key — MD spec: dialogs close on Esc
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && scrim.classList.contains('is-open')) {
+        closeDialog();
+        resetForm();
+      }
+    });
+
+    // Focus trap within dialog
+    scrim.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = scrim.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]):not([type="radio"] + *), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+
+    // =============================================
+    // Form Validation & Submit
+    // =============================================
+    function validateField(input, errorId) {
+      const empty = !input.value.trim();
+      input.classList.toggle('is-error', empty);
+      document.getElementById(errorId).classList.toggle('visible', empty);
+      return !empty;
+    }
+
+    btnConfirm.addEventListener('click', () => {
+      const nameOk = validateField(
+        document.getElementById('kb-name'), 'kb-name-error'
+      );
+      const maintainerOk = validateField(
+        document.getElementById('kb-maintainer'), 'kb-maintainer-error'
+      );
+
+      if (!nameOk || !maintainerOk) return;
+
+      // Collect form data
+      const formData = {
+        name:        document.getElementById('kb-name').value.trim(),
+        description: document.getElementById('kb-desc').value.trim(),
+        maintainer:  document.getElementById('kb-maintainer').value.trim(),
+        visibility:  document.querySelector('input[name="visibility"]:checked').value,
+      };
+
+      // Simulate successful creation — add a new card to grid
+      addNewCard(formData);
+      closeDialog();
+      resetForm();
+    });
+
+    // Clear error on input
+    document.getElementById('kb-name').addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('is-error');
+        document.getElementById('kb-name-error').classList.remove('visible');
+      }
+    });
+    document.getElementById('kb-maintainer').addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('is-error');
+        document.getElementById('kb-maintainer-error').classList.remove('visible');
+      }
+    });
+
+    // =============================================
+    // Icon Upload
+    // =============================================
+    const iconFileInput = document.getElementById('icon-file-input');
+    const iconPreviewImg = document.getElementById('icon-preview-img');
+    const iconPreviewPlaceholder = document.querySelector('#icon-preview .material-icons');
+
+    document.getElementById('btn-upload-icon').addEventListener('click', () => {
+      iconFileInput.click();
+    });
+
+    iconFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        iconPreviewImg.src = ev.target.result;
+        iconPreviewImg.classList.add('has-image');
+        iconPreviewPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Simulate AI icon generation
+    document.getElementById('btn-ai-icon').addEventListener('click', () => {
+      // Placeholder: generate a gradient "icon" as canvas data URL
+      const canvas = document.createElement('canvas');
+      canvas.width = 48; canvas.height = 48;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 48, 48);
+      grad.addColorStop(0, '#7C4DFF');
+      grad.addColorStop(1, '#1DE9B6');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, 48, 48, 8);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 22px Roboto';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('K', 24, 26);
+
+      iconPreviewImg.src = canvas.toDataURL();
+      iconPreviewImg.classList.add('has-image');
+      iconPreviewPlaceholder.style.display = 'none';
+    });
+
+    // =============================================
+    // Add new KB card dynamically
+    // =============================================
+    function getVisibilityLabel(val) {
+      return { company: '公司共享', department: '部门共享', people: '指定人员' }[val] || '';
+    }
+
+    function addNewCard(data) {
+      const grid = document.querySelector('.card-grid');
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+
+      const article = document.createElement('article');
+      article.className = 'kb-card md-interactive';
+      article.setAttribute('role', 'listitem');
+
+      const iconSrc = iconPreviewImg.classList.contains('has-image') ? iconPreviewImg.src : '';
+      const iconHtml = iconSrc
+        ? `<img src="${iconSrc}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`
+        : `<span style="font-size:11px;color:#fff;font-weight:400;letter-spacing:0.5px;">logo</span>`;
+
+      article.innerHTML = `
+        <div class="kb-card__header">
+          <div class="kb-card__logo" style="background-color:#BDBDBD;">${iconHtml}</div>
+          <div class="kb-card__meta">
+            <h2 class="kb-card__title">${escHtml(data.name)}</h2>
+            <div class="kb-card__stats">
+              <div class="kb-card__stat">
+                <span class="material-icons" aria-hidden="true">bar_chart</span>
+                <span class="kb-card__stat-value">0次</span>
+              </div>
+              <div class="kb-card__stat">
+                <span class="material-icons" aria-hidden="true">folder_open</span>
+                <span class="kb-card__stat-value">0个</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="kb-card__description">${escHtml(data.description) || '暂无描述'}</p>
+        <div class="kb-card__divider"></div>
+        <div class="kb-card__footer">
+          <span class="kb-card__update">更新时间：${dateStr}</span>
+          <div class="kb-card__maintainers" aria-label="Maintainers">
+            <div class="maintainer-avatar" style="background-color:#7C4DFF;"><span class="material-icons">person</span></div>
+          </div>
+        </div>
+      `;
+
+      // Insert at the top of the grid
+      grid.insertBefore(article, grid.firstChild);
+      addRipple(article);
+
+      // Scroll to top of grid area
+      article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function escHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+  </script>
+</body>
+</html>

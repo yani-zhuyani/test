@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关联合并请求</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: PingFang SC, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 22px;
+      color: #131416;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ─── Dialog ─────────────────────────────────────────── */
+    .dialog {
+      background: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+      width: 720px;
+      overflow: hidden;
+    }
+
+    /* ─── Header ─────────────────────────────────────────── */
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+    }
+
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+      color: #131416;
+    }
+
+    .dialog-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #8E8E90;
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .dialog-close:hover {
+      color: #131416;
+      background: #F5F5F5;
+    }
+
+    .dialog-close svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ─── Body ───────────────────────────────────────────── */
+    .dialog-body {
+      padding: 0 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ─── Radio Card ─────────────────────────────────────── */
+    .radio-card {
+      border: 1px solid #DFE0E2;
+      border-radius: 4px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .radio-card:hover {
+      border-color: #8E8E90;
+    }
+
+    .radio-card.is-selected {
+      border-color: #2563F4;
+      background: #F4F7FF;
+    }
+
+    /* ─── Radio Button ───────────────────────────────────── */
+    .radio-wrap {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .radio-input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #DFE0E2;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s;
+      display: block;
+    }
+
+    .radio-input:hover {
+      border-color: #2563F4;
+    }
+
+    .radio-input:checked {
+      border-color: #2563F4;
+      border-width: 5px;
+      background: #FFFFFF;
+    }
+
+    /* ─── Card Content ───────────────────────────────────── */
+    .card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── Tag ────────────────────────────────────────────── */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 2px;
+      font-size: 12px;
+      line-height: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tag-open {
+      background: #EEF3FF;
+      color: #2563F4;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 22px;
+      color: #131416;
+    }
+
+    .card-link-icon {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #8E8E90;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+
+    .card-link-icon:hover {
+      color: #2563F4;
+    }
+
+    .card-link-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ─── Card Meta ──────────────────────────────────────── */
+    .card-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 12px;
+      line-height: 20px;
+      color: #8E8E90;
+    }
+
+    .avatar {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .meta-text {
+      color: #8E8E90;
+    }
+
+    /* 文字链规范：和普通文字一起，12px环境中文字链为12px，主色 */
+    .meta-link {
+      color: #2563F4;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .meta-link:hover {
+      color: #5C8FFF;
+    }
+
+    .copy-icon {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      color: #B2B2B3;
+      transition: color 0.15s;
+    }
+
+    .copy-icon:hover {
+      color: #2563F4;
+    }
+
+    .copy-icon svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    .dialog-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 24px 20px;
+    }
+
+    /* ─── Button ─────────────────────────────────────────── */
+    /* 普通按钮（三级） */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 5px 12px;
+      border-radius: 2px;
+      font-size: 14px;
+      line-height: 22px;
+      font-family: inherit;
+      font-weight: 400;
+      cursor: pointer;
+      border: 1px solid #DFE0E2;
+      color: #131416;
+      background: #FFFFFF;
+      transition: border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      border-color: #8E8E90;
+    }
+
+    .btn:active {
+      border-color: #8E8E90;
+    }
+
+    /* 主要按钮 */
+    .btn-primary {
+      background: #2563F4;
+      color: #FFFFFF;
+      border-color: #2563F4;
+    }
+
+    .btn-primary:hover {
+      background: #5C8FFF;
+      border-color: #5C8FFF;
+    }
+
+    .btn-primary:active {
+      background: #1747CA;
+      border-color: #1747CA;
+    }
+
+    /* ─── Tooltip (copy feedback) ────────────────────────── */
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .tooltip-text {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #131416;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 2px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      pointer-events: none;
+      margin-bottom: 4px;
+    }
+
+    .tooltip-wrapper.show-tip .tooltip-text {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+
+    <!-- Header -->
+    <div class="dialog-header">
+      <span class="dialog-title" id="dialog-title">关联合并请求</span>
+      <button class="dialog-close" aria-label="关闭" onclick="closeDialog()">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="dialog-body">
+
+      <!-- Option 1 — Selected -->
+      <label class="radio-card is-selected" for="mr-option-1">
+        <div class="radio-wrap">
+          <input
+            class="radio-input"
+            type="radio"
+            id="mr-option-1"
+            name="merge-request"
+            value="1"
+            checked
+            onchange="selectCard(this)"
+          />
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <span class="tag tag-open">已开启</span>
+            <span class="card-title">kiwi: update docs for KIWI_SCAN</span>
+            <span class="card-link-icon tooltip-wrapper" aria-label="打开链接">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 2H2C1.44772 2 1 2.44772 1 3V12C1 12.5523 1.44772 13 2 13H11C11.5523 13 12 12.5523 12 12V8M8 1H13M13 1V6M13 1L5.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div class="card-meta">
+            <!-- 头像：双色拼接模拟 -->
+            <span class="avatar" style="background: linear-gradient(135deg, #2563F4 50%, #F5A623 50%);"></span>
+            <span class="meta-text">张爱民&nbsp;&nbsp;创建于 14 天前，向仓库</span>
+            <a class="meta-link" href="javascript:void(0)">halo-doc-site</a>
+            <span class="meta-text">的分支</span>
+            <a class="meta-link" href="javascript:void(0)">kiwi-update-docs</a>
+            <span class="tooltip-wrapper" onclick="copyText(this, 'kiwi-update-docs')">
+              <span class="copy-icon">
+                <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="4.5" y="4.5" width="6.5" height="6.5" rx="1" stroke="currentColor" stroke-width="1.1"/>
+                  <path d="M3 7.5H2C1.44772 7.5 1 7.05228 1 6.5V2C1 1.44772 1.44772 1 2 1H6.5C7.05228 1 7.5 1.44772 7.5 2V3" stroke="currentColor" stroke-width="1.1"/>
+                </svg>
+              </span>
+              <span class="tooltip-text">已复制</span>
+            </span>
+            <span class="meta-text">合并到分支</span>
+            <a class="meta-link" href="javascript:void(0)">master</a>
+            <span class="tooltip-wrapper" onclick="copyText(this, 'master')">
+              <span class="copy-icon">
+                <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="4.5" y="4.5" width="6.5" height="6.5" rx="1" stroke="currentColor" stroke-width="1.1"/>
+                  <path d="M3 7.5H2C1.44772 7.5 1 7.05228 1 6.5V2C1 1.44772 1.44772 1 2 1H6.5C7.05228 1 7.5 1.44772 7.5 2V3" stroke="currentColor" stroke-width="1.1"/>
+                </svg>
+              </span>
+              <span class="tooltip-text">已复制</span>
+            </span>
+          </div>
+        </div>
+      </label>
+
+      <!-- Option 2 — Unselected -->
+      <label class="radio-card" for="mr-option-2">
+        <div class="radio-wrap">
+          <input
+            class="radio-input"
+            type="radio"
+            id="mr-option-2"
+            name="merge-request"
+            value="2"
+            onchange="selectCard(this)"
+          />
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <span class="tag tag-open">已开启</span>
+            <span class="card-title">kiwi: update docs for KIWI_SCAN</span>
+            <span class="card-link-icon tooltip-wrapper" aria-label="打开链接">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 2H2C1.44772 2 1 2.44772 1 3V12C1 12.5523 1.44772 13 2 13H11C11.5523 13 12 12.5523 12 12V8M8 1H13M13 1V6M13 1L5.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div class="card-meta">
+            <span class="avatar" style="background: linear-gradient(135deg, #2563F4 50%, #F5A623 50%);"></span>
+            <span class="meta-text">张爱民&nbsp;&nbsp;创建于 14 天前，向仓库</span>
+            <a class="meta-link" href="javascript:void(0)">halo-doc-site</a>
+            <span class="meta-text">的分支</span>
+            <a class="meta-link" href="javascript:void(0)">kiwi-update-docs</a>
+            <span class="tooltip-wrapper" onclick="copyText(this, 'kiwi-update-docs')">
+              <span class="copy-icon">
+                <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="4.5" y="4.5" width="6.5" height="6.5" rx="1" stroke="currentColor" stroke-width="1.1"/>
+                  <path d="M3 7.5H2C1.44772 7.5 1 7.05228 1 6.5V2C1 1.44772 1.44772 1 2 1H6.5C7.05228 1 7.5 1.44772 7.5 2V3" stroke="currentColor" stroke-width="1.1"/>
+                </svg>
+              </span>
+              <span class="tooltip-text">已复制</span>
+            </span>
+            <span class="meta-text">合并到分支</span>
+            <a class="meta-link" href="javascript:void(0)">release</a>
+            <span class="tooltip-wrapper" onclick="copyText(this, 'release')">
+              <span class="copy-icon">
+                <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="4.5" y="4.5" width="6.5" height="6.5" rx="1" stroke="currentColor" stroke-width="1.1"/>
+                  <path d="M3 7.5H2C1.44772 7.5 1 7.05228 1 6.5V2C1 1.44772 1.44772 1 2 1H6.5C7.05228 1 7.5 1.44772 7.5 2V3" stroke="currentColor" stroke-width="1.1"/>
+                </svg>
+              </span>
+              <span class="tooltip-text">已复制</span>
+            </span>
+          </div>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+      <!-- 普通按钮（三级）：重要性弱，与主要按钮组合 -->
+      <button class="btn" onclick="closeDialog()">取消</button>
+      <!-- 主要按钮：核心行为确认 -->
+      <button class="btn btn-primary" onclick="confirm()">确定</button>
+    </div>
+
+  </div>
+
+  <script>
+    function selectCard(radio) {
+      document.querySelectorAll('.radio-card').forEach(card => {
+        card.classList.remove('is-selected');
+      });
+      radio.closest('.radio-card').classList.add('is-selected');
+    }
+
+    function closeDialog() {
+      document.querySelector('.dialog').style.opacity = '0';
+      setTimeout(() => {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#8E8E90;font-size:14px;">弹框已关闭</div>';
+      }, 150);
+    }
+
+    function confirm() {
+      const selected = document.querySelector('input[name="merge-request"]:checked');
+      if (selected) {
+        alert('已选择选项 ' + selected.value + '，提交成功');
+      }
+    }
+
+    function copyText(wrapper, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        wrapper.classList.add('show-tip');
+        setTimeout(() => wrapper.classList.remove('show-tip'), 1500);
+      }).catch(() => {
+        wrapper.classList.add('show-tip');
+        setTimeout(() => wrapper.classList.remove('show-tip'), 1500);
+      });
+    }
+  </script>
+</body>
+</html>

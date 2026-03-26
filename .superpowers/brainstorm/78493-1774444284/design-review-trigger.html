@@ -1,0 +1,28 @@
+<h2>好的，Figma 作为设计源</h2>
+<p class="subtitle">那走查通常在哪个环节触发？</p>
+
+<div class="section">
+  <div class="options">
+    <div class="option" data-choice="pr" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>PR / 提测节点</h3>
+        <p>前端提交代码 / 提测后，设计师去对比页面和设计稿</p>
+      </div>
+    </div>
+    <div class="option" data-choice="anytime" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>随时随地</h3>
+        <p>设计师想走查时，打开工具手动触发，不绑定特定节点</p>
+      </div>
+    </div>
+    <div class="option" data-choice="ci" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>CI / 自动化</h3>
+        <p>希望集成到 CI 流水线，每次 deploy 后自动跑对比并生成报告</p>
+      </div>
+    </div>
+  </div>
+</div>

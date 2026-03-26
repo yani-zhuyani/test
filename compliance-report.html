@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skill 生成界面规范合规度审查报告</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: #fff;
+      --border: #e3e6f0;
+      --text: #1a1d27;
+      --muted: #7a7f99;
+      --accent: #2563F4;
+      --accent-light: #eef3ff;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --yellow: #d97706;
+      --yellow-bg: #fef3c7;
+      --orange: #ea580c;
+      --orange-bg: #ffedd5;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(37,99,244,.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "PingFang SC","Helvetica Neue",Arial,sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.7; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg,#1a1d27 0%,#1e3a8a 55%,#2563F4 100%); color:#fff; padding:48px 48px 40px; }
+    .hero-label { font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:10px; }
+    .hero h1 { font-size:26px; font-weight:700; line-height:1.35; margin-bottom:10px; }
+    .hero-sub { font-size:13px; color:rgba(255,255,255,.65); margin-bottom:32px; }
+
+    /* ── Score cards row ── */
+    .score-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .score-card { background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius); padding:18px 20px; }
+    .score-card .sc-label { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.55); margin-bottom:8px; }
+    .score-card .sc-num { font-size:38px; font-weight:800; line-height:1; }
+    .score-card .sc-sub { font-size:13px; color:rgba(255,255,255,.6); margin-top:6px; }
+    .pass-color { color:#86efac; }
+    .warn-color { color:#fcd34d; }
+    .fail-color { color:#fca5a5; }
+
+    /* ── Layout ── */
+    .container { max-width:1040px; margin:0 auto; padding:36px 20px 80px; }
+
+    /* ── Section title ── */
+    .sec-title { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+    .sec-title::after { content:""; flex:1; height:1px; background:var(--border); }
+    .section { margin-bottom:44px; }
+
+    /* ── Intro banner ── */
+    .intro { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; font-size:13px; color:var(--muted); margin-bottom:28px; line-height:1.8; }
+    .intro strong { color:var(--text); }
+
+    /* ── Check card ── */
+    .check-group { margin-bottom:28px; }
+    .check-group-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .check-group-title .comp-badge { font-size:11px; font-weight:600; padding:2px 10px; border-radius:20px; background:var(--accent-light); color:var(--accent); font-family:"SF Mono",Menlo,monospace; }
+
+    .check-list { display:flex; flex-direction:column; gap:8px; }
+    .check-item {
+      display:grid;
+      grid-template-columns: 28px 1fr auto auto;
+      align-items:start;
+      gap:12px;
+      padding:14px 16px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:8px;
+    }
+    .check-item.pass { border-left:3px solid var(--green); }
+    .check-item.fail { border-left:3px solid var(--red); }
+    .check-item.warn { border-left:3px solid var(--yellow); }
+
+    .ci-icon { font-size:17px; padding-top:1px; }
+    .ci-main {}
+    .ci-rule { font-weight:600; font-size:13px; margin-bottom:3px; }
+    .ci-evidence { font-size:12px; color:var(--muted); }
+    .ci-evidence code { font-family:"SF Mono",Menlo,monospace; background:var(--bg); padding:1px 5px; border-radius:3px; font-size:11px; color:var(--accent); }
+    .ci-evidence .fix { color:var(--orange); }
+
+    .ci-status { white-space:nowrap; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; height:fit-content; }
+    .ci-status.pass { background:var(--green-bg); color:var(--green); }
+    .ci-status.fail { background:var(--red-bg); color:var(--red); }
+    .ci-status.warn { background:var(--yellow-bg); color:var(--yellow); }
+
+    .ci-src { font-size:11px; color:var(--muted); font-family:"SF Mono",Menlo,monospace; white-space:nowrap; padding-top:3px; }
+
+    /* ── Summary table ── */
+    .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+    .summary-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+    .summary-card .title { font-weight:700; font-size:14px; margin-bottom:14px; }
+    .progress-item { margin-bottom:12px; }
+    .progress-item .row { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+    .progress-item .pct { font-weight:700; }
+    .bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:4px; }
+    .bar-fill.full { background:var(--green); }
+    .bar-fill.high { background:#4ade80; }
+    .bar-fill.mid { background:var(--yellow); }
+    .bar-fill.low { background:var(--red); }
+
+    /* ── Radar-like score ring ── */
+    .score-ring-wrap { display:flex; justify-content:center; margin-bottom:28px; }
+    .score-ring { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; }
+    .ring-item { text-align:center; width:100px; }
+    .ring-circle {
+      width:80px; height:80px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column;
+      margin:0 auto 8px;
+      font-weight:800; font-size:22px;
+      border:4px solid;
+    }
+    .ring-circle.pass-ring { border-color:var(--green); color:var(--green); background:var(--green-bg); }
+    .ring-circle.warn-ring { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); }
+    .ring-circle.fail-ring { border-color:var(--red); color:var(--red); background:var(--red-bg); }
+    .ring-label { font-size:12px; color:var(--muted); line-height:1.4; }
+
+    /* ── Issue highlight ── */
+    .issue-box { background:var(--orange-bg); border:1px solid #fed7aa; border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+    .issue-box .ib-title { font-weight:700; font-size:13px; color:var(--orange); margin-bottom:4px; }
+    .issue-box .ib-code { font-family:"SF Mono",Menlo,monospace; font-size:12px; background:rgba(234,88,12,.08); padding:8px 10px; border-radius:4px; margin:6px 0; color:#9a3412; white-space:pre-wrap; }
+    .issue-box .ib-fix { font-size:12px; color:#92400e; }
+    .issue-box .ib-fix code { background:rgba(234,88,12,.1); }
+
+    /* ── Verdict banner ── */
+    .verdict { background:linear-gradient(135deg,#f0f9ff,#fff); border:1px solid #bfdbfe; border-radius:var(--radius); padding:22px 26px; font-size:14px; line-height:1.85; }
+    .verdict strong { color:var(--accent); }
+    .verdict .vd-score { font-size:32px; font-weight:800; color:var(--green); display:inline; }
+
+    /* ── Tag ── */
+    .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; font-family:"SF Mono",Menlo,monospace; }
+    .tag-spec { background:var(--accent-light); color:var(--accent); }
+    .tag-ok { background:var(--green-bg); color:var(--green); }
+    .tag-partial { background:var(--yellow-bg); color:var(--yellow); }
+    .tag-miss { background:var(--red-bg); color:var(--red); }
+
+    @media(max-width:768px) {
+      .hero { padding:28px 18px; }
+      .score-row { grid-template-columns:1fr 1fr; }
+      .summary-grid { grid-template-columns:1fr; }
+      .check-item { grid-template-columns:24px 1fr; }
+      .ci-status, .ci-src { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-label">Skill 输出合规度审查 · 2026-03-23</div>
+  <h1>date-design-guidelines Skill<br>生成界面规范符合度报告</h1>
+  <div class="hero-sub">审查对象：Skill 生成的 HTML 输出代码 · UI需求：KATE 知识库管理页面 · 审查方式：逐条对照快手B端设计文档</div>
+  <div class="score-row">
+    <div class="score-card">
+      <div class="sc-label">整体规范符合率</div>
+      <div class="sc-num pass-color">90.5%</div>
+      <div class="sc-sub">19 / 21 条规范通过</div>
+    </div>
+    <div class="score-card">
+      <div class="sc-label">严重缺陷（必改）</div>
+      <div class="sc-num warn-color">1</div>
+      <div class="sc-sub">textarea 最小高度不足 64px</div>
+    </div>
+    <div class="score-card">
+      <div class="sc-label">轻微偏差（建议改）</div>
+      <div class="sc-num warn-color">1</div>
+      <div class="sc-sub">字符计数器缺失</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="intro">
+    <strong>审查说明</strong>：本报告仅关注 Skill 生成的代码本身是否符合快手B端设计规范，不做 with/without skill 的横向对比。审查覆盖两个输出文件：<strong>新建知识库弹框</strong>（modal.html，Eval-1）和<strong>知识库列表标签页+分页</strong>（tabs-pagination.html，Eval-2），共对照 21 条规范条款。对于规范文档中明确写明数值/样式的条款，以文档为准逐行核对源码。
+  </div>
+
+  <!-- ═══════ 维度一：弹框整体结构 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查一 · 弹框整体结构（message-box.md）</div>
+
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">message-box.md</span> 弹框宽度与蒙层</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">弹框宽度 400px（规范标准）</div>
+            <div class="ci-evidence">源码第32行：<code>.modal { width: 400px; }</code>，精确符合 message-box.md §尺寸规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">message-box.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">蒙层存在且点击无反馈</div>
+            <div class="ci-evidence">源码第21-28行：<code>.modal-overlay { background: rgba(0,0,0,.45); }</code>，蒙层无绑定点击事件，符合规范"点击蒙层无反馈"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">message-box.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">弹框操作按钮数量 ≤ 3（规范上限）</div>
+            <div class="ci-evidence">底部仅有「取消」+「新建」两个按钮，符合"操作总数不宜超过3个"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">message-box.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">弹框全局居中显示</div>
+            <div class="ci-evidence"><code>.modal-overlay { display:flex; align-items:center; justify-content:center; }</code>，符合"全局居中出现"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">message-box.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查二：表单标签规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查二 · 表单标签规范（form.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">form.md</span> 标签冒号 & 必填星号</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">所有标签末尾含冒号</div>
+            <div class="ci-evidence">
+              源码中5个标签均正确：<code>知识库名称：</code>、<code>知识库描述：</code>、<code>知识库图标：</code>、<code>维护者：</code>、<code>可见权限：</code>，与 form.md §标签规范示例完全一致
+            </div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">form.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">必填星号颜色 #E34D59，位置紧跟标签文字右侧</div>
+            <div class="ci-evidence">
+              第88-92行：<code>.required-star { color: #E34D59; }</code>，位置在标签文字后冒号之后，与 form.md 示例完全一致
+            </div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">form.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">表单布局为垂直布局（标签在控件上方）</div>
+            <div class="ci-evidence"><code>.form-item { display:flex; flex-direction:column; }</code>，符合弹框表单推荐的垂直布局</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">form.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查三：输入框规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查三 · 输入框规范（input.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">input.md</span> 基础输入框 & 长文本输入框</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">输入框高度 32px，padding 5px 12px，字体 14px</div>
+            <div class="ci-evidence">源码第95-106行与 button.md Large 尺寸规范完全一致：<code>height:32px; padding:5px 12px; font-size:14px;</code></div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">input.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">所有输入框有占位文案（placeholder）</div>
+            <div class="ci-evidence">
+              名称：<code>placeholder="请输入知识库名称"</code>；维护者：<code>placeholder="请输入维护者"</code>；描述：<code>placeholder="输入内容描述知识库的具体用途..."</code>
+            </div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">SKILL.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">placeholder 颜色 #B2B2B3</div>
+            <div class="ci-evidence">第107行：<code>.form-input::placeholder { color: #B2B2B3; }</code>，符合规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">input.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">输入框 focus 状态：主色边框 + 2px 蓝色光晕</div>
+            <div class="ci-evidence">第109行：<code>.form-input:focus { border-color: #2563F4; box-shadow: 0 0 0 2px rgba(37,99,244,.15); }</code>，状态正确</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">input.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">描述字段使用 &lt;textarea&gt; 长文本输入框（非 input text）</div>
+            <div class="ci-evidence">第253-259行使用 <code>&lt;textarea class="form-textarea"&gt;</code>，类型正确</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">input.md</div>
+        </div>
+
+        <div class="check-item fail">
+          <div class="ci-icon">❌</div>
+          <div class="ci-main">
+            <div class="ci-rule">长文本框最小高度 ≥ 64px</div>
+            <div class="ci-evidence">
+              规范：input.md §5 "文本域最小高度不低于 64px"<br>
+              源码第122行：<code>min-height: 80px;</code> — <strong>实际为 80px，通过（大于64px）</strong>。但注意：textarea 高度由 <code>rows="3"</code> 控制，3行×22px行高+padding约72px，在不同字体渲染下可能略低于64px
+            </div>
+          </div>
+          <div class="ci-status warn">⚠ 注意</div>
+          <div class="ci-src">input.md</div>
+        </div>
+
+        <div class="check-item fail">
+          <div class="ci-icon">❌</div>
+          <div class="ci-main">
+            <div class="ci-rule">长文本框应包含字符计数器（当前字数/最大字数）</div>
+            <div class="ci-evidence">
+              规范：input.md §5 "字符计数器：超过限制字符会报错，计数器为单独一行，不与输入区域重叠；未超限时显示「当前字数/最大字数」"<br>
+              源码：textarea 有 <code>maxlength="200"</code>，但<span class="fix">缺少字符计数器 UI 和更新函数</span>，规范文档还提供了完整代码示例
+            </div>
+          </div>
+          <div class="ci-status fail">缺失</div>
+          <div class="ci-src">input.md §5</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 问题详情 -->
+    <div class="issue-box">
+      <div class="ib-title">❌ 缺陷详情：字符计数器缺失</div>
+      <div class="ib-code"><!-- 规范要求的字符计数器结构 -->
+&lt;div class="textarea-wrap"&gt;
+  &lt;textarea maxlength="200" oninput="updateCounter(this,'counter-desc',200)"&gt;&lt;/textarea&gt;
+  &lt;div class="char-counter" id="counter-desc"&gt;
+    &lt;span class="counter-current"&gt;0&lt;/span&gt;/&lt;span class="counter-max"&gt;200&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+      <div class="ib-fix">规范 input.md §5 明确规定：长文本框需要字符计数器，且规范文档已提供完整 HTML+CSS+JS 示例。Skill 生成的代码有 maxlength 属性但没有实现计数器 UI，属于规范漏实现。</div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查四：按钮规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查四 · 按钮规范（button.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">button.md</span> 样式 & 颜色 & 顺序</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">主要按钮（新建）背景色 #2563F4，白色文字</div>
+            <div class="ci-evidence">第208-220行：<code>background: #2563F4; color: #FFFFFF;</code>，Normal 状态精确符合规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">主要按钮 Hover 色 #5C8FFF，Active 色 #1747CA</div>
+            <div class="ci-evidence">第219-220行：hover→<code>#5C8FFF</code>，active→<code>#1747CA</code>，与规范颜色表完全一致</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">普通按钮（取消）灰色描边 #DFE0E2，深色文字 #131416</div>
+            <div class="ci-evidence">第194-204行：<code>border:1px solid #DFE0E2; color:#131416; background:#fff;</code>，符合三级按钮规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">按钮高度 32px，内边距 5px 12px，字体 14px，圆角 2px</div>
+            <div class="ci-evidence">两个按钮均为 <code>height:32px; padding:5px 12px; font-size:14px; border-radius:2px;</code>，与 Large 尺寸规范完全吻合</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">按钮从左到右按重要性降序（取消在左，新建在右）</div>
+            <div class="ci-evidence">第311-314行：<code>&lt;button class="btn-default"&gt;取消&lt;/button&gt;</code> 在前，<code>&lt;button class="btn-primary"&gt;新建&lt;/button&gt;</code> 在后，符合"降序排列"规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">区域内仅一个主要按钮</div>
+            <div class="ci-evidence">弹框底部只有一个 .btn-primary（新建），符合"一个区域内只保留一个主要按钮"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">button.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查五：单选框规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查五 · 单选框规范（radio.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">radio.md</span> 布局 & 间距</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">横排布局，选项间距 ≥ 24px</div>
+            <div class="ci-evidence">第162-166行：<code>.radio-group { display:flex; gap:24px; }</code>，恰好满足规范"横排版时选项间距不少于24px"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">radio.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">选项数量 ≤ 6（规范建议上限）</div>
+            <div class="ci-evidence">可见权限有 3 个选项（公司共享/指定部门共享/指定人员共享），符合"不超过6个"</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">radio.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">单选框 accent-color 使用主色 #2563F4</div>
+            <div class="ci-evidence">第179行：<code>accent-color: #2563F4;</code>，选中态颜色正确</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">radio.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查六：标签页规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查六 · 标签页规范（tabs.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">tabs.md</span> 类型选择 & 激活样式</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">上级导航使用简单标签页（非胶囊）</div>
+            <div class="ci-evidence">激活态为 <code>border-bottom: 2px solid #2563F4;</code> 下划线样式，是简单标签页。代码注释也明确说明"不能用于上级导航"的胶囊禁用原因</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">tabs.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">激活 tab 颜色 #2563F4，font-weight 500</div>
+            <div class="ci-evidence">第41-45行：<code>.tab-item.active { color:#2563F4; font-weight:500; border-bottom:2px solid #2563F4; }</code>，符合主色高亮规范</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">tabs.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">标签页字体 14px（三种尺寸之一）</div>
+            <div class="ci-evidence">第31行：<code>.tab-item { font-size: 14px; }</code>，在规范支持的 12/14/16px 范围内</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">tabs.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 审查七：分页规范 ═══════ -->
+  <div class="section">
+    <div class="sec-title">审查七 · 分页规范（pagination.md）</div>
+    <div class="check-group">
+      <div class="check-group-title"><span class="comp-badge">pagination.md</span> 交互要素 & 状态</div>
+      <div class="check-list">
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">显示总条目数</div>
+            <div class="ci-evidence">第201行：<code>&lt;span class="page-total"&gt;共 1374 条&lt;/span&gt;</code></div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">当前页码高亮（主色背景）</div>
+            <div class="ci-evidence">第107-112行：<code>.page-btn.active { background:#2563F4; color:#fff; }</code>，高亮正确</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">第一页时"上一页"禁用</div>
+            <div class="ci-evidence">第204行：<code>&lt;button class="page-btn" disabled aria-label="上一页"&gt;</code>，禁用状态实现</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">页码过多时省略号折叠，始终显示首末页</div>
+            <div class="ci-evidence">第213-215行：省略号 <code>···</code> 后直接显示末页第69页，完整实现首末页始终可见</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">提供跳转到指定页输入框</div>
+            <div class="ci-evidence">第229-234行：<code>.page-jumper</code> 区域含 <code>前往 [input] 页 [确定]</code> 完整跳转结构</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">提供每页条数切换下拉（10/20/50/100）</div>
+            <div class="ci-evidence">第221-226行：<code>&lt;select&gt;</code> 含 10/20/50/100 条/页 4个 option，与规范示例完全一致</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+        <div class="check-item pass">
+          <div class="ci-icon">✅</div>
+          <div class="ci-main">
+            <div class="ci-rule">分页组件尺寸与表单组件保持一致（32px 高度）</div>
+            <div class="ci-evidence">page-btn / page-size-select / jumper input 均为 <code>height: 32px</code>，与表单输入框统一</div>
+          </div>
+          <div class="ci-status pass">通过</div>
+          <div class="ci-src">pagination.md</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 综合评分 ═══════ -->
+  <div class="section">
+    <div class="sec-title">综合规范符合度</div>
+
+    <div class="score-ring-wrap">
+      <div class="score-ring">
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">弹框结构<br>4/4 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">表单标签<br>3/3 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle warn-ring">71%</div>
+          <div class="ring-label">输入框规范<br>5/7 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">按钮规范<br>6/6 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">单选框规范<br>3/3 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">标签页规范<br>3/3 条通过</div>
+        </div>
+        <div class="ring-item">
+          <div class="ring-circle pass-ring">100%</div>
+          <div class="ring-label">分页规范<br>7/7 条通过</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="title">各规范维度得分</div>
+        <div class="progress-item">
+          <div class="row"><span>弹框结构（message-box.md）</span><span class="pct" style="color:var(--green)">4/4</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>表单标签（form.md）</span><span class="pct" style="color:var(--green)">3/3</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>输入框（input.md）</span><span class="pct" style="color:var(--yellow)">5/7</span></div>
+          <div class="bar"><div class="bar-fill mid" style="width:71.4%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>按钮（button.md）</span><span class="pct" style="color:var(--green)">6/6</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>单选框（radio.md）</span><span class="pct" style="color:var(--green)">3/3</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>标签页（tabs.md）</span><span class="pct" style="color:var(--green)">3/3</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="row"><span>分页（pagination.md）</span><span class="pct" style="color:var(--green)">7/7</span></div>
+          <div class="bar"><div class="bar-fill full" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="title">不合规条款汇总（共 2 条）</div>
+
+        <div style="margin-bottom:14px;padding:12px 14px;background:var(--yellow-bg);border-radius:6px;border-left:3px solid var(--yellow)">
+          <div style="font-weight:700;font-size:13px;color:var(--yellow);margin-bottom:4px">⚠ 注意 · 轻微偏差</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:3px">textarea rows="3" 在低行高下可能略低于 64px</div>
+          <div style="font-size:12px;color:#92400e">规范要求最小高度 ≥ 64px。源码 min-height:80px 是符合的，但 rows="3" 依赖浏览器默认行高渲染，建议改为 <code>min-height:64px</code> 作为硬保底。</div>
+        </div>
+
+        <div style="padding:12px 14px;background:var(--red-bg);border-radius:6px;border-left:3px solid var(--red)">
+          <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:4px">❌ 缺失 · 需要补充</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:3px">知识库描述 textarea 缺少字符计数器</div>
+          <div style="font-size:12px;color:#991b1b">规范 input.md §5 明确要求：设有 maxlength 的长文本框必须配字符计数器，显示「当前字数/最大字数」。源码有 maxlength="200" 但无计数器 UI。规范文档已提供完整代码示例可直接使用。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 最终结论 ═══════ -->
+  <div class="section">
+    <div class="sec-title">最终结论</div>
+    <div class="verdict">
+      <strong>Skill 生成的界面整体规范符合率为 <span class="vd-score">90.5%</span>（19/21 条通过）</strong>，核心视觉和交互规范均已正确实现：弹框宽度 400px、标签冒号、必填星号颜色、按钮色值和顺序、Radio 间距、简单标签页选型、分页 7 要素——这些往往是最容易出错的快手专有规范，全部准确覆盖。<br><br>
+      <strong>2 处不符合规范</strong>集中在 textarea 的进阶细节（字符计数器），这类功能性规范在 Skill 文档中有示例代码，但生成时未被触发。属于 Skill 文档的<strong>细节覆盖盲区</strong>，而非规范理解偏差。<br><br>
+      <strong>建议改进方向</strong>：在 SKILL.md 的"使用规范速查"中补充「长文本框必须配字符计数器」的强制要求，并在 input.md 中标注该规范为高优先级，可使生成符合率从 90.5% 提升至 <strong>100%</strong>。
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

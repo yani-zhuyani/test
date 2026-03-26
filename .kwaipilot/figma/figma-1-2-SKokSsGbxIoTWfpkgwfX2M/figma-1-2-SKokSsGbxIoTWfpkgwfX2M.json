@@ -1,0 +1,12 @@
+{
+  "id": "1:2",
+  "nodeType": "view",
+  "styles": {
+    "boxSizing": "border-box",
+    "overflow": "hidden",
+    "height": "454px",
+    "width": "651px",
+    "background": "#FFFFFF"
+  },
+  "zIndex": 1
+}

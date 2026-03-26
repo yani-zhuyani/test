@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>资源监控面板 — 设计稿</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F6F7F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  /* ── 设计稿外框 ── */
+  .design-frame {
+    background: #fff;
+    border: 1px solid #E0E4EA;
+    border-radius: 6px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .design-label {
+    font-size: 11px;
+    color: #8E8E90;
+    margin-bottom: 16px;
+    letter-spacing: .5px;
+  }
+
+  /* ══════════════════════════════
+     弹窗容器
+  ══════════════════════════════ */
+  .panel {
+    width: 960px;
+    background: #FFFFFF;
+    border: 1px solid #E9EAEC;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  /* ── 顶部提示栏 ── */
+  .panel-notice {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #E9EAEC;
+    background: #FFFFFF;
+  }
+  .panel-notice__text {
+    font-size: 13px;
+    color: #131416;
+    line-height: 20px;
+  }
+  .panel-notice__text a {
+    color: #2563F4;
+    text-decoration: none;
+  }
+  .panel-notice__text a:hover { text-decoration: underline; }
+  .panel-notice__close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: #8E8E90;
+    flex-shrink: 0;
+    margin-left: 12px;
+    margin-top: 1px;
+  }
+  .panel-notice__close svg { display: block; }
+
+  /* ── 主体内容区 ── */
+  .panel-body {
+    padding: 20px 20px 24px;
+  }
+
+  /* ── 基础信息区 ── */
+  .info-section {
+    margin-bottom: 20px;
+  }
+  .info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #131416;
+    line-height: 18px;
+  }
+  .info-row__label {
+    color: #5F6063;
+    flex-shrink: 0;
+  }
+  .info-row__value {
+    color: #131416;
+    margin-left: 4px;
+  }
+  .info-row__link {
+    color: #2563F4;
+    text-decoration: none;
+    margin-left: 4px;
+  }
+
+  /* 双栏信息布局 */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 0;
+    margin-bottom: 20px;
+  }
+  .info-grid__left { display: flex; flex-direction: column; gap: 6px; }
+  .info-grid__right { display: flex; flex-direction: column; gap: 6px; padding-left: 40px; }
+
+  /* ── 资源占用 Top20 小节 ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #131416;
+    line-height: 20px;
+  }
+  .section-title__icon {
+    width: 14px;
+    height: 14px;
+    color: #8E8E90;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── 按钮组（CPU/内存切换）── */
+  .btn-group {
+    display: flex;
+    border: 1px solid #DFE0E2;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .btn-group__item {
+    height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+    line-height: 26px;
+    cursor: pointer;
+    color: #131416;
+    background: #FFFFFF;
+    border: none;
+    outline: none;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+  }
+  .btn-group__item + .btn-group__item {
+    border-left: 1px solid #DFE0E2;
+  }
+  .btn-group__item.is-active {
+    background: #FFFFFF;
+    color: #2563F4;
+    border-color: #2563F4;
+    /* 覆盖外框 */
+    box-shadow: 0 0 0 1px #2563F4 inset;
+  }
+  .btn-group__item:not(.is-active):hover {
+    background: #F6F7F9;
+  }
+
+  /* ── 表格 ── */
+  .table-wrap {
+    border: 1px solid #F0F2F4;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  thead tr {
+    background: #F6F7F9;
+  }
+  thead th {
+    padding: 0 12px;
+    height: 40px;
+    text-align: left;
+    font-weight: 600;
+    color: #131416;
+    border-bottom: 1px solid #F0F2F4;
+    line-height: 18px;
+  }
+  tbody tr {
+    border-bottom: 1px solid #F0F2F4;
+    transition: background .12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F6F7F9; }
+  tbody td {
+    padding: 0 12px;
+    height: 48px;
+    color: #131416;
+    line-height: 18px;
+    vertical-align: middle;
+  }
+
+  /* 用户单元格（头像 + 名称）*/
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .user-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #FFD700 40%, #4285F4 40%);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .user-avatar svg { display: block; }
+
+  /* ── 趋势分析小节 ── */
+  .trend-section { }
+  .trend-filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .trend-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #5F6063;
+  }
+
+  /* Select 下拉（仅样式，不含下拉逻辑）*/
+  .select-box {
+    height: 28px;
+    border: 1px solid #DFE0E2;
+    border-radius: 2px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #131416;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .select-box:hover { border-color: #2563F4; }
+  .select-box__text { flex: 1; }
+  .select-box__arrow {
+    width: 10px;
+    height: 10px;
+    color: #8E8E90;
+    flex-shrink: 0;
+  }
+
+  /* 日期范围选择器 */
+  .datetime-range {
+    height: 28px;
+    border: 1px solid #DFE0E2;
+    border-radius: 2px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #131416;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .datetime-range:hover { border-color: #2563F4; }
+  .datetime-range__icon { color: #8E8E90; flex-shrink: 0; }
+  .datetime-range__sep { color: #5F6063; padding: 0 4px; }
+
+  /* ── 折线图区域 ── */
+  .chart-area {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    border-left: 1px solid #E9EAEC;
+    border-bottom: 1px solid #E9EAEC;
+    overflow: visible;
+  }
+
+  /* Y轴刻度 */
+  .y-axis {
+    position: absolute;
+    left: -36px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .y-tick {
+    font-size: 11px;
+    color: #8E8E90;
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+  .y-tick:first-child { transform: translateY(0); }
+  .y-tick:last-child { transform: translateY(100%); }
+
+  /* 水平辅助线 */
+  .chart-grid-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: #E9EAEC;
+    pointer-events: none;
+  }
+
+  /* X轴时间刻度 */
+  .x-axis {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0 0 0;
+    margin-left: 0;
+  }
+  .x-tick {
+    font-size: 11px;
+    color: #8E8E90;
+    text-align: center;
+    flex: 1;
+  }
+  .x-tick:first-child { text-align: left; }
+  .x-tick:last-child { text-align: right; }
+
+  .chart-container {
+    padding: 8px 0 0 40px;
+  }
+
+  /* SVG 折线图 */
+  .chart-svg {
+    width: 100%;
+    height: 200px;
+    overflow: visible;
+  }
+</style>
+</head>
+<body>
+
+<div class="design-frame">
+  <div class="design-label">资源监控面板 · B端设计规范 v2.0 · 1440px 视口</div>
+
+  <!-- ═══════════════ 弹窗主体 ═══════════════ -->
+  <div class="panel">
+
+    <!-- 顶部提示横幅 -->
+    <div class="panel-notice">
+      <div class="panel-notice__text">
+        资源紧张可参考<a href="#">《任务跑不动，可以做什么》</a>更多问题？<a href="#">一键反馈</a>
+      </div>
+      <div class="panel-notice__close" title="关闭">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <div class="panel-body">
+
+      <!-- 基础信息栏 -->
+      <div style="margin-bottom: 20px;">
+        <!-- 队列行 -->
+        <div class="info-row" style="margin-bottom: 10px;">
+          <span class="info-row__label">使用队列:</span>
+          <a href="#" class="info-row__link">root.offline.text.text（数据工厂）</a>
+        </div>
+
+        <!-- 双列信息网格 -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 0;">
+          <!-- 左列 -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="info-row">
+              <span class="info-row__label">运行中APP:</span>
+              <span class="info-row__value">123</span>
+            </div>
+            <div class="info-row">
+              <span class="info-row__label">排队中APP:</span>
+              <span class="info-row__value">123</span>
+            </div>
+            <div class="info-row">
+              <span class="info-row__label">最大可并发运行APP:</span>
+              <span class="info-row__value">100</span>
+            </div>
+          </div>
+          <!-- 右列 -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="info-row">
+              <span class="info-row__label">资源饱和度:</span>
+              <span class="info-row__value">CPU 54.18%&nbsp;&nbsp;内存 12.90%</span>
+            </div>
+            <div class="info-row">
+              <span class="info-row__label">获取资源量:</span>
+              <span class="info-row__value">CPU 1.231核&nbsp;&nbsp;内存 27.12TB</span>
+            </div>
+            <div class="info-row">
+              <span class="info-row__label">可保障资源量:</span>
+              <span class="info-row__value">CPU 1.231核&nbsp;&nbsp;内存 27.12TB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 资源占用 Top20 小节 -->
+      <div style="margin-bottom: 20px;">
+        <div class="section-header">
+          <div class="section-title">
+            资源占用Top20用户
+            <svg class="section-title__icon" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M7 6.5v4M7 4.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <!-- CPU / 内存 切换按钮组 -->
+          <div class="btn-group">
+            <button class="btn-group__item is-active" onclick="switchTab(this, 'cpu')">CPU资源占用</button>
+            <button class="btn-group__item" onclick="switchTab(this, 'mem')">内存资源占用</button>
+          </div>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:56px;">排名</th>
+                <th style="width:180px;">用户</th>
+                <th style="width:160px;">所属部门</th>
+                <th style="width:160px;">内存占用</th>
+                <th style="width:120px;">占比</th>
+                <th>APP数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect width="20" height="20" rx="2" fill="#FFD600"/>
+                        <rect x="0" y="10" width="20" height="10" rx="0" fill="#4285F4"/>
+                        <rect x="0" y="10" width="20" height="10" rx="2" fill="#4285F4"/>
+                      </svg>
+                    </div>
+                    朝丹
+                  </div>
+                </td>
+                <td>内容运营</td>
+                <td>9.80TB</td>
+                <td>37.7%</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar"></div>
+                    李朝丹
+                  </div>
+                </td>
+                <td>内容运营</td>
+                <td>9.80TB</td>
+                <td>37.7%</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar"></div>
+                    朝丹
+                  </div>
+                </td>
+                <td>内容运营</td>
+                <td>9.80TB</td>
+                <td>37.7%</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar"></div>
+                    朝丹
+                  </div>
+                </td>
+                <td>内容运营</td>
+                <td>9.80TB</td>
+                <td>37.7%</td>
+                <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 趋势分析小节 -->
+      <div class="trend-section">
+        <div class="section-header" style="margin-bottom: 14px;">
+          <div class="section-title">
+            趋势分析
+            <svg class="section-title__icon" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M7 6.5v4M7 4.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 筛选行 -->
+        <div class="trend-filters">
+          <!-- 选择: 运行中APP数 -->
+          <div class="trend-filter-item">
+            <span>选择:</span>
+            <div class="select-box" style="width: 128px;">
+              <span class="select-box__text">运行中APP数</span>
+              <svg class="select-box__arrow" viewBox="0 0 10 10" fill="none">
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <!-- 时间: 分钟 -->
+          <div class="trend-filter-item">
+            <span>时间:</span>
+            <div class="select-box" style="width: 80px;">
+              <span class="select-box__text">分钟</span>
+              <svg class="select-box__arrow" viewBox="0 0 10 10" fill="none">
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <!-- 日期时间范围 -->
+          <div class="datetime-range">
+            <svg class="datetime-range__icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="2" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M1 5.5h12M4.5 1v2.5M9.5 1v2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <span>2021-9-10 23:22:19</span>
+            <span class="datetime-range__sep">至</span>
+            <span>2021-9-20 23:22:19</span>
+          </div>
+        </div>
+
+        <!-- 折线图 -->
+        <div class="chart-container">
+          <div class="chart-area">
+            <!-- 辅助线 -->
+            <div class="chart-grid-line" style="top: 0%;"></div>
+            <div class="chart-grid-line" style="top: 25%; background: #E9EAEC;"></div>
+            <div class="chart-grid-line" style="top: 50%; background: #E9EAEC;"></div>
+            <div class="chart-grid-line" style="top: 75%; background: #E9EAEC;"></div>
+            <div class="chart-grid-line" style="top: 100%;"></div>
+
+            <!-- Y轴刻度 -->
+            <div class="y-axis">
+              <span class="y-tick" style="transform:translateY(0);">80%</span>
+              <span class="y-tick" style="transform:translateY(-50%);">40%</span>
+              <span class="y-tick" style="transform:translateY(-100%);">0</span>
+            </div>
+
+            <!-- SVG 折线图 -->
+            <svg class="chart-svg" viewBox="0 0 880 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2563F4" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#2563F4" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 面积填充 -->
+              <path
+                d="M0,110 C40,112 80,120 120,125 C160,130 200,132 240,128 C280,124 320,100 360,90 C400,80 440,82 480,84 C520,86 560,88 600,85 C640,82 680,80 720,82 C760,84 800,60 840,40 C860,30 870,24 880,20 L880,200 L0,200 Z"
+                fill="url(#areaGrad)"
+              />
+              <!-- 折线 -->
+              <path
+                d="M0,110 C40,112 80,120 120,125 C160,130 200,132 240,128 C280,124 320,100 360,90 C400,80 440,82 480,84 C520,86 560,88 600,85 C640,82 680,80 720,82 C760,84 800,60 840,40 C860,30 870,24 880,20"
+                fill="none"
+                stroke="#2563F4"
+                stroke-width="2"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <!-- X轴时间刻度 -->
+          <div class="x-axis">
+            <span class="x-tick"></span>
+            <span class="x-tick">12:00</span>
+            <span class="x-tick"></span>
+            <span class="x-tick">14:00</span>
+            <span class="x-tick"></span>
+            <span class="x-tick">16:00</span>
+            <span class="x-tick"></span>
+            <span class="x-tick">18:00</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-body -->
+  </div><!-- /panel -->
+</div><!-- /design-frame -->
+
+<script>
+  function switchTab(el, type) {
+    const group = el.closest('.btn-group');
+    group.querySelectorAll('.btn-group__item').forEach(btn => btn.classList.remove('is-active'));
+    el.classList.add('is-active');
+  }
+</script>
+</body>
+</html>
