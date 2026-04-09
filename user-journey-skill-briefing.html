@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用户旅程地图 Skill</title>
+  <link rel="stylesheet" href="./user-journey-skill-briefing.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111127'/%3E%3Ccircle cx='22' cy='22' r='10' fill='%23165dff'/%3E%3Ccircle cx='42' cy='22' r='10' fill='%2300b42a'/%3E%3Ccircle cx='32' cy='42' r='10' fill='%23ff7d00'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero figma-card">
+      <div>
+        <p class="eyebrow">User Journey Mapping · Figma Board Briefing</p>
+        <h1>用户旅程地图 Skill</h1>
+        <p class="hero-copy">基于现有 Figma Board 模板视觉语言重构这份汇报页。目标不是再做一份旅程地图，而是清楚说明这个 skill 的结构、方法、使用方式、当前问题，以及后续产品化方向。</p>
+      </div>
+      <div class="hero-meta">
+        <span>Skill：user-journey-mapping</span>
+        <span>当前状态：可复用</span>
+        <span>最近更新：输入模板收敛</span>
+        <span>面向对象：设计 / 产品 / 研究 / 业务</span>
+      </div>
+    </header>
+
+    <section class="board-grid">
+      <article class="figma-card stat-card accent-blue">
+        <span class="stat-label">为什么要做这个 Skill</span>
+        <strong>把隐性经验变成显性工作流</strong>
+        <p>用户旅程地图的制作原本非常依赖个人经验、表达能力和临场追问能力。做这个 skill 的意义，是把这套方法从“会做的人脑子里”抽出来，沉淀成别人也能直接调用的标准流程。</p>
+      </article>
+      <article class="figma-card stat-card accent-red">
+        <span class="stat-label">不做 Skill 的传统模式</span>
+        <strong>高依赖人工，质量与效率都不稳定</strong>
+        <p>传统做法通常是人工追问、手工整理、临时拼装输出。结果就是收集过程冗长、分析结构不统一、事实与建议容易混写，而且很难分享给别的用户复用。</p>
+      </article>
+      <article class="figma-card stat-card accent-purple">
+        <span class="stat-label">这个 Skill 的概述</span>
+        <strong>一条从输入到汇报的轻量生产线</strong>
+        <p>它把信息收集、7 条泳道分析、事实/推测/建议标注，以及 Mermaid / Markdown / HTML 报告输出串成一条标准化工作流，确保旅程地图既能快速生成，也能正式汇报。</p>
+      </article>
+      <article class="figma-card stat-card accent-green">
+        <span class="stat-label">它带来的价值</span>
+        <strong>更可复用，也更提效</strong>
+        <p>它把多轮沟通压缩成一轮输入，把临时分析变成稳定结构，也让同一套方法既能服务你自己，也能服务其他用户，显著提高复用率与交付效率。</p>
+      </article>
+    </section>
+
+    <nav class="section-tabs figma-card" aria-label="页面分区导航">
+      <a href="#summary" class="active">执行摘要</a>
+      <a href="#map">结构地图</a>
+      <a href="#workflow">SOP</a>
+      <a href="#manual">使用手册</a>
+      <a href="#issues">当前问题</a>
+      <a href="#roadmap">下一步</a>
+    </nav>
+
+    <section class="board-layout" id="summary">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>执行摘要</h2>
+          <span class="tag">Executive Summary</span>
+        </div>
+        <div class="persona-grid">
+          <div>
+            <span class="mini-label">这个 skill 的本质</span>
+            <p>它不是只负责“生成一张图”，而是把输入收集、结构分析、证据标注、正式输出串成一条轻量工作流。</p>
+          </div>
+          <div>
+            <span class="mini-label">解决的核心问题</span>
+            <p>把原来容易拖长的逐题引导，收敛成一屏输入模板，更适合对外分享和复用。</p>
+          </div>
+          <div>
+            <span class="mini-label">为什么要重做页面</span>
+            <p>汇报页不应该继续沿用旅程地图本身的表达结构，而应该更像一份策略说明与能力总览。</p>
+          </div>
+          <div>
+            <span class="mini-label">下一阶段重点</span>
+            <p>继续推进模板产品化、模式分层，以及多文件联动维护的收敛。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="figma-card panel insights-panel">
+        <div class="panel-head">
+          <h2>3 条关键判断</h2>
+          <span class="tag">Key Calls</span>
+        </div>
+        <ul class="insight-list">
+          <li>对外使用时，<strong>一次性收集模板</strong> 比 7 个问题逐条追问更符合真实场景。</li>
+          <li>正式汇报页应采用<strong>能力总览 + 结构图 + 决策项</strong>，而不是继续套旅程地图版式。</li>
+          <li>在当前项目里，最稳妥的方式是<strong>直接复用 Figma Board 模板语言</strong>，而不是重新发明一套视觉系统。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="figma-card panel" id="map">
+      <div class="panel-head">
+        <h2>Skill 结构地图</h2>
+        <span class="tag">Map View</span>
+      </div>
+      <p class="section-desc">以 `user-journey-mapping` 为中心，将入口、方法、原则、模板、案例和最新输入模板组织成一张结构地图。这个区块只负责说明组成关系，不承载旅程地图本身。</p>
+      <div class="map-stage">
+        <svg class="map-lines" viewBox="0 0 1000 560" aria-hidden="true">
+          <line x1="500" y1="280" x2="500" y2="104"></line>
+          <line x1="500" y1="280" x2="780" y2="168"></line>
+          <line x1="500" y1="280" x2="790" y2="390"></line>
+          <line x1="500" y1="280" x2="500" y2="458"></line>
+          <line x1="500" y1="280" x2="215" y2="388"></line>
+          <line x1="500" y1="280" x2="225" y2="168"></line>
+        </svg>
+
+        <article class="map-node center-node">
+          <span class="mini-label">核心节点</span>
+          <h3>user-journey-mapping</h3>
+          <p>统一承接旅程地图分析、证据标注、可视化输出与正式汇报。</p>
+        </article>
+
+        <article class="map-node top-node">
+          <span class="mini-label">入口层</span>
+          <h3>SKILL.md</h3>
+          <p>定义触发场景、输入模式、工作流和交互方式。</p>
+        </article>
+
+        <article class="map-node right-top-node">
+          <span class="mini-label">方法层</span>
+          <h3>journey-framework.md</h3>
+          <p>沉淀 7 条泳道与分析框架，保证输出结构稳定。</p>
+        </article>
+
+        <article class="map-node right-bottom-node">
+          <span class="mini-label">模板层</span>
+          <h3>templates</h3>
+          <p>承接正式 HTML 汇报版的结构与视觉模板。</p>
+        </article>
+
+        <article class="map-node bottom-node">
+          <span class="mini-label">新增收敛点</span>
+          <h3>信息收集模板</h3>
+          <p>一屏式收集角色、目标、阶段、触点、情绪、痛点与输出形式。</p>
+        </article>
+
+        <article class="map-node left-bottom-node">
+          <span class="mini-label">案例层</span>
+          <h3>examples</h3>
+          <p>提供电商、SaaS、咨询等案例作为参考起点。</p>
+        </article>
+
+        <article class="map-node left-top-node">
+          <span class="mini-label">原则层</span>
+          <h3>design-principles.md</h3>
+          <p>约束洞察表达、建议质量与可视化一致性。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="figma-card panel" id="workflow">
+      <div class="panel-head">
+        <h2>标准 SOP</h2>
+        <span class="tag">Workflow</span>
+      </div>
+      <p class="section-desc">这条流程带只回答“这个 skill 怎么工作”，而不展开具体业务旅程内容。</p>
+      <div class="workflow-strip">
+        <article class="workflow-card">
+          <span class="step-chip">01</span>
+          <h3>识别输入模式</h3>
+          <p>判断用户是只有需求、已有材料，还是已有页面/链接。</p>
+        </article>
+        <article class="workflow-card">
+          <span class="step-chip">02</span>
+          <h3>一次性收集信息</h3>
+          <p>优先发统一模板，不再默认进入长链路追问。</p>
+        </article>
+        <article class="workflow-card">
+          <span class="step-chip">03</span>
+          <h3>压成 7 条泳道</h3>
+          <p>把输入转成统一分析结构，便于稳定输出。</p>
+        </article>
+        <article class="workflow-card">
+          <span class="step-chip">04</span>
+          <h3>证据分层</h3>
+          <p>所有结论区分为【事实 / 推测 / 建议】，并带证据来源或置信度。</p>
+        </article>
+        <article class="workflow-card">
+          <span class="step-chip">05</span>
+          <h3>选择输出载体</h3>
+          <p>根据场景输出 Mermaid、Markdown 或 HTML 报告。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="detail-grid" id="manual">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>使用手册</h2>
+          <span class="tag">Usage</span>
+        </div>
+        <div class="usage-grid">
+          <article class="usage-card">
+            <span class="mini-label">场景 1</span>
+            <h3>用户只有一句话需求</h3>
+            <p>直接发标准输入模板，让对方一次性补齐关键信息。</p>
+          </article>
+          <article class="usage-card">
+            <span class="mini-label">场景 2</span>
+            <h3>用户已有访谈 / 调研材料</h3>
+            <p>优先接收原始材料，先抽事实，再补推测和建议。</p>
+          </article>
+          <article class="usage-card">
+            <span class="mini-label">场景 3</span>
+            <h3>用户要正式汇报</h3>
+            <p>优先走 HTML 报告模板，保留证据分层、问题清单和结构化可视化。</p>
+          </article>
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>最新输入模板</h2>
+          <span class="tag">Prompt</span>
+        </div>
+        <div class="template-box">
+          <pre class="template-code">为了帮你快速生成用户旅程地图，请尽量一次性补充以下信息：
+
+- 用户角色：
+- 用户目标：
+- 旅程阶段：
+- 关键触点：
+- 情绪变化：
+- 已知痛点：
+- 希望输出形式（可选其一）：Mermaid / Markdown / HTML 报告
+- 补充材料（可选，请直接上传原始文件，如访谈记录、调研报告、产品文档、截图等）：</pre>
+        </div>
+        <div class="template-tags">
+          <span class="source-tag">Mermaid</span>
+          <span class="source-tag">Markdown</span>
+          <span class="source-tag">HTML 报告</span>
+          <span class="source-tag">支持上传原始材料</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-grid" id="issues">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>当前问题</h2>
+          <span class="tag">Current Issues</span>
+        </div>
+        <div class="issues-stack">
+          <section class="issue-group">
+            <h3>产品化问题</h3>
+            <div class="issue-item"><span class="badge p0">P0</span><p>虽然输入模板已经收敛，但首次使用者仍可能不清楚字段的填写粒度。</p></div>
+            <div class="issue-item"><span class="badge p0">P0</span><p>Skill、模板、案例之间存在联动维护成本，改一处容易影响多处。</p></div>
+          </section>
+          <section class="issue-group">
+            <h3>输出分层问题</h3>
+            <div class="issue-item"><span class="badge p1">P1</span><p>轻量分析版与正式汇报版还没有清晰的双模式分层。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>不同业务案例对模板的定制方式还依赖人工判断，缺少更标准的复用方式。</p></div>
+          </section>
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>已完成优化</h2>
+          <span class="tag">Done</span>
+        </div>
+        <div class="validation-list">
+          <article class="validation-item">
+            <h3>已完成</h3>
+            <ul>
+              <li>把逐题追问改成一次性收集模板。</li>
+              <li>只在“输出形式”保留固定选项，避免模板变长。</li>
+              <li>新增“补充材料”字段，引导用户上传原始文件。</li>
+              <li>示例报告已同步吸收新的信息收集模板区块。</li>
+            </ul>
+          </article>
+        </div>
+      </article>
+    </section>
+
+    <section class="figma-card panel" id="roadmap">
+      <div class="panel-head">
+        <h2>下一步路线图</h2>
+        <span class="tag">Roadmap</span>
+      </div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card">
+          <span class="mini-label">Step 1</span>
+          <h3>补“填写示例版”</h3>
+          <p>让第一次使用的人更容易判断应该填到什么粒度。</p>
+        </article>
+        <article class="roadmap-card">
+          <span class="mini-label">Step 2</span>
+          <h3>做双模式分层</h3>
+          <p>区分轻量分析版与正式汇报版，减少临时决策成本。</p>
+        </article>
+        <article class="roadmap-card">
+          <span class="mini-label">Step 3</span>
+          <h3>模板默认吸收新输入结构</h3>
+          <p>减少未来多文件联动更新的维护成本。</p>
+        </article>
+        <article class="roadmap-card">
+          <span class="mini-label">Step 4</span>
+          <h3>继续补行业案例</h3>
+          <p>扩展到更多 B 端与平台型场景，提高复用性。</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const tabs = Array.from(document.querySelectorAll('.section-tabs a'));
+      const sections = tabs
+        .map((tab) => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          return targetId ? document.getElementById(targetId) : null;
+        })
+        .filter(Boolean);
+
+      if (!tabs.length || !sections.length) {
+        return;
+      }
+
+      const setActiveTab = (id) => {
+        tabs.forEach((tab) => {
+          tab.classList.toggle('active', tab.getAttribute('href') === `#${id}`);
+        });
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          if (targetId) {
+            setActiveTab(targetId);
+          }
+        });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visibleEntry = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          if (visibleEntry?.target?.id) {
+            setActiveTab(visibleEntry.target.id);
+          }
+        },
+        {
+          rootMargin: '-20% 0px -55% 0px',
+          threshold: [0.2, 0.35, 0.5, 0.7]
+        }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>
