@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天琴用户旅程地图报告</title>
+  <link rel="stylesheet" href="./tianqin-journey-report.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111127'/%3E%3Ccircle cx='22' cy='22' r='10' fill='%23A78BFA'/%3E%3Ccircle cx='42' cy='22' r='10' fill='%236EE7F9'/%3E%3Ccircle cx='32' cy='42' r='10' fill='%23F472B6'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero figma-card">
+      <div>
+        <p class="eyebrow">Tianqin · User Journey Report</p>
+        <h1>天琴用户旅程地图报告</h1>
+        <p class="hero-copy">基于 3 位快手内部研发同学深访，按更细粒度的行为节点拆分天琴用户旅程。X 轴为连续行为单元格，Y 轴为固定泳道，方便逐格查看触点、情绪、痛点与改进机会。</p>
+      </div>
+      <div class="hero-meta">
+        <span>研究对象：快手内部研发</span>
+        <span>样本量：3</span>
+        <span>产品：天琴</span>
+        <span>日期：2026-04-09</span>
+      </div>
+    </header>
+
+    <nav class="section-tabs figma-card" aria-label="页面分区导航">
+      <a href="#summary" class="active">统一画像</a>
+      <a href="#evidence">事实推测</a>
+      <a href="#journey-map">旅程地图</a>
+      <a href="#issues">问题清单</a>
+      <a href="#all-issues">完整问题</a>
+    </nav>
+
+    <section class="board-grid">
+      <article class="figma-card stat-card accent-purple">
+        <span class="stat-label">受访用户</span>
+        <strong>3 位</strong>
+        <p>客户端研发 / 后端研发 / 业务研发</p>
+      </article>
+      <article class="figma-card stat-card accent-blue">
+        <span class="stat-label">时间轴节点</span>
+        <strong>11 个</strong>
+        <p>从进入系统到回滚协作的完整细粒度行为链路</p>
+      </article>
+      <article class="figma-card stat-card accent-red">
+        <span class="stat-label">最低情绪点</span>
+        <strong>查看实例</strong>
+        <p>步骤、实例、批次与监控信息割裂</p>
+      </article>
+      <article class="figma-card stat-card accent-green">
+        <span class="stat-label">核心机会</span>
+        <strong>发布总览</strong>
+        <p>同屏整合进度、实例、步骤与监控</p>
+      </article>
+    </section>
+
+    <section class="board-layout" id="summary">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>统一用户画像</h2>
+          <span class="tag">Board Summary</span>
+        </div>
+        <div class="persona-grid">
+          <div>
+            <span class="mini-label">典型入口</span>
+            <p>KDev、事件中心、目录节点、服务节点</p>
+          </div>
+          <div>
+            <span class="mini-label">核心诉求</span>
+            <p>少跳转、快定位、看全局、能排障、可回滚</p>
+          </div>
+          <div>
+            <span class="mini-label">高频任务</span>
+            <p>发布、变更、看实例、查监控、回滚止损</p>
+          </div>
+          <div>
+            <span class="mini-label">当前工作方式</span>
+            <p>成熟用户用 KDev + 天琴 + 天问 + Oncall 群拼出闭环</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="figma-card panel insights-panel">
+        <div class="panel-head">
+          <h2>4 条关键洞察</h2>
+          <span class="tag">Insights</span>
+        </div>
+        <ul class="insight-list">
+          <li>真正断裂的不是单页，而是 <strong>一条任务链路</strong>。</li>
+          <li>进入系统后，用户先卡在 <strong>找入口</strong>，再卡在 <strong>发布总览缺失</strong>。</li>
+          <li>从“步骤详情”到“实例详情”再到“监控”是情绪持续下滑的核心链路。</li>
+          <li>止损阶段能回升，不是因为系统足够好，而是因为老用户已经学会了绕路。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="board-layout" id="evidence">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>事情 / 推测 / 置信度</h2>
+          <span class="tag">Fact / Hypothesis / Confidence</span>
+        </div>
+        <p class="section-desc">这一部分把“已经确认的事情”和“基于线索的推测”拆开写，避免把判断直接写成事实。阅读顺序：先看事情，再看推测，最后结合置信度判断是否需要继续验证。</p>
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <div class="evidence-head">
+              <h3>事情 01 · 入口与链路割裂是高频共性反馈</h3>
+              <span class="evidence-type fact">事情（事实）</span>
+            </div>
+            <p>3 位受访用户都直接提到入口分散或跨系统跳转问题，涉及 KDev、天琴、事件中心、天问、CMDB 等多个触点。</p>
+            <div class="evidence-meta">
+              <div>
+                <span class="mini-label">证据来源</span>
+                <p>钱立勋、郑佳俊、肖干 3 份访谈原话</p>
+              </div>
+              <div>
+                <span class="mini-label">判断性质</span>
+                <p>用户反馈已重复出现，可视为已确认问题</p>
+              </div>
+              <div>
+                <span class="mini-label">置信度</span>
+                <p><span class="confidence-pill high">高</span></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-head">
+              <h3>事情 02 · 发布执行阶段是当前最低情绪区间</h3>
+              <span class="evidence-type fact">事情（事实）</span>
+            </div>
+            <p>从“步骤详情”到“实例详情”再到“监控 / 日志”的连续链路，承接了最多的负面描述，包括看不全、切换重、难联查、难判断异常。</p>
+            <div class="evidence-meta">
+              <div>
+                <span class="mini-label">证据来源</span>
+                <p>钱立勋、肖干关于发布总览、实例查看、监控跳转的集中反馈</p>
+              </div>
+              <div>
+                <span class="mini-label">判断性质</span>
+                <p>负面反馈集中落在同一连续任务链路</p>
+              </div>
+              <div>
+                <span class="mini-label">置信度</span>
+                <p><span class="confidence-pill high">高</span></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-head">
+              <h3>推测 01 · 新手用户会更早在“定位对象 / 添加环境”阶段掉队</h3>
+              <span class="evidence-type hypothesis">推测</span>
+            </div>
+            <p>当前受访者多为已有经验的研发同学，仍然反复提到入口分散、概念门槛和路径难找；因此可推测对低经验用户而言，低谷可能比当前地图更早出现。</p>
+            <div class="evidence-meta">
+              <div>
+                <span class="mini-label">依据</span>
+                <p>成熟用户已经会绕路，仍持续反馈“找入口难”“添加环境重”</p>
+              </div>
+              <div>
+                <span class="mini-label">影响判断</span>
+                <p>说明当前地图对新手痛点可能还是偏保守</p>
+              </div>
+              <div>
+                <span class="mini-label">置信度</span>
+                <p><span class="confidence-pill medium">中</span></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-head">
+              <h3>推测 02 · 如果先做“发布总览 + 联查闭环”，整体体验提升会最明显</h3>
+              <span class="evidence-type hypothesis">推测</span>
+            </div>
+            <p>最低情绪点集中在发布执行与排障交界处，而这里同时承接了最多 P0 问题与最高频任务，因此优先做发布总览与联查闭环，预计会带来最直接的体验改善。</p>
+            <div class="evidence-meta">
+              <div>
+                <span class="mini-label">依据</span>
+                <p>情绪最低点、问题清单、机会点三处信号高度重合</p>
+              </div>
+              <div>
+                <span class="mini-label">对应动作</span>
+                <p>优先整合步骤、实例、监控、日志、变更信息</p>
+              </div>
+              <div>
+                <span class="mini-label">置信度</span>
+                <p><span class="confidence-pill medium">中</span></p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>验证清单</h2>
+          <span class="tag">Validation</span>
+        </div>
+        <p class="section-desc">这些结论里，哪些已经足够稳，哪些还要继续补证据，要单独拎出来，避免后续方案建立在未经验证的假设上。</p>
+        <div class="validation-list">
+          <article class="validation-item">
+            <h3>已验证</h3>
+            <ul>
+              <li>入口分散、跨系统跳转割裂，已被 3 位受访用户重复提及。</li>
+              <li>发布阶段缺少总览、实例与步骤割裂，是当前最集中、最明确的体验问题之一。</li>
+              <li>问题解决高度依赖经验与群协作，自助闭环不足，已在共性问题与原始问题中多次出现。</li>
+            </ul>
+          </article>
+
+          <article class="validation-item">
+            <h3>待验证</h3>
+            <ul>
+              <li>新手用户是否会在“定位目录 / 服务”“添加环境”阶段更早出现情绪低谷。</li>
+              <li>“发布总览页”上线后，是否真的能显著减少步骤 / 实例 / 监控切换成本。</li>
+              <li>查询助手是否适合承接更多排障动作，还是只适合信息查询场景。</li>
+            </ul>
+          </article>
+
+          <article class="validation-item">
+            <h3>建议补充验证</h3>
+            <ul>
+              <li>补 2-3 位低经验研发样本，重点观察首次创建服务、首次加环境、首次发版。</li>
+              <li>做“发布总览页”低保真原型测试，测任务完成时间、切换次数、异常定位速度。</li>
+              <li>区分查询类能力与高风险执行类能力，验证用户对 AI 辅助边界的接受度。</li>
+            </ul>
+          </article>
+        </div>
+      </article>
+    </section>
+
+    <section class="figma-card panel" id="journey-map">
+      <div class="panel-head">
+        <h2>标准地图坐标系</h2>
+        <span class="tag">细粒度 Journey Map</span>
+      </div>
+      <p class="section-desc">X 轴保留阶段分组，并在每个阶段下继续拆成更细的具体行为单元格；Y 轴固定为用户目标、具体行为、触点、情绪曲线、痛点、机会点、落地规划 7 条泳道。表格支持横向滚动查看。</p>
+      <div class="map-table-wrap">
+        <table class="journey-map-table">
+          <thead>
+            <tr>
+              <th rowspan="2">地图坐标系</th>
+              <th colspan="3">进入与定位</th>
+              <th colspan="2">配置与准备</th>
+              <th colspan="3">发布与执行</th>
+              <th colspan="1">监控与排障</th>
+              <th colspan="2">止损与协作</th>
+            </tr>
+            <tr>
+              <th>从 KDev 进入</th>
+              <th>从事件中心进入</th>
+              <th>定位目录 / 服务</th>
+              <th>创建服务</th>
+              <th>添加环境</th>
+              <th>发起上线单</th>
+              <th>查看步骤详情</th>
+              <th>查看实例详情</th>
+              <th>跳监控 / 日志</th>
+              <th>查变更历史</th>
+              <th>回滚 / 求助</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>用户目标</th>
+              <td>快速进入发布链路</td>
+              <td>找到对应变更事件</td>
+              <td>确认正确操作对象</td>
+              <td>建好服务基础配置</td>
+              <td>补齐环境，进入可发版状态</td>
+              <td>顺利发起变更</td>
+              <td>看清发布步骤与批次</td>
+              <td>知道哪些实例已完成</td>
+              <td>快速判断是否异常</td>
+              <td>找到责任链路与上下文</td>
+              <td>尽快止损并闭环</td>
+            </tr>
+            <tr>
+              <th>具体行为</th>
+              <td>在 KDev 流水线或发布报告里跳转进入天琴</td>
+              <td>从事件中心查看变更事件并尝试复制链接分享</td>
+              <td>在目录节点、服务节点、服务中心之间找入口</td>
+              <td>创建服务或按服务类型复制已有服务</td>
+              <td>添加 staging / 泳道环境，填写环境相关配置</td>
+              <td>新建上线单，选择版本，填写变更信息</td>
+              <td>查看步骤详情，确认当前执行到哪一步</td>
+              <td>切换到实例详情，查看机器发布状态与批次</td>
+              <td>从实例或服务跳到监控、日志、天问、CMDB</td>
+              <td>查变更历史、查询变更人、确认最近变更</td>
+              <td>执行回滚，或在 Oncall 群中继续求助</td>
+            </tr>
+            <tr>
+              <th>触点</th>
+              <td>KDev、发布报告</td>
+              <td>事件中心、变更事件页</td>
+              <td>目录节点、服务节点、服务中心</td>
+              <td>创建服务页、模板配置、容器配置</td>
+              <td>环境页、二级弹窗、服务节点</td>
+              <td>上线单 2.0、版本选择、变更表单</td>
+              <td>步骤详情页、批次信息</td>
+              <td>实例详情页、实例列表</td>
+              <td>监控入口、日志、天问、CMDB</td>
+              <td>变更历史、服务搜索、事件查询</td>
+              <td>回滚入口、Oncall 群、容器云小助手</td>
+            </tr>
+            <tr class="emotion-row">
+              <th>情绪曲线</th>
+              <td colspan="11" class="emotion-row-cell">
+                <div class="emotion-row-chart" aria-label="嵌入式用户情绪曲线">
+                  <svg viewBox="0 0 1160 180" class="emotion-row-svg" role="img" aria-label="嵌入式用户情绪曲线">
+                    <rect x="30" y="18" width="300" height="126" class="emotion-phase-bg" />
+                    <rect x="330" y="18" width="200" height="126" class="emotion-phase-bg alt" />
+                    <rect x="530" y="18" width="300" height="126" class="emotion-phase-bg" />
+                    <rect x="830" y="18" width="100" height="126" class="emotion-phase-bg alt" />
+                    <rect x="930" y="18" width="200" height="126" class="emotion-phase-bg" />
+
+                    <line x1="48" y1="24" x2="48" y2="144" class="emotion-axis" />
+                    <line x1="48" y1="144" x2="1120" y2="144" class="emotion-axis" />
+                    <line x1="48" y1="52" x2="1120" y2="52" class="emotion-grid" />
+                    <line x1="48" y1="80" x2="1120" y2="80" class="emotion-grid" />
+                    <line x1="48" y1="108" x2="1120" y2="108" class="emotion-grid" />
+                    <line x1="48" y1="136" x2="1120" y2="136" class="emotion-grid" />
+
+                    <line x1="330" y1="18" x2="330" y2="144" class="emotion-stage-divider" />
+                    <line x1="530" y1="18" x2="530" y2="144" class="emotion-stage-divider" />
+                    <line x1="830" y1="18" x2="830" y2="144" class="emotion-stage-divider" />
+                    <line x1="930" y1="18" x2="930" y2="144" class="emotion-stage-divider" />
+
+                    <text x="18" y="56" class="emotion-axis-label">+1</text>
+                    <text x="24" y="84" class="emotion-axis-label">0</text>
+                    <text x="18" y="112" class="emotion-axis-label">-1</text>
+                    <text x="18" y="140" class="emotion-axis-label">-2</text>
+
+                    <polyline points="80,80 180,80 280,108 380,80 480,108 580,108 680,136 780,136 880,108 980,80 1080,52" class="emotion-row-line" />
+                    <text x="80" y="58" class="emotion-point-emoji">🙂</text>
+                    <text x="180" y="58" class="emotion-point-emoji">🙂</text>
+                    <text x="280" y="86" class="emotion-point-emoji">😕</text>
+                    <text x="380" y="58" class="emotion-point-emoji">🙂</text>
+                    <text x="480" y="86" class="emotion-point-emoji">😕</text>
+                    <text x="580" y="86" class="emotion-point-emoji">😕</text>
+                    <text x="680" y="114" class="emotion-point-emoji">😣</text>
+                    <text x="780" y="114" class="emotion-point-emoji">😣</text>
+                    <text x="880" y="86" class="emotion-point-emoji">😕</text>
+                    <text x="980" y="58" class="emotion-point-emoji">🙂</text>
+                    <text x="1080" y="30" class="emotion-point-emoji">😄</text>
+                    <circle cx="80" cy="80" r="7" class="emotion-row-point neutral" />
+                    <circle cx="180" cy="80" r="7" class="emotion-row-point neutral" />
+                    <circle cx="280" cy="108" r="7" class="emotion-row-point warn" />
+                    <circle cx="380" cy="80" r="7" class="emotion-row-point neutral" />
+                    <circle cx="480" cy="108" r="7" class="emotion-row-point warn" />
+                    <circle cx="580" cy="108" r="7" class="emotion-row-point warn" />
+                    <circle cx="680" cy="136" r="7" class="emotion-row-point danger" />
+                    <circle cx="780" cy="136" r="7" class="emotion-row-point danger" />
+                    <circle cx="880" cy="108" r="7" class="emotion-row-point warn" />
+                    <circle cx="980" cy="80" r="7" class="emotion-row-point neutral" />
+                    <circle cx="1080" cy="52" r="7" class="emotion-row-point positive" />
+                  </svg>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th>痛点</th>
+              <td>KDev 与天琴切换割裂，用户不想来回跳</td>
+              <td>复制链接后时间参数不稳定；事件查询有性能等待</td>
+              <td>入口分散，用户不清楚该从目录还是服务开始</td>
+              <td>入口可发现性一般；owner 责任感弱；提交反馈慢</td>
+              <td>二级弹窗长、入口深、概念理解门槛高</td>
+              <td>版本选择交互冗余；表单信息量重</td>
+              <td>步骤视角强，但缺少实例全局感知</td>
+              <td>无法一眼看清已发布机器；实例与步骤关联弱</td>
+              <td>天琴与天问割裂；图表难懂；日志联查弱</td>
+              <td>审核人范围过宽；权限链路不透明</td>
+              <td>问题解决依赖经验和群问答，自助闭环不足</td>
+            </tr>
+            <tr>
+              <th>机会点</th>
+              <td>直接在 KDev 内嵌部署状态摘要</td>
+              <td>稳定分享链接参数并提升事件查询性能</td>
+              <td>做统一任务入口：我要发布 / 查变更 / 建环境</td>
+              <td>强化模板推荐与责任人可见性</td>
+              <td>缩短流程，默认继承已有环境配置</td>
+              <td>压缩表单复杂度，默认最新版本</td>
+              <td>把步骤、批次、风险提示同屏呈现</td>
+              <td>增加实例汇总、机器完成数、异常聚合</td>
+              <td>打通实例、日志、监控、变更一站式排障</td>
+              <td>审核人按节点 / 最近使用优先展示</td>
+              <td>把回滚、责任链路和求助建议产品化</td>
+            </tr>
+            <tr>
+              <th>落地规划</th>
+              <td>P1：KDev 内展示状态卡片</td>
+              <td>P1：修复分享链接与检索性能</td>
+              <td>P0：导航重构为任务导向</td>
+              <td>P1：服务模板推荐与 owner 提示</td>
+              <td>P0：重做添加环境流程</td>
+              <td>P1：优化上线单默认项与版本交互</td>
+              <td>P0：发布总览页整合步骤视角</td>
+              <td>P0：实例总览与异常聚合</td>
+              <td>P0：日志监控变更联查</td>
+              <td>P1：权限与审核链路显式化</td>
+              <td>P1：自助止损与协作面板</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="detail-grid" id="issues">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>问题清单</h2>
+          <span class="tag">By Stage + Priority</span>
+        </div>
+        <div class="issues-stack">
+          <section class="issue-group">
+            <h3>进入与定位</h3>
+            <div class="issue-item"><span class="badge p0">P0</span><p>入口分散，目录节点与服务节点心智不一致，创建服务 / 创建环境难发现。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>权限链路不透明，接入能力后仍需额外后端开启权限。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>审核人选择范围过宽，难优先找到本节点下人员。</p></div>
+          </section>
+          <section class="issue-group">
+            <h3>配置与准备</h3>
+            <div class="issue-item"><span class="badge p0">P0</span><p>添加环境流程长，二级弹窗重，入口过深。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>环境、泳道、stage、资源池等概念存在理解门槛。</p></div>
+          </section>
+          <section class="issue-group">
+            <h3>发布与执行</h3>
+            <div class="issue-item"><span class="badge p0">P0</span><p>上线单 2.0 中步骤详情与实例详情割裂，来回切换成本高。</p></div>
+            <div class="issue-item"><span class="badge p0">P0</span><p>缺少发布总览，无法一眼看出多少机器已经完成。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>实例与步骤关联弱，按批次展示后依然难快速定位。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>版本选择交互冗余，默认使用最新版本更符合多数心智。</p></div>
+          </section>
+          <section class="issue-group">
+            <h3>监控与排障</h3>
+            <div class="issue-item"><span class="badge p0">P0</span><p>KDev、天琴、天问链路割裂，排障路径依赖多次跳转。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>监控入口不直观，系统监控图表难理解，联通体验差。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>实例列表、变更事件查询存在性能等待感。</p></div>
+            <div class="issue-item"><span class="badge p1">P1</span><p>服务信息、CMDB、日志联动弱，用户不知道如何借助现有能力排障。</p></div>
+          </section>
+          <section class="issue-group">
+            <h3>止损与协作</h3>
+            <div class="issue-item"><span class="badge p1">P1</span><p>问题解决过度依赖同事经验与 Oncall 群，自助闭环不足。</p></div>
+            <div class="issue-item"><span class="badge p2">P2</span><p>Techlink、星环、天琴边界不清，但当前对老用户影响较低。</p></div>
+          </section>
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>机会点与建议</h2>
+          <span class="tag">Priorities</span>
+        </div>
+        <div class="opportunity-block">
+          <h3>P0</h3>
+          <ul>
+            <li>做统一任务入口：我要发布 / 查变更 / 建环境 / 看实例。</li>
+            <li>在部署页提供实例汇总、步骤关联、发布进度总览。</li>
+            <li>打通实例 / 日志 / 监控 / 变更的一站式排障链路。</li>
+            <li>重做添加环境流程，减少层级与重复输入。</li>
+          </ul>
+        </div>
+        <div class="opportunity-block">
+          <h3>P1</h3>
+          <ul>
+            <li>增加我的服务 / 收藏服务 / 最近使用，降低定位成本。</li>
+            <li>审核人、责任人、权限缺失做成显式推荐与提示。</li>
+            <li>优化变更事件查询、实例检索性能与空态反馈。</li>
+            <li>把监控视图改造成“发布决策视图”，而非专业图表堆叠。</li>
+          </ul>
+        </div>
+        <div class="opportunity-block">
+          <h3>P2</h3>
+          <ul>
+            <li>为新手提供任务式引导，补足平台概念认知。</li>
+            <li>统一平台角色边界文案，减少系统命名混淆。</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="figma-card panel full-issues-section" id="all-issues">
+      <div class="panel-head">
+        <h2>完整问题全集</h2>
+        <span class="tag">All Interview Issues</span>
+      </div>
+      <p class="section-desc">这一部分补齐 3 位受访用户提到的原始问题，不再只保留归并后的共性问题。阅读方式：先看共性问题，再看每位用户的完整原始反馈。</p>
+      <div class="full-issues-grid">
+        <article class="issue-catalog-card issue-catalog-wide">
+          <div class="catalog-head">
+            <h3>共性问题（归并后）</h3>
+            <div class="source-tags">
+              <span class="source-tag">跨用户共性</span>
+            </div>
+          </div>
+          <div class="issue-bullet-list">
+            <div class="issue-bullet-item">
+              <p>入口分散，目录节点、服务节点、事件中心、KDev 之间心智不统一。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">郑佳俊</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>发布阶段缺少总览，步骤、实例、批次、完成机器数无法同屏理解。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>天琴与 KDev / 天问 / CMDB 的跳转割裂，排障链路不连贯。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>添加环境流程重、入口深，环境概念与路径都有理解成本。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">郑佳俊</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>权限、审核人、责任人等协作链路不透明，用户经常需要额外确认。</p>
+              <div class="source-tags"><span class="source-tag">郑佳俊</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>查询类场景有明显等待感，包括实例列表、变更事件、部分提交反馈。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">郑佳俊</span><span class="source-tag">肖干</span></div>
+            </div>
+            <div class="issue-bullet-item">
+              <p>当前产品内自助闭环不足，很多问题最终还是依赖经验、同事或 Oncall 群。</p>
+              <div class="source-tags"><span class="source-tag">钱立勋</span><span class="source-tag">郑佳俊</span><span class="source-tag">肖干</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="issue-catalog-card">
+          <div class="catalog-head">
+            <h3>钱立勋</h3>
+            <div class="source-tags"><span class="source-tag">后端研发</span><span class="source-tag">评分 4</span></div>
+          </div>
+          <div class="issue-bullet-list">
+            <div class="issue-bullet-item"><p>选择版本时 checkbox 留白奇怪，一般只选最新版本。</p></div>
+            <div class="issue-bullet-item"><p>添加环境二级弹窗流程过长，操作路径冗长。</p></div>
+            <div class="issue-bullet-item"><p>运行上线时无法平铺查看实例，认为 1.0 版本体验更好。</p></div>
+            <div class="issue-bullet-item"><p>查看实例页面字段被折叠，内容区域宽度需要调整。</p></div>
+            <div class="issue-bullet-item"><p>创建服务提交完成时响应慢，反馈不够及时。</p></div>
+            <div class="issue-bullet-item"><p>KDev 创建多个流水线需要逐个点击，流程繁琐。</p></div>
+            <div class="issue-bullet-item"><p>服务下线前希望先看 5-7 天监控 / RPC 流量，确认无流量后再操作。</p></div>
+            <div class="issue-bullet-item"><p>webshell 线上环境希望保留 OTP，staging 环境可考虑降低门槛。</p></div>
+          </div>
+        </article>
+
+        <article class="issue-catalog-card">
+          <div class="catalog-head">
+            <h3>郑佳俊</h3>
+            <div class="source-tags"><span class="source-tag">客户端研发</span><span class="source-tag">评分 6</span></div>
+          </div>
+          <div class="issue-bullet-list">
+            <div class="issue-bullet-item"><p>变更事件复制普通浏览器链接时，时间周期参数会变化或丢失。</p></div>
+            <div class="issue-bullet-item"><p>操作人批量导入不方便，希望支持从 KIM 群批量复制人员。</p></div>
+            <div class="issue-bullet-item"><p>接入变更平台后，不知道还需要天琴后端开启权限。</p></div>
+            <div class="issue-bullet-item"><p>变更描述体验有问题，填写与理解过程不顺。</p></div>
+            <div class="issue-bullet-item"><p>AB 接入管控不完整，有事件但没有完整变更管控，希望接入天琴审批。</p></div>
+            <div class="issue-bullet-item"><p>服务信息页审核人选择范围铺得太开，难优先找到自己节点下的审核人。</p></div>
+            <div class="issue-bullet-item"><p>变更事件查询耗时较长，性能问题明显可感知。</p></div>
+            <div class="issue-bullet-item"><p>创建服务入口不容易发现，需要被提示后才能找到。</p></div>
+            <div class="issue-bullet-item"><p>创建环境入口埋得太深，在目录节点中找不到，只能从容器部署服务节点进入。</p></div>
+          </div>
+        </article>
+
+        <article class="issue-catalog-card">
+          <div class="catalog-head">
+            <h3>肖干</h3>
+            <div class="source-tags"><span class="source-tag">业务研发</span><span class="source-tag">评分 8</span></div>
+          </div>
+          <div class="issue-bullet-list">
+            <div class="issue-bullet-item"><p>不希望在 KDev、天琴、天问等系统之间反复跳转。</p></div>
+            <div class="issue-bullet-item"><p>开发环境部署不方便，希望直接在 KDev 看到部署情况。</p></div>
+            <div class="issue-bullet-item"><p>个人中心缺少“收藏服务”“我的服务”等贴近日常工作的入口。</p></div>
+            <div class="issue-bullet-item"><p>服务节点缺少实例汇总，不清楚 CMDB 能做什么，也不知道如何直接看日志。</p></div>
+            <div class="issue-bullet-item"><p>上线单 2.0 中步骤详情与实例详情来回切换不便，希望一页看全。</p></div>
+            <div class="issue-bullet-item"><p>实例侧监控会跳到天问系统监控，热力图难理解，入口也不直观。</p></div>
+            <div class="issue-bullet-item"><p>想快速知道多少机器已经发布完成，缺少聚合汇总信息。</p></div>
+            <div class="issue-bullet-item"><p>实例按批次展示后，与步骤关联依然较弱，难判断某实例对应哪一步。</p></div>
+            <div class="issue-bullet-item"><p>天琴与天问联通体验差，实例搜索列表等待时间长。</p></div>
+            <div class="issue-bullet-item"><p>对查询助手有兴趣，但涉及直接上下线等高风险操作时存在风险顾虑。</p></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const tabs = Array.from(document.querySelectorAll('.section-tabs a'));
+      const sections = tabs
+        .map((tab) => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          return targetId ? document.getElementById(targetId) : null;
+        })
+        .filter(Boolean);
+
+      if (!tabs.length || !sections.length) {
+        return;
+      }
+
+      const setActiveTab = (id) => {
+        tabs.forEach((tab) => {
+          tab.classList.toggle('active', tab.getAttribute('href') === `#${id}`);
+        });
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          if (targetId) {
+            setActiveTab(targetId);
+          }
+        });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visibleEntry = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          if (visibleEntry?.target?.id) {
+            setActiveTab(visibleEntry.target.id);
+          }
+        },
+        {
+          rootMargin: '-20% 0px -55% 0px',
+          threshold: [0.2, 0.35, 0.5, 0.7]
+        }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>

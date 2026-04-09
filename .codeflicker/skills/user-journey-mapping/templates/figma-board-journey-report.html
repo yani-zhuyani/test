@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{reportTitle}}</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111127'/%3E%3Ccircle cx='22' cy='22' r='10' fill='%23A78BFA'/%3E%3Ccircle cx='42' cy='22' r='10' fill='%236EE7F9'/%3E%3Ccircle cx='32' cy='42' r='10' fill='%23F472B6'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f6f8;
+      --bg-alt: #f8f9fb;
+      --panel: #ffffff;
+      --panel-strong: #ffffff;
+      --text: #1f2329;
+      --muted: #4e5969;
+      --line: #e5e6eb;
+      --line-strong: #d9dce3;
+      --purple: #165dff;
+      --blue: #165dff;
+      --red: #f53f3f;
+      --green: #00b42a;
+      --yellow: #ff7d00;
+      --shadow: 0 6px 18px rgba(31, 35, 41, 0.08);
+      --shadow-soft: 0 2px 8px rgba(31, 35, 41, 0.06);
+      --section-gap: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .page-shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .figma-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: none;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 32px;
+      display: grid;
+      gap: 20px;
+      margin-bottom: var(--section-gap);
+      background: #ffffff;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -120px -140px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-tabs {
+      position: sticky;
+      top: 16px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      padding: 0 12px;
+      margin-bottom: var(--section-gap);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .section-tabs a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 12px 16px;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .section-tabs a:hover {
+      background: transparent;
+      border-color: transparent;
+      color: var(--blue);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .section-tabs a.active {
+      background: transparent;
+      color: var(--blue);
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .section-tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--blue);
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+
+    .hero-copy {
+      max-width: 960px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-meta span,
+    .tag,
+    .badge,
+    .emotion-chip,
+    .source-tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero-meta span {
+      padding: 6px 12px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+      color: var(--muted);
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: var(--section-gap);
+    }
+
+    .stat-card {
+      padding: 20px;
+      min-height: 132px;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .stat-card::after {
+      content: none;
+    }
+
+    .accent-purple { color: var(--purple); }
+    .accent-blue { color: var(--blue); }
+    .accent-red { color: var(--red); }
+    .accent-green { color: var(--green); }
+
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .board-layout,
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      margin-bottom: var(--section-gap);
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      background: #f7f8fa;
+      color: var(--muted);
+    }
+
+    .section-desc {
+      margin: -6px 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .persona-grid > div,
+    .opportunity-block,
+    .issue-group,
+    .issue-catalog-card,
+    .evidence-card,
+    .validation-item {
+      padding: 16px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .mini-label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .persona-grid p,
+    .insight-list,
+    .issue-item p,
+    .opportunity-block li,
+    .issue-bullet-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .insight-list {
+      padding-left: 20px;
+    }
+
+    .insight-list li + li {
+      margin-top: 12px;
+    }
+
+    .evidence-grid,
+    .validation-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .evidence-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .evidence-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .evidence-head h3,
+    .validation-item h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .evidence-type,
+    .confidence-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .evidence-type.fact {
+      background: #e8f3ff;
+      color: var(--blue);
+    }
+
+    .evidence-type.hypothesis {
+      background: #fff3e8;
+      color: #b75d00;
+    }
+
+    .evidence-type.recommendation {
+      background: #e8ffea;
+      color: #00a01d;
+    }
+
+    .confidence-pill.high {
+      background: #e8ffea;
+      color: #00a01d;
+    }
+
+    .confidence-pill.medium {
+      background: #fff3e8;
+      color: #b75d00;
+    }
+
+    .confidence-pill.low {
+      background: #ffece8;
+      color: #d91f11;
+    }
+
+    .evidence-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .evidence-meta div {
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #f7f8fa;
+      border: 1px solid var(--line);
+    }
+
+    .evidence-meta p,
+    .validation-item p,
+    .validation-item li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .validation-item ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .map-table-wrap {
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: #c9cdd4 #f2f3f5;
+    }
+
+    .map-table-wrap::-webkit-scrollbar {
+      height: 12px;
+    }
+
+    .map-table-wrap::-webkit-scrollbar-track {
+      background: #f2f3f5;
+      border-radius: 999px;
+    }
+
+    .map-table-wrap::-webkit-scrollbar-thumb {
+      background: #c9cdd4;
+      border-radius: 999px;
+    }
+
+    .journey-map-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 1400px;
+    }
+
+    .journey-map-table th,
+    .journey-map-table td {
+      min-width: 122px;
+      padding: 14px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      line-height: 1.7;
+      background: #ffffff;
+    }
+
+    .journey-map-table thead th {
+      position: sticky;
+      z-index: 2;
+      background: #f7f8fa;
+      color: var(--text);
+    }
+
+    .journey-map-table thead tr:first-child th {
+      top: 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .journey-map-table thead tr:nth-child(2) th {
+      top: 49px;
+      z-index: 3;
+    }
+
+    .journey-map-table thead th[rowspan] {
+      top: 0;
+      z-index: 4;
+      min-width: 140px;
+    }
+
+    .journey-map-table tbody th {
+      min-width: 140px;
+      background: #fafbfc;
+      text-align: left;
+    }
+
+    .emotion-row th {
+      vertical-align: top;
+    }
+
+    .emotion-row-cell {
+      padding: 10px 12px !important;
+    }
+
+    .emotion-row-chart {
+      min-width: 1080px;
+    }
+
+    .emotion-row-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .emotion-phase-bg {
+      fill: #f7f8fa;
+    }
+
+    .emotion-phase-bg.alt {
+      fill: #f2f3f5;
+    }
+
+    .emotion-axis {
+      stroke: rgba(17, 19, 34, 0.24);
+      stroke-width: 2;
+    }
+
+    .emotion-grid {
+      stroke: rgba(17, 19, 34, 0.08);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+
+    .emotion-stage-divider {
+      stroke: #d9dce3;
+      stroke-width: 2;
+    }
+
+    .emotion-axis-label {
+      fill: var(--muted);
+      font-size: 11px;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+
+    .emotion-row-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .emotion-point-emoji {
+      font-size: 18px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .emotion-row-point {
+      stroke: white;
+      stroke-width: 4;
+    }
+
+    .emotion-row-point.neutral { fill: #64748b; }
+    .emotion-row-point.warn { fill: #f59e0b; }
+    .emotion-row-point.danger { fill: #ef4444; }
+    .emotion-row-point.positive { fill: #10b981; }
+
+    .issues-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .issue-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-top: 12px;
+    }
+
+    .badge {
+      min-width: 40px;
+      justify-content: center;
+      padding: 4px 8px;
+      color: var(--text);
+      border-radius: 4px;
+      border: 1px solid transparent;
+    }
+
+    .badge.p0 { background: #ffece8; color: #d91f11; border-color: #ffd1c7; }
+    .badge.p1 { background: #fff3e8; color: #b75d00; border-color: #ffe0b0; }
+    .badge.p2 { background: #e8f3ff; color: #165dff; border-color: #bedaff; }
+
+    .opportunity-block + .opportunity-block {
+      margin-top: 14px;
+    }
+
+    .opportunity-block ul {
+      padding-left: 18px;
+      margin: 12px 0 0;
+    }
+
+    #journey-map {
+      margin-bottom: var(--section-gap);
+    }
+
+    .full-issues-section {
+      margin-bottom: var(--section-gap);
+    }
+
+    .full-issues-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .issue-catalog-wide {
+      grid-column: 1 / -1;
+    }
+
+    .catalog-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .catalog-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .source-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .source-tag {
+      padding: 4px 8px;
+      background: #f2f3f5;
+      color: var(--muted);
+    }
+
+    .issue-bullet-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .issue-bullet-item {
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #f7f8fa;
+      border: 1px solid var(--line);
+    }
+
+    @media (max-width: 1200px) {
+      .board-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .board-layout,
+      .detail-grid,
+      .full-issues-grid,
+      .evidence-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        padding: 18px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .section-tabs {
+        top: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 0 8px;
+      }
+
+      .section-tabs a {
+        min-height: 44px;
+        width: 100%;
+      }
+
+      .board-grid,
+      .persona-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-map-table {
+        min-width: 1320px;
+      }
+
+      .emotion-row-chart {
+        min-width: 1040px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero figma-card">
+      <div>
+        <p class="eyebrow">{{reportEyebrow}}</p>
+        <h1>{{reportTitle}}</h1>
+        <p class="hero-copy">{{reportSummary}}</p>
+      </div>
+      <div class="hero-meta">
+        {{heroMetaItems}}
+      </div>
+    </header>
+
+    <nav class="section-tabs figma-card" aria-label="页面分区导航">
+      <a href="#summary" class="active">统一画像</a>
+      <a href="#evidence">事实推测</a>
+      <a href="#journey-map">旅程地图</a>
+      <a href="#issues">问题清单</a>
+      <a href="#all-issues">完整问题</a>
+    </nav>
+
+    <section class="board-grid">
+      {{boardStatCards}}
+    </section>
+
+    <section class="board-layout" id="summary">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>{{personaTitle}}</h2>
+          <span class="tag">Board Summary</span>
+        </div>
+        <div class="persona-grid">
+          {{personaCards}}
+        </div>
+      </article>
+
+      <article class="figma-card panel insights-panel">
+        <div class="panel-head">
+          <h2>{{insightsTitle}}</h2>
+          <span class="tag">Insights</span>
+        </div>
+        <ul class="insight-list">
+          {{insightItems}}
+        </ul>
+      </article>
+    </section>
+
+    <section class="board-layout" id="evidence">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>{{evidenceTitle}}</h2>
+          <span class="tag">Fact / Hypothesis / Confidence</span>
+        </div>
+        <p class="section-desc">{{evidenceDescription}}</p>
+        <div class="evidence-grid">
+          {{evidenceCards}}
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>{{validationTitle}}</h2>
+          <span class="tag">Validation</span>
+        </div>
+        <p class="section-desc">{{validationDescription}}</p>
+        <div class="validation-list">
+          {{validationItems}}
+        </div>
+      </article>
+    </section>
+
+    <section class="figma-card panel" id="journey-map">
+      <div class="panel-head">
+        <h2>{{mapTitle}}</h2>
+        <span class="tag">{{mapTag}}</span>
+      </div>
+      <p class="section-desc">{{mapDescription}}</p>
+      <div class="map-table-wrap">
+        <table class="journey-map-table">
+          <thead>
+            {{mapHeaderRows}}
+          </thead>
+          <tbody>
+            <!-- 情绪曲线行默认在每个点位叠加对应表情，如 😄 / 🙂 / 😕 / 😣，增强可读性与生动感 -->
+            {{mapBodyRows}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="detail-grid" id="issues">
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>{{issueSummaryTitle}}</h2>
+          <span class="tag">By Stage + Priority</span>
+        </div>
+        <div class="issues-stack">
+          {{issueSummaryGroups}}
+        </div>
+      </article>
+
+      <article class="figma-card panel">
+        <div class="panel-head">
+          <h2>{{opportunityTitle}}</h2>
+          <span class="tag">Priorities</span>
+        </div>
+        {{opportunityBlocks}}
+      </article>
+    </section>
+
+    <section class="figma-card panel full-issues-section" id="all-issues">
+      <div class="panel-head">
+        <h2>{{fullIssueTitle}}</h2>
+        <span class="tag">All Interview Issues</span>
+      </div>
+      <p class="section-desc">{{fullIssueDescription}}</p>
+      <div class="full-issues-grid">
+        {{fullIssueCards}}
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const tabs = Array.from(document.querySelectorAll('.section-tabs a'));
+      const sections = tabs
+        .map((tab) => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          return targetId ? document.getElementById(targetId) : null;
+        })
+        .filter(Boolean);
+
+      if (!tabs.length || !sections.length) {
+        return;
+      }
+
+      const setActiveTab = (id) => {
+        tabs.forEach((tab) => {
+          tab.classList.toggle('active', tab.getAttribute('href') === `#${id}`);
+        });
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const targetId = tab.getAttribute('href')?.replace('#', '');
+          if (targetId) {
+            setActiveTab(targetId);
+          }
+        });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visibleEntry = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          if (visibleEntry?.target?.id) {
+            setActiveTab(visibleEntry.target.id);
+          }
+        },
+        {
+          rootMargin: '-20% 0px -55% 0px',
+          threshold: [0.2, 0.35, 0.5, 0.7]
+        }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>
