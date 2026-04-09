@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL 矩阵 · 设计稿规模化生成方案</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #FF4D6A;
+      --brand-light: #fff1f3;
+      --brand-dark: #d93050;
+      --bg: #f7f8fa;
+      --white: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666;
+      --text-muted: #999;
+      --border: #ebebeb;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      width: 36px; height: 36px;
+      background: var(--brand);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: white;
+    }
+    .header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .header h1 span { color: var(--brand); }
+    .tag {
+      margin-left: auto;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 0.75rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      max-width: 1100px;
+      margin: 60px auto 0;
+      padding: 0 40px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand-light);
+      color: var(--brand);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    .hero h2 strong { color: var(--brand); }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto 50px;
+    }
+
+    /* ---- Section ---- */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    /* ---- Skill Table ---- */
+    .skill-table-wrap { overflow-x: auto; }
+    .skill-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .skill-table thead tr {
+      background: var(--bg);
+    }
+    .skill-table th {
+      padding: 20px 24px; text-align: center;
+      font-size: 0.95rem; font-weight: 700; line-height: 1.8;
+      border-bottom: 2px solid var(--border);
+    }
+    .skill-table th:first-child { width: 110px; text-align: left; }
+    .th-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; border-radius: 12px;
+      font-size: 20px; margin-bottom: 6px;
+    }
+    .skill-table td {
+      padding: 16px 24px; font-size: 0.9rem;
+      color: var(--text-secondary); border-bottom: 1px solid var(--border);
+      vertical-align: middle; text-align: center;
+    }
+    .skill-table tbody tr:last-child td { border-bottom: none; }
+    .skill-table tbody tr:hover td { background: #fafafa; }
+    .row-label {
+      font-weight: 700 !important; color: var(--text-primary) !important;
+      text-align: left !important; white-space: nowrap; font-size: 0.85rem !important;
+    }
+
+    .skill-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .skill-card:hover {
+      border-color: var(--brand);
+      transform: translateY(-4px);
+    }
+    .skill-card .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+    .ic-blue { background: #EEF4FF; }
+    .ic-green { background: #EDFBF3; }
+    .ic-amber { background: #FFF8EC; }
+
+    .skill-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .skill-role {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+    .role-blue { background: #EEF4FF; color: #3b82f6; }
+    .role-green { background: #EDFBF3; color: #10b981; }
+    .role-amber { background: #FFF8EC; color: #f59e0b; }
+
+    .skill-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .skill-card li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .skill-card li::before {
+      content: "✓";
+      color: var(--brand);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ---- Flow ---- */
+    .flow-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .flow-step {
+      text-align: center;
+      flex: 1;
+      min-width: 160px;
+      padding: 0 10px;
+    }
+    .flow-num {
+      width: 44px; height: 44px;
+      background: var(--brand-light);
+      color: var(--brand);
+      border-radius: 50%;
+      font-size: 1rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .flow-step b {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .flow-step small { color: var(--text-secondary); font-size: 0.8rem; }
+
+    .flow-arrow {
+      color: var(--border);
+      font-size: 1.5rem;
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+
+    /* ---- Roadmap ---- */
+    .roadmap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .phase {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      display: flex;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .phase-badge {
+      background: var(--brand);
+      color: white;
+      padding: 24px 22px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 90px;
+      gap: 2px;
+      line-height: 1.3;
+    }
+    .phase-badge span { font-size: 0.7rem; font-weight: 400; opacity: 0.85; }
+    .phase:nth-child(2) .phase-badge { background: #3b82f6; }
+    .phase:nth-child(3) .phase-badge { background: #10b981; }
+    .phase-body {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .phase-body strong {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .phase-body p { color: var(--text-secondary); font-size: 0.9rem; }
+    .phase-body code {
+      background: var(--bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* ---- Core Insight ---- */
+    .insight-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 768px) { .insight-row { grid-template-columns: 1fr; } }
+
+    .insight-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--brand);
+    }
+    .insight-card h4 {
+      font-size: 0.9rem;
+      color: var(--brand);
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .insight-card p { font-size: 0.9rem; color: var(--text-secondary); }
+    .insight-card strong { color: var(--text-primary); }
+
+    /* ---- Divider ---- */
+    .divider { height: 1px; background: var(--border); margin: 0 40px 60px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">🎯</div>
+      <h1>SKILL 矩阵 · <span>规模化设计稿生成</span>方案</h1>
+      <span class="tag">策略报告</span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">⚡ 核心问题</div>
+    <h2>如何让 AI 像<strong>工业车间</strong>一样<br>稳定输出规范设计稿？</h2>
+    <p>答案：强约束底座 + 严格 SOP + 自动化交叉验证，三层 SKILL 协同工作。</p>
+  </section>
+
+  <!-- 三位一体架构 -->
+  <section class="section">
+    <div class="section-title">🏗 三位一体 SKILL 架构</div>
+    <div class="section-sub">职责完全独立，协同工作，消除生成不一致性</div>
+    <div class="skill-table-wrap">
+      <table class="skill-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="th-icon ic-blue">🎨</span><br>规范引擎 (Source)<br><span class="skill-role role-blue">真理之源</span></th>
+            <th><span class="th-icon ic-green">⚙️</span><br>生成引擎 (Builder)<br><span class="skill-role role-green">流水线执行者</span></th>
+            <th><span class="th-icon ic-amber">🔍</span><br>走查引擎 (QA)<br><span class="skill-role role-amber">自动化质检</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">职责</td>
+            <td>只提供资产，不写业务逻辑</td>
+            <td>强制复用规范片段，禁止自由发挥</td>
+            <td>兜底机制，确保 100% 合规</td>
+          </tr>
+          <tr>
+            <td class="row-label">核心能力 1</td>
+            <td>维护全局 Design Tokens (CSS 变量)</td>
+            <td>强制向规范引擎索取代码片段</td>
+            <td>逐行扫描，对照规范验证</td>
+          </tr>
+          <tr>
+            <td class="row-label">核心能力 2</td>
+            <td>提供原子组件标准 HTML 片段库</td>
+            <td>按需求"乐高式"拼装页面</td>
+            <td>检测非标颜色值、间距违规</td>
+          </tr>
+          <tr>
+            <td class="row-label">核心能力 3</td>
+            <td>输出常见页面布局骨架</td>
+            <td>禁止自创 CSS / 硬编码颜色</td>
+            <td>验证交互状态完整性</td>
+          </tr>
+          <tr>
+            <td class="row-label">核心能力 4</td>
+            <td>—</td>
+            <td>所有样式只引用全局 theme.css</td>
+            <td>自动输出修复报告并二次修正</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SOP 工作流 -->
+  <section class="section">
+    <div class="section-title">🔄 标准化 SOP 工作流</div>
+    <div class="section-sub">从自然语言到规范代码，每步受约束</div>
+    <div class="flow-card">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <b>结构化输入</b>
+        <small>JSON/Markdown<br>描述需求</small>
+      </div>
+      <div class="flow-arrow">›</div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <b>强制查询规范</b>
+        <small>从规范库提取<br>标准代码片段</small>
+      </div>
+      <div class="flow-arrow">›</div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <b>乐高式拼装</b>
+        <small>零行内样式<br>只用 class 组合</small>
+      </div>
+      <div class="flow-arrow">›</div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <b>机器验收</b>
+        <small>QA 扫描<br>合规率 → 100%</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 落地路径 -->
+  <section class="section">
+    <div class="section-title">🎯 落地实施路径</div>
+    <div class="section-sub">三个阶段，逐步提高生成稳定性</div>
+    <div class="roadmap">
+      <div class="phase">
+        <div class="phase-badge">阶段一<span>当前</span></div>
+        <div class="phase-body">
+          <strong>夯实规范底座</strong>
+          <p>将 <code>data-design-guidelines</code> 转为代码库：全局 <code>theme.css</code> + 原子组件 HTML 片段目录</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">阶段二</div>
+        <div class="phase-body">
+          <strong>编写生成 SOP</strong>
+          <p>建立 <code>ks-page-generator</code> Skill，写入强硬约束 prompt：<strong>禁止创造 CSS，强制复用规范片段拼装页面</strong></p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">阶段三</div>
+        <div class="phase-body">
+          <strong>批量跑测 + 闭环</strong>
+          <p>准备 50 个标准用例批量生成，用 Eval 框架自动打分，针对低分点迭代规范库与 SOP</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 核心洞察 -->
+  <section class="section">
+    <div class="section-title">💡 稳定性的核心秘诀</div>
+    <div class="section-sub">两个关键原则，决定 AI 是否能稳定工作</div>
+    <div class="insight-row">
+      <div class="insight-card">
+        <h4>从「理解规则」→「复制代码」</h4>
+        <p>❌ 告诉 AI "按钮是蓝色32px圆角"<br>✅ 直接提供 <strong><code>&lt;button class="ks-btn-primary"&gt;</code></strong>，禁止改动</p>
+      </div>
+      <div class="insight-card">
+        <h4>独立 CSS 基座</h4>
+        <p>AI 只操作 HTML 结构与 class 名，<strong>所有视觉规范在 theme.css 中封存</strong>，HTML 变动不会破坏视觉一致性</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

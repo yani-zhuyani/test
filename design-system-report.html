@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B端设计一致性工程 · 汇报</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:      #0f1117;
+      --ink-2:    #2c2f3a;
+      --ink-3:    #4a4f60;
+      --ink-4:    #7a7f94;
+      --ink-5:    #b4b8c8;
+      --surface:  #f8f9fc;
+      --surface-2:#f0f2f8;
+      --surface-3:#e6eaf3;
+      --white:    #ffffff;
+      --brand:    #2563f4;
+      --brand-dim:#eef3ff;
+      --brand-mid:#6b9bff;
+      --success:  #16a34a;
+      --success-dim:#dcfce7;
+      --danger:   #dc2626;
+      --danger-dim:#fee2e2;
+      --warn:     #d97706;
+      --warn-dim: #fef3c7;
+      --line:     #e4e7f0;
+      --r:        6px;
+      --r-lg:     12px;
+      --r-xl:     16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─────────── HERO ─────────── */
+    .hero {
+      background: linear-gradient(145deg, #060c1c 0%, #0d1530 45%, #0e1e45 100%);
+      color: #fff;
+      padding: 72px 48px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 400px at 65% -5%, rgba(37,99,244,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 400px 300px at 10% 110%, rgba(107,155,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      max-width: 1080px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: end;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brand-mid);
+      background: rgba(37,99,244,0.14);
+      border: 1px solid rgba(37,99,244,0.28);
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brand-mid);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .hero h1 {
+      font-size: clamp(26px, 3.8vw, 42px);
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+    .hero h1 .accent { color: var(--brand-mid); }
+    .hero-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      max-width: 580px;
+      line-height: 1.7;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 20px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .hero-tag {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-tag span { color: rgba(255,255,255,0.6); font-weight: 500; }
+    /* right stats panel */
+    .hero-stats-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--r-xl);
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-width: 220px;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hero-stat-num {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #fff;
+    }
+    .hero-stat-num.up { color: #4ade80; }
+    .hero-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.38);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .hero-stat-bar {
+      margin-top: 6px;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .hero-stat-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--brand) 0%, var(--brand-mid) 100%);
+    }
+    .hero-stat-bar-fill.up {
+      background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+    }
+
+    /* ─────────── STICKY NAV ─────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(248,249,252,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-logo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+      padding: 14px 0;
+      margin-right: 24px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: -0.01em;
+    }
+    .nav-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--line);
+      margin-right: 24px;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-4);
+      padding: 14px 14px;
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .nav-item:hover { color: var(--ink-2); }
+    .nav-item.active { color: var(--brand); border-color: var(--brand); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<header class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Design System · Skill Engineering
+      </div>
+      <h1>
+        B端设计<br/>
+        <span class="accent">一致性输出工程</span>
+      </h1>
+      <p class="hero-sub">
+        基于 Skill 体系，将快手内部 B 端设计规范转化为可被 AI 精确执行的知识结构，
+        实现生图/走查/Review 全链路的规范合规率 <strong style="color:#fff">100%</strong>。
+      </p>
+      <div class="hero-meta">
+        <div class="hero-tag">对象 <span>快手 B 端产品</span></div>
+        <div class="hero-tag">方法 <span>Skill + Eval 双轮驱动</span></div>
+        <div class="hero-tag">状态 <span>Iteration 1 完成</span></div>
+      </div>
+    </div>
+    <div class="hero-stats-panel">
+      <div class="hero-stat">
+        <div class="hero-stat-num up">+71.1%</div>
+        <div class="hero-stat-label">规范合规率提升</div>
+        <div class="hero-stat-bar"><div class="hero-stat-bar-fill up" style="width:71%"></div></div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">With Skill 通过率</div>
+        <div class="hero-stat-bar"><div class="hero-stat-bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">28.9%</div>
+        <div class="hero-stat-label">Without Skill 通过率</div>
+        <div class="hero-stat-bar"><div class="hero-stat-bar-fill" style="width:29%;opacity:0.4"></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">B端设计规范工程</div>
+    <div class="nav-divider"></div>
+    <a href="#problem"   class="nav-item active">问题背景</a>
+    <a href="#arch"      class="nav-item">工程架构</a>
+    <a href="#skill"     class="nav-item">Skill 框架</a>
+    <a href="#eval"      class="nav-item">Eval 实验</a>
+    <a href="#production" class="nav-item">生产链路</a>
+    <a href="#structure" class="nav-item">目录结构</a>
+    <a href="#gap"       class="nav-item">现状差距</a>
+    <a href="#next"      class="nav-item">下一步</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT PLACEHOLDER — parts 3-5 will be appended here -->
+<main id="main-content">
+<div class="page-wrap">
+
+<!-- ══════════════ SHARED STYLES ══════════════ -->
+<style>
+  .page-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  /* Section */
+  .section { padding-top: 72px; }
+  .section-header { margin-bottom: 36px; }
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--ink-4);
+    margin-top: 8px;
+    max-width: 600px;
+    line-height: 1.7;
+  }
+  .section-rule { height: 1px; background: var(--line); margin-top: 72px; }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    padding: 28px;
+  }
+
+  /* Tag */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .tag-danger  { background: var(--danger-dim); color: var(--danger); }
+  .tag-warn    { background: var(--warn-dim); color: var(--warn); }
+  .tag-success { background: var(--success-dim); color: var(--success); }
+  .tag-brand   { background: var(--brand-dim); color: var(--brand); }
+  .tag-neutral { background: var(--surface-2); color: var(--ink-3); }
+</style>
+
+<!-- ═══════════════════ SECTION 1: PROBLEM ═══════════════════ -->
+<section class="section" id="problem">
+  <div class="section-header">
+    <div class="section-eyebrow">01 · Problem</div>
+    <h2 class="section-title">为什么 AI 会输出不一致的 B 端界面？</h2>
+    <p class="section-desc">快手 B 端有大量专有设计约定，没有规范文档，AI 只能凭通用前端知识"猜"，导致每次生成结果都不一样。</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- card 1 -->
+    <div class="card" style="border-top:3px solid var(--danger);">
+      <div class="tag tag-danger" style="margin-bottom:14px">❌ 规范不可及</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">AI 无法凭直觉得知内部专有规定</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65">
+        "弹框宽度 400px"、"标签末尾必须加冒号"、"胶囊标签页禁止用于上级导航"——这些是快手内部规定，
+        通用前端知识里根本不存在，不查文档就必定写错。
+      </p>
+      <div style="margin-top:14px;background:var(--danger-dim);border-radius:var(--r);padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--danger)">
+        Without Skill：快手专有规范命中率 0/15 = <strong>0%</strong>
+      </div>
+    </div>
+    <!-- card 2 -->
+    <div class="card" style="border-top:3px solid var(--danger);">
+      <div class="tag tag-danger" style="margin-bottom:14px">❌ 每次都不一样</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">没有约束就靠"发挥"，一致性为零</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65">
+        弹框宽度一次 500px 一次 600px；按钮顺序时左时右；分页有时有跳转框有时没有。
+        AI 的创造力在规范场景里是负资产。
+      </p>
+      <div style="margin-top:14px;background:var(--danger-dim);border-radius:var(--r);padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--danger)">
+        标准差无法量化：每次生成结果不可预期
+      </div>
+    </div>
+    <!-- card 3 -->
+    <div class="card" style="border-top:3px solid var(--warn);">
+      <div class="tag tag-warn" style="margin-bottom:14px">⚠️ 只有正例，没有约束</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">AI 会对正例举一反三出奇怪变体</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65">
+        "应该用主色蓝" → AI 会发挥出渐变蓝、半透明蓝、深蓝。
+        反例（禁止项）和决策树才是让 AI 不乱发挥的真正约束。
+      </p>
+    </div>
+    <!-- card 4 -->
+    <div class="card" style="border-top:3px solid var(--warn);">
+      <div class="tag tag-warn" style="margin-bottom:14px">⚠️ 缺决策树</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">遇到模糊场景，AI 只能随机选择</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65">
+        弹框 vs 抽屉 vs 页内展开？主操作按钮放哪里？这类判断需要明确的决策规则，
+        没有就靠运气。
+      </p>
+    </div>
+  </div>
+
+  <!-- ROOT CAUSE CALLOUT -->
+  <div style="margin-top:20px;background:linear-gradient(135deg,#0f1530 0%,#1a2a5e 100%);border-radius:var(--r-xl);padding:28px 32px;display:flex;align-items:center;gap:28px;">
+    <div style="font-size:40px;flex-shrink:0">🎯</div>
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">根本原因</div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:700px">
+        <strong style="color:rgba(255,255,255,0.9)">约 71% 的快手 B 端规范是内部专有约定</strong>，
+        与通用前端知识完全无重叠。没有 Skill，这些规范对 AI 来说就是"不存在"。
+        解法不是让 AI 更聪明，而是把规范知识结构化地喂进去。
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 2: ARCH ═══════════════════ -->
+<section class="section" id="arch">
+  <div class="section-header">
+    <div class="section-eyebrow">02 · Architecture</div>
+    <h2 class="section-title">整体工程架构</h2>
+    <p class="section-desc">三个 Skill 分层协作，规范知识只写一次，生图和走查均可复用。</p>
+  </div>
+
+  <div class="card" style="padding:40px;">
+    <!-- Arch Diagram -->
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-4);margin-bottom:32px;font-family:'JetBrains Mono',monospace;">
+      SKILL ARCHITECTURE · 3-LAYER
+    </div>
+
+    <!-- Layer: Input -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--ink-5);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">用户输入</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--ink-3);text-align:center;">💬 "帮我生成一个知识库管理页"</div>
+        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--ink-3);text-align:center;">🔍 "走查这个弹框是否符合规范"</div>
+        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--ink-3);text-align:center;">📋 "检查这段代码有什么规范问题"</div>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div style="text-align:center;font-size:20px;color:var(--ink-5);margin:8px 0">↓</div>
+
+    <!-- Layer: Executor Skills -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--ink-5);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">执行层 Skill（触发路由）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:var(--r);padding:16px 20px;">
+          <div style="font-size:13px;font-weight:700;color:#c2410c;margin-bottom:4px">b-design-codegen</div>
+          <div style="font-size:12px;color:#92400e;">生成符合规范的 HTML/CSS 代码<br/>触发词：生成页面 / 帮我写</div>
+        </div>
+        <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:var(--r);padding:16px 20px;">
+          <div style="font-size:13px;font-weight:700;color:#7e22ce;margin-bottom:4px">b-design-review</div>
+          <div style="font-size:12px;color:#6b21a8;">走查/审查规范合规情况<br/>触发词：走查 / 检查规范 / code review</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div style="text-align:center;font-size:20px;color:var(--ink-5);margin:8px 0">↓ 依赖</div>
+
+    <!-- Layer: Knowledge Skill -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--ink-5);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">知识层 Skill（规范来源）</div>
+      <div style="background:#eef3ff;border:2px solid #c7d8ff;border-radius:var(--r-lg);padding:20px 24px;position:relative;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="font-size:15px;font-weight:700;color:var(--brand)">data-design-guidelines</div>
+          <div class="tag tag-brand">核心数据层</div>
+        </div>
+        <p style="font-size:13px;color:#1e40af;line-height:1.65;">
+          快手内部 B 端完整组件规范库。包含 Token 值、组件尺寸/状态、页面模板、使用约定。
+          <strong>规范只写一次，codegen 和 review 均从这里取数。</strong>
+        </p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="tag tag-brand">22个组件规范</span>
+          <span class="tag tag-brand">精确 Token 值</span>
+          <span class="tag tag-brand">3类页面模板</span>
+          <span class="tag tag-brand">使用规范速查</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div style="text-align:center;font-size:20px;color:var(--ink-5);margin:8px 0">↓</div>
+
+    <!-- Layer: Output -->
+    <div>
+      <div style="font-size:11px;font-weight:600;color:var(--ink-5);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;">输出结果</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div style="background:var(--success-dim);border:1px solid #bbf7d0;border-radius:var(--r);padding:12px 16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--success);margin-bottom:4px">✅ 合规 HTML/CSS</div>
+          <div style="font-size:12px;color:#166534;">Token 精确应用<br/>状态/尺寸全部符合规范</div>
+        </div>
+        <div style="background:var(--success-dim);border:1px solid #bbf7d0;border-radius:var(--r);padding:12px 16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--success);margin-bottom:4px">✅ 结构化走查报告</div>
+          <div style="font-size:12px;color:#166534;">P1/P2/P3 分级<br/>规范来源可溯源</div>
+        </div>
+        <div style="background:var(--success-dim);border:1px solid #bbf7d0;border-radius:var(--r);padding:12px 16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--success);margin-bottom:4px">✅ 精确修复代码</div>
+          <div style="font-size:12px;color:#166534;">不只是建议<br/>给出完整修正 HTML</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key insight -->
+    <div style="margin-top:24px;background:var(--surface-2);border-radius:var(--r);padding:14px 20px;font-size:13px;color:var(--ink-3);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:16px">💡</span>
+      <span><strong style="color:var(--ink-2)">核心设计原则：</strong>关注点分离。data-design-guidelines 只负责"规范是什么"，codegen 和 review 只负责"怎么执行"。规范变更只改一个文件，两个执行器自动继承。</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 3: SKILL FRAMEWORK ═══════════════════ -->
+<section class="section" id="skill">
+  <div class="section-header">
+    <div class="section-eyebrow">03 · Skill Framework</div>
+    <h2 class="section-title">规范 Skill 的 4 层内容框架</h2>
+    <p class="section-desc">让 AI 稳定输出的核心是"约束层"，而不只是"内容层"。4层结构从设计语言到可验证 Checklist 逐层增强约束力。</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <!-- Layer 0 -->
+    <div style="display:grid;grid-template-columns:160px 1fr;align-items:stretch;">
+      <div style="background:#0f1530;border-radius:var(--r-lg) 0 0 var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">LAYER 0</div>
+        <div style="font-size:13px;font-weight:700;color:#fff;text-align:right">设计语言</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:right;margin-top:2px">全局 Token</div>
+      </div>
+      <div style="background:#eef3ff;border:1.5px solid #c7d8ff;border-radius:0 var(--r-lg) var(--r-lg) 0;padding:20px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px">精确到元素 × 状态的 Token 绑定</div>
+          <p style="font-size:13px;color:var(--ink-3);line-height:1.6">不是"蓝色"，而是"主要按钮正常态背景 = <code style="font-family:'JetBrains Mono',monospace;color:var(--brand);background:var(--brand-dim);padding:1px 5px;border-radius:3px">#2563F4</code>"</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="font-size:12px;color:var(--brand)">✓ 色彩 Token（含状态变化）</div>
+          <div style="font-size:12px;color:var(--brand)">✓ 间距系统（4px 基准网格）</div>
+          <div style="font-size:12px;color:var(--brand)">✓ 字体体系（字号+行高+粗细）</div>
+          <div style="font-size:12px;color:var(--brand)">✓ 圆角/阴影（按组件类型）</div>
+        </div>
+      </div>
+    </div>
+    <!-- Layer 1 -->
+    <div style="display:grid;grid-template-columns:160px 1fr;align-items:stretch;">
+      <div style="background:#1a2a5e;border-radius:var(--r-lg) 0 0 var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">LAYER 1</div>
+        <div style="font-size:13px;font-weight:700;color:#fff;text-align:right">组件规范</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:right;margin-top:2px">精确 + 反例</div>
+      </div>
+      <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:0 var(--r-lg) var(--r-lg) 0;padding:20px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px">正例 + <span style="color:var(--danger)">反例库</span> + 组合约束三合一</div>
+          <p style="font-size:13px;color:var(--ink-3);line-height:1.6">AI 会对正例举一反三出变体，但对"❌不允许"几乎不会违反。<strong style="color:var(--ink-2)">反例库是关键缺失项。</strong></p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="font-size:12px;color:#c2410c">✓ 尺寸表（各变体精确 px）</div>
+          <div style="font-size:12px;color:#c2410c">✓ 状态矩阵（Normal/Hover/Active/Disabled）</div>
+          <div style="font-size:12px;color:var(--danger);font-weight:600">⭐ 反例库（❌禁止用法集中管理）</div>
+          <div style="font-size:12px;color:#c2410c">✓ 跨组件组合约束（按钮组顺序）</div>
+        </div>
+      </div>
+    </div>
+    <!-- Layer 2 -->
+    <div style="display:grid;grid-template-columns:160px 1fr;align-items:stretch;">
+      <div style="background:#3b2160;border-radius:var(--r-lg) 0 0 var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">LAYER 2</div>
+        <div style="font-size:13px;font-weight:700;color:#fff;text-align:right">页面模式</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:right;margin-top:2px">模板先行</div>
+      </div>
+      <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:0 var(--r-lg) var(--r-lg) 0;padding:20px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px">直接给框架，比让 AI 推导规则更稳</div>
+          <p style="font-size:13px;color:var(--ink-3);line-height:1.6">3-5 个典型页面模板，含完整区域划分 + 精确间距标注。<strong>模板 &gt; 规则</strong>。</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="font-size:12px;color:#7e22ce">✓ 天工数据平台（已有）</div>
+          <div style="font-size:12px;color:#7e22ce">✓ APP 分析看板（已有）</div>
+          <div style="font-size:12px;color:#7e22ce">✓ AB Test 管理页（已有）</div>
+          <div style="font-size:12px;color:#9333ea;font-weight:600">+ 通用列表页/设置页（待补充）</div>
+        </div>
+      </div>
+    </div>
+    <!-- Layer 3 -->
+    <div style="display:grid;grid-template-columns:160px 1fr;align-items:stretch;">
+      <div style="background:#7c1d1d;border-radius:var(--r-lg) 0 0 var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">LAYER 3</div>
+        <div style="font-size:13px;font-weight:700;color:#fff;text-align:right">决策树</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:right;margin-top:2px">消除歧义</div>
+      </div>
+      <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:0 var(--r-lg) var(--r-lg) 0;padding:20px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px">遇到模糊场景，AI 需要判断逻辑而不是猜</div>
+          <p style="font-size:13px;color:var(--ink-3);line-height:1.6">弹框 vs 抽屉 vs 页内展开？主操作按钮放哪里？没有规则就靠随机，有了决策树就能精确选择。</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="font-size:12px;color:var(--danger);font-weight:600">⭐ 弹框 vs 抽屉 vs 页内（判断条件）</div>
+          <div style="font-size:12px;color:#b91c1c">✓ 主操作按钮位置规则</div>
+          <div style="font-size:12px;color:#b91c1c">✓ 字段类型选择（输入框 vs 选择器）</div>
+        </div>
+      </div>
+    </div>
+    <!-- Layer 4 -->
+    <div style="display:grid;grid-template-columns:160px 1fr;align-items:stretch;">
+      <div style="background:#064e3b;border-radius:var(--r-lg) 0 0 var(--r-lg);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">LAYER 4</div>
+        <div style="font-size:13px;font-weight:700;color:#fff;text-align:right">Checklist</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:right;margin-top:2px">可验证</div>
+      </div>
+      <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:0 var(--r-lg) var(--r-lg) 0;padding:20px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px">P0/P1/P2 分级核查，判断条件是 CSS 属性值</div>
+          <p style="font-size:13px;color:var(--ink-3);line-height:1.6">按页面类型分类。P0=必须通过，P1=强烈建议，P2=可接受偏差。判断是客观属性值，不依赖主观判断。</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="font-size:12px;color:var(--success);font-weight:600">⭐ Eval 驱动持续验证</div>
+          <div style="font-size:12px;color:#15803d">✓ 按页面类型分文件</div>
+          <div style="font-size:12px;color:#15803d">✓ 机器可执行判断条件</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- formula -->
+  <div style="margin-top:20px;background:var(--ink);border-radius:var(--r-lg);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.4)">稳定输出方程</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="background:rgba(255,255,255,0.07);border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);font-family:'JetBrains Mono',monospace">精确 Token</div>
+      <div style="color:rgba(255,255,255,0.3)">+</div>
+      <div style="background:rgba(255,255,255,0.07);border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);font-family:'JetBrains Mono',monospace">反例约束</div>
+      <div style="color:rgba(255,255,255,0.3)">+</div>
+      <div style="background:rgba(255,255,255,0.07);border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);font-family:'JetBrains Mono',monospace">页面模板</div>
+      <div style="color:rgba(255,255,255,0.3)">+</div>
+      <div style="background:rgba(255,255,255,0.07);border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);font-family:'JetBrains Mono',monospace">决策树</div>
+      <div style="color:rgba(255,255,255,0.3)">=</div>
+      <div style="background:linear-gradient(90deg,#2563f4,#6b9bff);border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:700;color:#fff">一致性输出</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 4: EVAL ═══════════════════ -->
+<section class="section" id="eval">
+  <div class="section-header">
+    <div class="section-eyebrow">04 · Eval Experiments</div>
+    <h2 class="section-title">Eval 实验：有没有 Skill 差在哪？</h2>
+    <p class="section-desc">3 个场景 × 2 配置（with/without skill）= 6 次运行。结果：规范合规率提升 71.1%，快手专有规范命中率 0% → 100%。</p>
+  </div>
+
+  <!-- Overall result -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;">
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;text-align:center;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);margin-bottom:12px">整体规范合规率</div>
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:16px;">
+        <div>
+          <div style="font-size:11px;color:var(--ink-5);margin-bottom:4px">Without</div>
+          <div style="font-size:28px;font-weight:800;color:var(--danger);letter-spacing:-.03em">28.9%</div>
+        </div>
+        <div style="font-size:20px;color:var(--ink-5)">→</div>
+        <div>
+          <div style="font-size:11px;color:var(--ink-5);margin-bottom:4px">With</div>
+          <div style="font-size:28px;font-weight:800;color:var(--success);letter-spacing:-.03em">100%</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;background:var(--success-dim);border-radius:var(--r);padding:6px 12px;font-size:13px;font-weight:700;color:var(--success)">▲ +71.1%</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;text-align:center;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);margin-bottom:12px">快手专有规范命中率</div>
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:16px;">
+        <div>
+          <div style="font-size:11px;color:var(--ink-5);margin-bottom:4px">Without</div>
+          <div style="font-size:28px;font-weight:800;color:var(--danger);letter-spacing:-.03em">0%</div>
+        </div>
+        <div style="font-size:20px;color:var(--ink-5)">→</div>
+        <div>
+          <div style="font-size:11px;color:var(--ink-5);margin-bottom:4px">With</div>
+          <div style="font-size:28px;font-weight:800;color:var(--success);letter-spacing:-.03em">100%</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;background:var(--success-dim);border-radius:var(--r);padding:6px 12px;font-size:13px;font-weight:700;color:var(--success)">▲ +100%</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;text-align:center;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);margin-bottom:12px">评估覆盖断言数</div>
+      <div style="font-size:36px;font-weight:800;color:var(--ink);letter-spacing:-.03em;margin:12px 0">21</div>
+      <div style="font-size:13px;color:var(--ink-4)">3 个场景 × 7/8/6 条断言</div>
+      <div style="margin-top:14px;background:var(--brand-dim);border-radius:var(--r);padding:6px 12px;font-size:13px;font-weight:700;color:var(--brand)">可复现 · 客观判断</div>
+    </div>
+  </div>
+
+  <!-- 3 Eval cards -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Eval 1 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#0f1530,#1a2a5e);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.08em;text-transform:uppercase;font-family:'JetBrains Mono',monospace">EVAL-1</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-top:3px">新建知识库弹框表单实现</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="background:var(--success-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--success)">With: 8/8 ✅</div>
+          <div style="background:var(--danger-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--danger)">Without: 2/8 ❌</div>
+        </div>
+      </div>
+      <div style="padding:20px 24px;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:var(--surface-2);">
+              <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--ink-3);border-radius:var(--r) 0 0 var(--r)">断言</th>
+              <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--ink-3);width:80px">With</th>
+              <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--ink-3);width:80px">Without</th>
+              <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--ink-3);border-radius:0 var(--r) var(--r) 0">规范来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">所有表单标签末尾包含冒号</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">form.md §标签规范</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">必填项红色星号 * 紧跟标签右侧</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">通用前端知识</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">「取消」在左 / 「新建」在右</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">button.md §顺序规范</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">描述字段使用 textarea 长文本框</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">input.md §长文本输入框</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">单选框横排间距 ≥ 24px</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">radio.md §尺寸规范</td></tr>
+            <tr><td style="padding:9px 12px;color:var(--ink-2)">弹框宽度 400px 符合规范</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">message-box.md §尺寸</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;background:var(--danger-dim);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--danger)">
+          Without Skill 通过的 2/8 均为通用前端知识（主色按钮 + 星号位置），与快手规范特有约定无关。
+        </div>
+      </div>
+    </div>
+
+    <!-- Eval 2 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#3b2160,#4c1d95);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.08em;text-transform:uppercase;font-family:'JetBrains Mono',monospace">EVAL-2</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-top:3px">标签页类型选择与分页组件实现</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="background:var(--success-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--success)">With: 7/7 ✅</div>
+          <div style="background:var(--danger-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--danger)">Without: 2/7 ❌</div>
+        </div>
+      </div>
+      <div style="padding:20px 24px;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tbody>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">标签页使用简单标签页（非胶囊）</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700;width:80px">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700;width:80px">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">tabs.md §胶囊禁止上级导航</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">分页含总条目数显示</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">pagination.md §类型</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">分页有跳转输入框</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">pagination.md §类型</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">分页有每页条数切换下拉</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">pagination.md §类型</td></tr>
+            <tr><td style="padding:9px 12px;color:var(--ink-2)">当前页码高亮 / 省略号折叠</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">通用前端知识</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Eval 3 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#064e3b,#065f46);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.08em;text-transform:uppercase;font-family:'JetBrains Mono',monospace">EVAL-3</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-top:3px">代码规范检查与修正</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="background:var(--success-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--success)">With: 6/6 ✅</div>
+          <div style="background:var(--danger-dim);border-radius:var(--r);padding:5px 12px;font-size:13px;font-weight:700;color:var(--danger)">Without: 2/6 ❌</div>
+        </div>
+      </div>
+      <div style="padding:20px 24px;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tbody>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">识别出标签缺少冒号</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700;width:80px">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700;width:80px">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">form.md §冒号规范</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">识别出描述应用 textarea 非 input</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">input.md §长文本</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">识别出弹框宽度 600px 超规范 400px</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">通用 UI 感知</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td style="padding:9px 12px;color:var(--ink-2)">识别出输入框缺少 placeholder</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">SKILL.md §使用速查</td></tr>
+            <tr><td style="padding:9px 12px;color:var(--ink-2)">提供符合规范的完整修正代码</td><td style="padding:9px 12px;text-align:center;color:var(--success);font-weight:700">✅</td><td style="padding:9px 12px;text-align:center;color:var(--danger);font-weight:700">❌</td><td style="padding:9px 12px;color:var(--ink-4);font-size:12px;font-family:'JetBrains Mono',monospace">规范依据完整才可修正</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Key insight -->
+  <div style="margin-top:20px;background:linear-gradient(135deg,#0f1530,#1a2a5e);border-radius:var(--r-xl);padding:24px 28px;color:#fff;">
+    <div style="font-size:15px;font-weight:700;margin-bottom:10px">核心洞察</div>
+    <p style="font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;max-width:800px">
+      Without Skill 通过的所有断言，<strong style="color:#fff">100% 来自通用前端知识</strong>（按钮高亮、省略号分页等），与快手内部规范完全无关。
+      快手专有规范（标签冒号、弹框400px、胶囊禁用规则……）Without Skill 命中率精确为 <strong style="color:#f87171">0%</strong>。
+      这证明：Skill 对内部规范场景是<strong style="color:#4ade80">不可替代的基础设施</strong>，不是锦上添花。
+    </p>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 5: PRODUCTION PIPELINE ═══════════════════ -->
+<section class="section" id="production">
+  <div class="section-header">
+    <div class="section-eyebrow">05 · Production Pipeline</div>
+    <h2 class="section-title">生成稿如何直接进入生产？</h2>
+    <p class="section-desc">
+      AI 生成的 HTML/CSS 设计稿不是"给设计师看的原型"，而是<strong>前端可直接使用的生产代码</strong>。
+      这需要在生成侧满足三个条件：结构可接管、样式可剥离、Token 可对齐。
+    </p>
+  </div>
+
+  <!-- 端到端流程图 -->
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:36px 40px;margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:28px;font-family:'JetBrains Mono',monospace;">END-TO-END · 从需求到上线</div>
+
+    <div style="display:flex;align-items:stretch;gap:0;overflow-x:auto;">
+
+      <!-- Step 1 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#eef3ff;border:2px solid #c7d8ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📋</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">需求描述</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">"帮我生成一个<br/>知识库列表页"</div>
+        </div>
+        <div style="background:var(--brand-dim);border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--brand);font-weight:600">产品/设计师</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,var(--brand),var(--brand-mid));border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--brand-mid);"></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fff7ed;border:2px solid #fed7aa;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤖</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">AI 规范生成</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">b-design-codegen<br/>调用规范 Skill</div>
+        </div>
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#c2410c;font-weight:600">Token 精确 · 合规 100%</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#c2410c,#ea580c);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #ea580c;"></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#f0fdf4;border:2px solid #bbf7d0;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📄</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">输出产物</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">HTML + CSS<br/>（含规范注释）</div>
+        </div>
+        <div style="background:var(--success-dim);border:1px solid #bbf7d0;border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--success);font-weight:600">生产就绪格式</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #4ade80;"></div>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fdf4ff;border:2px solid #e9d5ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⚙️</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">前端接管</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">结构拆解为<br/>Vue/React 组件</div>
+        </div>
+        <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#7e22ce;font-weight:600">无需重写逻辑</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#7e22ce,#9333ea);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #9333ea;"></div>
+      </div>
+
+      <!-- Step 5 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fef3c7;border:2px solid #fde68a;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">自动走查</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">b-design-review<br/>CI 门控</div>
+        </div>
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:4px 8px;font-size:11px;color:#92400e;font-weight:600">不合规不合并</div>
+      </div>
+
+      <div style="display:flex;align-items:center;padding:0 8px;flex-shrink:0;padding-bottom:32px;">
+        <div style="height:2px;width:32px;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:1px;"></div>
+        <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #f59e0b;"></div>
+      </div>
+
+      <!-- Step 6 -->
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#2563f4,#6b9bff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🚀</div>
+        <div style="text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">上线</div>
+          <div style="font-size:11px;color:var(--ink-4);line-height:1.5">规范合规<br/>零 UI 债务</div>
+        </div>
+        <div style="background:var(--brand-dim);border-radius:var(--r);padding:4px 8px;font-size:11px;color:var(--brand);font-weight:600">100% 规范合规</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3 条件 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+
+    <!-- 条件1：结构可接管 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#0f1530,#1a2a5e);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 1</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">结构可接管</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">HTML 语义化，组件边界清晰</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          生成的 HTML 必须有明确的组件边界注释，让前端可以直接按区域拆 Vue/React 组件，而不是面对一团 div 猜结构。
+        </p>
+        <div style="background:var(--ink);border-radius:var(--r);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2;color:rgba(255,255,255,0.7);">
+          <div style="color:#6b9bff"><!-- [COMPONENT: KnowledgeList] --></div>
+          <div style="color:rgba(255,255,255,0.4)">&lt;div class="knowledge-list"&gt;</div>
+          <div style="padding-left:16px;color:rgba(255,255,255,0.4)">&lt;div class="list-header"&gt;...</div>
+          <div style="padding-left:16px;color:rgba(255,255,255,0.4)">&lt;div class="list-body"&gt;...</div>
+          <div style="color:rgba(255,255,255,0.4)">&lt;/div&gt;</div>
+          <div style="color:#6b9bff"><!-- [/COMPONENT] --></div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 组件开始/结束注释</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 语义化标签（nav/header/main/section）</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ class 命名与组件库一致</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 条件2：样式可剥离 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#1a3a1a,#14532d);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 2</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">样式可剥离</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">CSS 变量映射到组件库 Token</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          CSS 使用 CSS 变量，变量名与快手组件库的 Design Token 对齐。前端只需替换 Token 引用，不需要逐行改样式值。
+        </p>
+        <div style="background:var(--ink);border-radius:var(--r);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2;color:rgba(255,255,255,0.7);">
+          <div style="color:rgba(255,255,255,0.35)">/* 生成稿（直接可用）*/</div>
+          <div><span style="color:#f87171">--btn-primary-bg:</span> <span style="color:#4ade80">#2563F4</span>;</div>
+          <div><span style="color:#f87171">--btn-height-sm:</span> <span style="color:#4ade80">28px</span>;</div>
+          <div><span style="color:#f87171">--modal-width:</span> <span style="color:#4ade80">400px</span>;</div>
+          <div style="margin-top:6px;color:rgba(255,255,255,0.35)">/* 映射到组件库 */</div>
+          <div><span style="color:#6b9bff">@import</span> <span style="color:#fcd34d">'@kuaishou/b-design/tokens'</span>;</div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 所有样式值来自 CSS 变量</div>
+          <div style="font-size:12px;color:var(--success);display:flex;align-items:center;gap:6px;">✓ 变量名与 @kuaishou/b-design Token 对齐</div>
+          <div style="font-size:12px;color:var(--danger);display:flex;align-items:center;gap:6px;font-weight:600">✗ 禁止魔法值（#2563F4 直接写死）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 条件3：Token 可对齐 -->
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;">
+      <div style="background:linear-gradient(90deg,#3b1e0a,#7c2d12);padding:16px 20px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px">CONDITION 3</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">交付物可直用</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">Handoff 注释 + 走查报告随附</div>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px">
+          每次生成同时产出三份交付物：HTML 稿、规范对照说明、自动走查报告。前端接到的不是一个 HTML 文件，而是一个完整的可验收包。
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">📄</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">page.html</div>
+              <div style="font-size:11px;color:var(--ink-4)">含组件边界注释 + CSS 变量</div>
+            </div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">📋</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">spec-notes.md</div>
+              <div style="font-size:11px;color:var(--ink-4)">每个组件的规范来源引用</div>
+            </div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px">✅</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-2)">compliance-report.md</div>
+              <div style="font-size:11px;color:var(--ink-4)">P0/P1/P2 自动走查结果</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 前端视角：节省了什么 -->
+  <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:28px 32px;">
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:20px">前端视角：原来要做什么 vs 现在要做什么</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--danger-dim);display:inline-flex;align-items:center;justify-content:center;font-size:10px">✗</span>
+          原来（没有生产就绪设计稿）
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">①</span>
+            <span>看 Figma 稿反推组件结构，逐层猜层次关系</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">②</span>
+            <span>手动查规范文档，找按钮色值/间距/弹框宽度</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">③</span>
+            <span>凭记忆写 CSS，经常写错或写漏</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">④</span>
+            <span>等设计师走查，发现规范问题再改</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--danger);flex-shrink:0;margin-top:2px">⑤</span>
+            <span>反复改返工，UI 债务累积</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--success);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--success-dim);display:inline-flex;align-items:center;justify-content:center;font-size:10px">✓</span>
+          现在（AI 生产就绪设计稿）
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">①</span>
+            <span>直接按组件注释边界拆 Vue/React 组件，结构已标注</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">②</span>
+            <span>CSS 变量已对齐组件库 Token，直接替换引用即可</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">③</span>
+            <span>随附 spec-notes.md，每个组件的规范来源可溯源</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">④</span>
+            <span>compliance-report.md 提前标注所有 P0 问题</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-3);">
+            <span style="color:var(--success);flex-shrink:0;margin-top:2px">⑤</span>
+            <span>CI 集成 b-design-review，不合规不合并</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- time saving -->
+    <div style="margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:var(--surface-2);border-radius:var(--r-lg);padding:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:26px;font-weight:800;color:var(--success);letter-spacing:-.03em">~0</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">规范查阅时间</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--success);letter-spacing:-.03em">~0</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">UI 走查等待</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-.03em">3件</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">交付物随稿产出</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--line);">
+        <div style="font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-.03em">CI</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px">门控自动拦截</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CI 集成 -->
+  <div style="margin-top:16px;background:var(--ink);border-radius:var(--r-xl);padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:#fff">CI 门控：规范走查集成到 PR 流程</div>
+      <div style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:#4ade80">自动拦截</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--r);padding:16px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:rgba(255,255,255,0.7);">
+      <div style="color:rgba(255,255,255,0.35)"># .github/workflows/design-review.yml</div>
+      <div><span style="color:#6b9bff">on:</span> [pull_request]</div>
+      <div><span style="color:#6b9bff">jobs:</span></div>
+      <div style="padding-left:16px"><span style="color:#6b9bff">design-review:</span></div>
+      <div style="padding-left:32px"><span style="color:#6b9bff">steps:</span></div>
+      <div style="padding-left:48px"><span style="color:#f87171">- name:</span> Run b-design-review</div>
+      <div style="padding-left:56px"><span style="color:#f87171">run:</span> <span style="color:#4ade80">ai review --skill b-design-review --fail-on P0</span></div>
+      <div style="padding-left:48px;margin-top:4px;color:rgba(255,255,255,0.35)"># P0 问题 → PR 阻塞 · P1 问题 → Warning · P2 → 记录</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="background:var(--danger-dim);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--danger);font-weight:600">P0 问题 → 阻塞合并</div>
+      <div style="background:var(--warn-dim);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--warn);font-weight:600">P1 问题 → Warning 提示</div>
+      <div style="background:var(--surface-2);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--ink-4);font-weight:600">P2 问题 → 记录备案</div>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ═══════════════════ SECTION 6: STRUCTURE + GAP + NEXT ═══════════════════ -->
+<section class="section" id="structure">
+  <div class="section-header">
+    <div class="section-eyebrow">06 · File Structure</div>
+    <h2 class="section-title">Skill 目录结构</h2>
+    <p class="section-desc">按功能分层，每类文件职责单一，支持增量扩展。</p>
+  </div>
+
+  <div style="background:var(--ink);border-radius:var(--r-xl);padding:32px 36px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:rgba(255,255,255,0.75);">
+    <div style="color:rgba(255,255,255,0.4);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px">data-design-guidelines/</div>
+    <div><span style="color:#6b9bff">├── SKILL.md</span><span style="color:rgba(255,255,255,0.3);margin-left:24px">← 入口：触发词 + 依赖声明 + 快查索引</span></div>
+    <div><span style="color:rgba(255,255,255,0.5)">├── references/</span></div>
+    <div><span style="color:rgba(255,255,255,0.35)">│   ├── button.md / input.md / table.md ...</span><span style="color:rgba(255,255,255,0.25);margin-left:16px">← 已有 22 个组件</span></div>
+    <div><span style="color:rgba(255,255,255,0.35)">│   ├── typical-page.md</span><span style="color:rgba(255,255,255,0.25);margin-left:24px">← 已有 3 类页面模板</span></div>
+    <div><span style="color:#f87171">│   ├── tokens.md</span><span style="color:rgba(255,255,255,0.3);margin-left:24px">← ⭐ 新增：精确 Token 绑定表（元素+状态+值）</span></div>
+    <div><span style="color:#f87171">│   ├── anti-patterns.md</span><span style="color:rgba(255,255,255,0.3);margin-left:16px">← ⭐ 新增：反例库（禁止用法集中管理）</span></div>
+    <div><span style="color:#f87171">│   └── combination-rules.md</span><span style="color:rgba(255,255,255,0.3);margin-left:8px">← ⭐ 新增：跨组件组合约束</span></div>
+    <div><span style="color:rgba(255,255,255,0.5)">├── patterns/</span></div>
+    <div><span style="color:#f87171">│   ├── decision-tree.md</span><span style="color:rgba(255,255,255,0.3);margin-left:24px">← ⭐ 新增：弹框 vs 抽屉决策逻辑</span></div>
+    <div><span style="color:rgba(255,255,255,0.35)">│   └── page-templates/</span><span style="color:rgba(255,255,255,0.25);margin-left:24px">← 扩充：列表页/设置页模板</span></div>
+    <div><span style="color:rgba(255,255,255,0.5)">├── examples/</span><span style="color:rgba(255,255,255,0.25);margin-left:24px">← 已有，继续补充</span></div>
+    <div><span style="color:#4ade80">└── checklists/</span><span style="color:rgba(255,255,255,0.3);margin-left:24px">← ⭐ 新增：按页面类型分文件的核查表</span></div>
+    <div style="color:#4ade80;margin-left:24px">    ├── modal-form.md</div>
+    <div style="color:#4ade80;margin-left:24px">    ├── list-page.md</div>
+    <div style="color:#4ade80;margin-left:24px">    └── dashboard.md</div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<section class="section" id="gap">
+  <div class="section-header">
+    <div class="section-eyebrow">07 · Gap Analysis</div>
+    <h2 class="section-title">现有 vs 缺失：差距在哪里</h2>
+    <p class="section-desc">Iteration 1 已验证核心合规率，以下是下一轮需要补充的缺失项。</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div style="background:var(--success-dim);border:1.5px solid #bbf7d0;border-radius:var(--r-xl);padding:24px;">
+      <div style="font-size:13px;font-weight:700;color:var(--success);margin-bottom:16px">✅ 已有（Iteration 1 完成）</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>22 个组件规范文档（尺寸 + 状态矩阵）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>精确 Token 值（色值/字号/间距/圆角）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>3 类典型页面模板（天工/看板/ABTest）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>使用规范速查（按钮组/标签冒号/placeholder）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>3 个 Eval 场景验证，合规率 100%</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--success);flex-shrink:0">✓</span>codegen + review 双执行器 Skill</div>
+      </div>
+    </div>
+    <div style="background:var(--danger-dim);border:1.5px solid #fecaca;border-radius:var(--r-xl);padding:24px;">
+      <div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:16px">❌ 缺失（Iteration 2 计划补充）</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>反例库（anti-patterns.md）——<strong style="color:var(--ink-2)">最高优先级</strong></div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>决策树（弹框 vs 抽屉 vs 页内展开）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>跨组件组合约束（combination-rules.md）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>Token 绑定表（元素 × 状态 × 精确值）</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>通用列表页 / 设置页模板</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-3)"><span style="color:var(--danger);flex-shrink:0">✗</span>P0/P1/P2 分类 Checklist 文件</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<section class="section" id="next">
+  <div class="section-header">
+    <div class="section-eyebrow">08 · Next Steps</div>
+    <h2 class="section-title">下一步计划</h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;">
+      <div class="tag tag-danger" style="margin-bottom:14px">P0 · 立即执行</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px">补充反例库</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65;">
+        新建 <code style="font-size:12px;font-family:'JetBrains Mono',monospace;background:var(--surface-2);padding:1px 5px;border-radius:3px">anti-patterns.md</code>，
+        收录所有已知的"不能这样用"约定。这是提升一致性最高ROI的单项投入。
+      </p>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;">
+      <div class="tag tag-warn" style="margin-bottom:14px">P1 · 本轮迭代</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px">决策树 + 组合约束</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65;">
+        弹框/抽屉选择逻辑、操作区放置规则、跨组件顺序约束。
+        消灭所有 ambiguous 场景下的随机输出。
+      </p>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;">
+      <div class="tag tag-brand" style="margin-bottom:14px">P2 · 下一轮</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px">Eval 扩充 + 覆盖率追踪</div>
+      <p style="font-size:13px;color:var(--ink-3);line-height:1.65;">
+        扩充 Eval 场景到 10+，追踪每次规范变更后的合规率变化曲线，
+        建立规范健康度监控。
+      </p>
+    </div>
+  </div>
+
+  <!-- Final callout -->
+  <div style="margin-top:28px;background:linear-gradient(145deg,#060c1c,#0d1530);border-radius:var(--r-xl);padding:32px 36px;display:flex;align-items:center;gap:28px;">
+    <div style="font-size:48px;flex-shrink:0">🎯</div>
+    <div>
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em">最终目标</div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.75;max-width:700px">
+        将快手内部 B 端设计规范的<strong style="color:#fff">每一条约定</strong>转化为 AI 可精确执行的知识结构。
+        不再依赖设计师逐页走查，不再依赖开发者记忆规范细节。
+        任何人让 AI 生成一个 B 端页面，输出结果就应该和设计师亲手画的稿子<strong style="color:#4ade80">一样</strong>。
+      </p>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script>
+  // Active nav highlight on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

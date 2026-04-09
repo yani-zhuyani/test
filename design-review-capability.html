@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计走查 Skill — 能力结构图</title>
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #12121f;
+    --surface2: #1a1a2e;
+    --border: rgba(255,255,255,0.07);
+    --l1: #6366f1;
+    --l1-glow: rgba(99,102,241,0.2);
+    --l2: #0ea5e9;
+    --l2-glow: rgba(14,165,233,0.2);
+    --l3: #10b981;
+    --l3-glow: rgba(16,185,129,0.2);
+    --warn: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #475569;
+    --secondary: #94a3b8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+    min-height: 100vh;
+    padding: 40px 32px 80px;
+  }
+
+  /* === 标题区 === */
+  .hero {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 20px; padding: 5px 14px; font-size: 12px;
+    color: #818cf8; margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #e2e8f0 30%, #818cf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p {
+    color: var(--secondary); font-size: 15px; margin-top: 10px;
+  }
+
+  /* === 总体布局 === */
+  .diagram {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  /* 连接线 */
+  .diagram::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 80px;
+    bottom: 80px;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      rgba(99,102,241,0.4) 0%,
+      rgba(14,165,233,0.4) 50%,
+      rgba(16,185,129,0.4) 100%
+    );
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+
+  /* === Layer 卡片 === */
+  .layer {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 48px 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .layer-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 32px;
+    gap: 8px;
+    position: relative;
+  }
+  .layer-node {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+    position: relative; z-index: 2;
+  }
+  .layer-line {
+    flex: 1;
+    width: 2px;
+    min-height: 40px;
+  }
+  .arrow-down {
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    margin-bottom: 4px;
+  }
+
+  /* Layer 1 颜色 */
+  .l1 .layer-node { background: rgba(99,102,241,0.2); border: 2px solid var(--l1); color: var(--l1); }
+  .l1 .layer-line { background: linear-gradient(to bottom, rgba(99,102,241,0.4), rgba(14,165,233,0.2)); }
+  .l1 .arrow-down { border-top: 8px solid rgba(14,165,233,0.5); }
+  /* Layer 2 颜色 */
+  .l2 .layer-node { background: rgba(14,165,233,0.2); border: 2px solid var(--l2); color: var(--l2); }
+  .l2 .layer-line { background: linear-gradient(to bottom, rgba(14,165,233,0.4), rgba(16,185,129,0.2)); }
+  .l2 .arrow-down { border-top: 8px solid rgba(16,185,129,0.5); }
+  /* Layer 3 颜色 */
+  .l3 .layer-node { background: rgba(16,185,129,0.2); border: 2px solid var(--l3); color: var(--l3); }
+
+  /* === 内容面板 === */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin: 16px 0;
+    transition: border-color 0.2s;
+  }
+  .panel:hover { border-color: rgba(255,255,255,0.12); }
+  .panel-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 14px; opacity: 0.6;
+  }
+  .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .panel-desc { font-size: 13px; color: var(--secondary); line-height: 1.6; margin-bottom: 16px; }
+
+  /* 输入/输出 chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .chip-in { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--secondary); }
+  .chip-out { border: 1px solid; }
+  .chip-l1 { background: var(--l1-glow); border-color: rgba(99,102,241,0.4); color: #a5b4fc; }
+  .chip-l2 { background: var(--l2-glow); border-color: rgba(14,165,233,0.4); color: #7dd3fc; }
+  .chip-l3 { background: var(--l3-glow); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+  .chip-warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #fbbf24; }
+  .chip-red { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+
+  /* 步骤列表 */
+  .steps { display: flex; flex-direction: column; gap: 8px; }
+  .step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 12px; line-height: 1.5;
+  }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 600; color: var(--text); }
+  .step-note { color: var(--secondary); margin-top: 2px; }
+
+  /* 技术栈 */
+  .tech-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .tech {
+    padding: 3px 10px; border-radius: 5px;
+    font-size: 11px; font-family: 'SF Mono', monospace;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+  }
+
+  /* 约束提示 */
+  .constraint {
+    background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px; padding: 10px 14px; margin-top: 12px;
+    font-size: 12px; color: #fcd34d; display: flex; gap: 8px; align-items: flex-start;
+  }
+
+  /* === Skill 工作流 === */
+  .workflow-section {
+    max-width: 1080px; margin: 64px auto 0;
+  }
+  .workflow-title {
+    text-align: center; font-size: 20px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .workflow-subtitle {
+    text-align: center; color: var(--secondary); font-size: 13px; margin-bottom: 32px;
+  }
+  .workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .workflow::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: calc(10% + 12px);
+    right: calc(10% + 12px);
+    height: 2px;
+    background: linear-gradient(to right,
+      var(--l1) 0%, var(--l1) 20%,
+      var(--l2) 40%, var(--l2) 60%,
+      var(--l3) 80%, var(--l3) 100%
+    );
+    opacity: 0.4;
+  }
+  .wf-step {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 8px; position: relative; z-index: 1;
+  }
+  .wf-node {
+    width: 80px; height: 80px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 14px; flex-shrink: 0;
+    border: 2px solid;
+    position: relative;
+  }
+  .wf-step-num {
+    position: absolute; top: -4px; right: -4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--bg); border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700;
+  }
+  .wf-label { font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 6px; }
+  .wf-desc { font-size: 11px; color: var(--secondary); text-align: center; line-height: 1.5; }
+  .wf-tag {
+    margin-top: 8px; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 600;
+  }
+
+  /* 分支区 */
+  .branch-section {
+    max-width: 1080px; margin: 48px auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 32px;
+  }
+  .branch-title { font-size: 14px; font-weight: 700; margin-bottom: 20px; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; }
+  .branch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .branch-card {
+    border-radius: 10px; padding: 16px 18px;
+    border: 1px solid;
+  }
+  .branch-card-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .branch-list { display: flex; flex-direction: column; gap: 5px; }
+  .branch-item { font-size: 12px; color: var(--secondary); display: flex; align-items: flex-start; gap: 6px; line-height: 1.5; }
+
+  /* 页脚说明 */
+  .footnote {
+    max-width: 1080px; margin: 32px auto 0;
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .fn-item {
+    flex: 1; min-width: 240px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+    font-size: 12px;
+  }
+  .fn-label { font-weight: 700; margin-bottom: 6px; }
+  .fn-text { color: var(--secondary); line-height: 1.6; }
+
+  .divider {
+    height: 1px; background: var(--border);
+    max-width: 1080px; margin: 48px auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🔍 Design Review Skill · 能力结构图</div>
+  <div style="position:fixed;bottom:20px;right:24px;z-index:999;display:flex;align-items:center;gap:8px;background:rgba(18,18,31,0.9);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px;backdrop-filter:blur(12px);">
+    <img src="https://github.com/zhuyani.png" style="width:22px;height:22px;border-radius:50%;border:1px solid rgba(99,102,241,0.5)" onerror="this.style.display='none'">
+    <span style="font-size:12px;color:#94a3b8;font-family:monospace;">@zhuyani</span>
+    <span style="font-size:11px;color:#475569;">· 2026</span>
+  </div>
+  <h1>三层能力 · 从视觉到交互到自动修复</h1>
+  <p>每层能力独立可运行，也可串联为完整的「走查 → 修复 → 验证」闭环</p>
+</div>
+
+<div class="diagram">
+
+  <!-- ========== LAYER 1 ========== -->
+  <div class="layer l1">
+    <!-- 左侧：输入 + 技术栈 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l1)">输入 · Input</div>
+      <div class="chips">
+        <div class="chip chip-in">🎨 Figma Frame URL</div>
+        <div class="chip chip-in">🌐 前端页面 URL</div>
+        <div class="chip chip-in">📐 视口尺寸</div>
+      </div>
+      <div class="panel-desc">
+        设计师提供 Figma 设计稿链接 + 前端环境地址，工具自动完成双端截图。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l1-glow);color:var(--l1)">1</div>
+          <div class="step-body">
+            <div class="step-title">Figma API 获取 Frame 图像</div>
+            <div class="step-note">解析 node-id → Export PNG（1x/2x）</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l1-glow);color:var(--l1)">2</div>
+          <div class="step-body">
+            <div class="step-title">Playwright 截取前端页面</div>
+            <div class="step-note">Headless Chrome，指定视口，全页截图</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l1-glow);color:var(--l1)">3</div>
+          <div class="step-body">
+            <div class="step-title">图像对齐 + pixelmatch 逐像素对比</div>
+            <div class="step-note">生成差异热力图，标注差异坐标和区域面积</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-row">
+        <span class="tech">Figma REST API</span>
+        <span class="tech">Playwright</span>
+        <span class="tech">pixelmatch</span>
+        <span class="tech">jimp</span>
+      </div>
+    </div>
+
+    <!-- 中轴 -->
+    <div class="layer-spine">
+      <div class="layer-node">👁</div>
+      <div class="layer-line"></div>
+      <div class="arrow-down"></div>
+    </div>
+
+    <!-- 右侧：输出 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l1)">输出 · Output</div>
+      <div class="chips">
+        <div class="chip chip-l1">🔴 差异热力图</div>
+        <div class="chip chip-l1">📋 问题清单 CSV</div>
+        <div class="chip chip-l1">🏆 还原度分数（0-100）</div>
+      </div>
+      <div class="panel-title" style="color:var(--l1)">Layer 1 · 视觉走查</div>
+      <div class="panel-desc">
+        对比设计稿与前端截图的视觉一致性，定位颜色、间距、字号等视觉属性偏差，输出量化的还原度报告。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l1-glow);color:var(--l1)">4</div>
+          <div class="step-body">
+            <div class="step-title">AI Vision 分析差异区域</div>
+            <div class="step-note">定位差异坐标 → 分类（颜色/间距/字号/布局）</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l1-glow);color:var(--l1)">5</div>
+          <div class="step-body">
+            <div class="step-title">生成 HTML 报告 + 推送通知</div>
+            <div class="step-note">飞书卡片 · PR Comment · 邮件报告</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-row">
+        <span class="tech">GPT-4V / Claude Vision</span>
+        <span class="tech">Feishu Webhook</span>
+        <span class="tech">GitHub API</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LAYER 2 ========== -->
+  <div class="layer l2">
+    <!-- 左侧 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l2)">输入 · Input</div>
+      <div class="chips">
+        <div class="chip chip-in">📜 交互剧本 DSL</div>
+        <div class="chip chip-in">🔀 Figma Prototype Flows</div>
+        <div class="chip chip-in">⌚ 动效时长规格</div>
+      </div>
+      <div class="panel-desc">
+        设计师额外提供一份「交互剧本」，描述用户操作序列（点击、输入、悬停），Playwright 逐步执行并截图每个交互状态。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l2-glow);color:var(--l2)">1</div>
+          <div class="step-body">
+            <div class="step-title">解析交互剧本</div>
+            <div class="step-note">click #btn → hover .menu → type "hello" → assert URL</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l2-glow);color:var(--l2)">2</div>
+          <div class="step-body">
+            <div class="step-title">Playwright 执行操作序列</div>
+            <div class="step-note">每步操作后截图，记录状态变化</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l2-glow);color:var(--l2)">3</div>
+          <div class="step-body">
+            <div class="step-title">与 Figma Prototype 状态对比</div>
+            <div class="step-note">Hover 态 · Focus 态 · Error 态 · 成功态</div>
+          </div>
+        </div>
+      </div>
+      <div class="constraint">
+        <span>⚠</span>
+        <span>Figma Prototype API 目前不开放完整的交互状态导出，需设计师手动补充 DSL 或录制操作序列</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech">Playwright Actions</span>
+        <span class="tech">YAML DSL</span>
+        <span class="tech">Figma Variables API</span>
+      </div>
+    </div>
+
+    <!-- 中轴 -->
+    <div class="layer-spine">
+      <div class="layer-node">🖱</div>
+      <div class="layer-line"></div>
+      <div class="arrow-down"></div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l2)">输出 · Output</div>
+      <div class="chips">
+        <div class="chip chip-l2">🎞 状态对比截图序列</div>
+        <div class="chip chip-l2">❌ 缺失状态清单</div>
+        <div class="chip chip-l2">⏱ 动效时长偏差</div>
+        <div class="chip chip-l2">🔗 跳转路径错误</div>
+      </div>
+      <div class="panel-title" style="color:var(--l2)">Layer 2 · 交互走查</div>
+      <div class="panel-desc">
+        验证页面的交互行为是否符合设计预期：状态切换是否完整、动效是否存在、跳转路径是否正确。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l2-glow);color:var(--l2)">4</div>
+          <div class="step-body">
+            <div class="step-title">AI 分类交互问题</div>
+            <div class="step-note">缺失状态 · 错误反馈缺失 · 动效时机不对 · 错误跳转</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l2-glow);color:var(--l2)">5</div>
+          <div class="step-body">
+            <div class="step-title">生成交互问题报告</div>
+            <div class="step-note">附操作录屏 GIF + 每步截图对比</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-row">
+        <span class="tech">Playwright Video</span>
+        <span class="tech">ffmpeg → GIF</span>
+        <span class="tech">GPT-4V</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LAYER 3 ========== -->
+  <div class="layer l3">
+    <!-- 左侧 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l3)">输入 · Input</div>
+      <div class="chips">
+        <div class="chip chip-in">📋 L1 + L2 问题清单</div>
+        <div class="chip chip-in">🗂 前端代码仓库</div>
+        <div class="chip chip-in">🔑 Design Token 映射表</div>
+      </div>
+      <div class="panel-desc">
+        基于 L1/L2 的问题清单，AI Agent 定位源码位置，对确定性问题（颜色/间距/字号）自动生成修复 patch，并截图验证。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l3-glow);color:var(--l3)">1</div>
+          <div class="step-body">
+            <div class="step-title">问题分级：确定性 vs 主观判断</div>
+            <div class="step-note">颜色/间距/字号 → 自动修 ｜ 布局/交互逻辑 → 人工处理</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l3-glow);color:var(--l3)">2</div>
+          <div class="step-body">
+            <div class="step-title">AI 定位源码</div>
+            <div class="step-note">grep / AST 分析 → 定位对应 CSS class / token 引用</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l3-glow);color:var(--l3)">3</div>
+          <div class="step-body">
+            <div class="step-title">生成修复 patch</div>
+            <div class="step-note">#6366f1 → #4f46e5，margin-top: 16px，最小改动原则</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-row">
+        <span class="tech">Claude Code / Codex</span>
+        <span class="tech">AST Parser</span>
+        <span class="tech">tree-sitter</span>
+      </div>
+    </div>
+
+    <!-- 中轴 -->
+    <div class="layer-spine">
+      <div class="layer-node">🤖</div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="panel">
+      <div class="panel-label" style="color:var(--l3)">输出 · Output</div>
+      <div class="chips">
+        <div class="chip chip-l3">✅ 自动修复 PR</div>
+        <div class="chip chip-l3">🔁 修复前后对比图</div>
+        <div class="chip chip-l3">📊 还原度提升报告</div>
+        <div class="chip chip-warn">⚠ 不可修复问题清单</div>
+      </div>
+      <div class="panel-title" style="color:var(--l3)">Layer 3 · AI 自动修复</div>
+      <div class="panel-desc">
+        AI 对确定性视觉问题直接生成代码 patch，截图验证通过后自动提 PR；不确定的问题输出给人工处理。
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--l3-glow);color:var(--l3)">4</div>
+          <div class="step-body">
+            <div class="step-title">截图验证（最多 3 次迭代）</div>
+            <div class="step-note">修改后重新跑 L1 Diff，验证还原度提升</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--l3-glow);color:var(--l3)">5</div>
+          <div class="step-body">
+            <div class="step-title">创建修复 PR + 通知</div>
+            <div class="step-note">附走查报告 · 修复前后对比 · 飞书通知设计师确认</div>
+          </div>
+        </div>
+      </div>
+      <div class="constraint">
+        <span>⚠</span>
+        <span><strong>关键约束：</strong>AI 只修颜色值/间距/字号等确定性属性。布局重构、交互逻辑、组件替换——一律不自动修，避免引入更大问题。</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech">GitHub API</span>
+        <span class="tech">Playwright 验证</span>
+        <span class="tech">Feishu Webhook</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== 工作流总览 ========== -->
+<div class="divider"></div>
+
+<div class="workflow-section">
+  <div class="workflow-title">完整 Skill 工作流</div>
+  <div class="workflow-subtitle">触发词：「走查 [页面 URL] [Figma URL]」· 全自动串联三层能力</div>
+
+  <div class="workflow">
+    <div class="wf-step">
+      <div class="wf-node" style="background:rgba(99,102,241,0.12);border-color:var(--l1)">
+        📥
+        <div class="wf-step-num" style="border-color:var(--l1);color:var(--l1)">1</div>
+      </div>
+      <div class="wf-label">输入解析</div>
+      <div class="wf-desc">识别 Figma URL<br>+ 前端 URL<br>+ 走查范围</div>
+      <div class="wf-tag chip chip-l1">L1</div>
+    </div>
+
+    <div class="wf-step">
+      <div class="wf-node" style="background:rgba(99,102,241,0.12);border-color:var(--l1)">
+        👁
+        <div class="wf-step-num" style="border-color:var(--l1);color:var(--l1)">2</div>
+      </div>
+      <div class="wf-label">视觉走查</div>
+      <div class="wf-desc">双端截图<br>pixelmatch Diff<br>AI 标注问题</div>
+      <div class="wf-tag chip chip-l1">L1 输出</div>
+    </div>
+
+    <div class="wf-step">
+      <div class="wf-node" style="background:rgba(14,165,233,0.12);border-color:var(--l2)">
+        🖱
+        <div class="wf-step-num" style="border-color:var(--l2);color:var(--l2)">3</div>
+      </div>
+      <div class="wf-label">交互走查</div>
+      <div class="wf-desc">执行交互剧本<br>验证每个状态<br>记录录屏</div>
+      <div class="wf-tag chip chip-l2">L2 可选</div>
+    </div>
+
+    <div class="wf-step">
+      <div class="wf-node" style="background:rgba(16,185,129,0.12);border-color:var(--l3)">
+        🤖
+        <div class="wf-step-num" style="border-color:var(--l3);color:var(--l3)">4</div>
+      </div>
+      <div class="wf-label">AI 自动修复</div>
+      <div class="wf-desc">分级问题<br>定位源码<br>生成 patch</div>
+      <div class="wf-tag chip chip-l3">L3 可选</div>
+    </div>
+
+    <div class="wf-step">
+      <div class="wf-node" style="background:rgba(16,185,129,0.12);border-color:var(--l3)">
+        📤
+        <div class="wf-step-num" style="border-color:var(--l3);color:var(--l3)">5</div>
+      </div>
+      <div class="wf-label">交付闭环</div>
+      <div class="wf-desc">PR + 飞书通知<br>设计师确认<br>前端 Review</div>
+      <div class="wf-tag chip chip-l3">结束</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 问题分级 ========== -->
+<div class="branch-section">
+  <div class="branch-title">问题分级规则 — 决定走哪条修复路径</div>
+  <div class="branch-grid">
+    <div class="branch-card" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.25)">
+      <div class="branch-card-title" style="color:var(--l3)">
+        <span>🤖 AI 自动修复（确定性问题）</span>
+      </div>
+      <div class="branch-list">
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 颜色值偏差（hex / rgb 不匹配）</div>
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 间距偏差（padding / margin / gap 具体 px 值）</div>
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 字号偏差（font-size 具体值）</div>
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 字重偏差（font-weight 具体值）</div>
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 圆角偏差（border-radius 具体值）</div>
+        <div class="branch-item"><span style="color:var(--l3)">●</span> 透明度偏差（opacity 具体值）</div>
+      </div>
+    </div>
+    <div class="branch-card" style="background:rgba(245,158,11,0.05);border-color:rgba(245,158,11,0.25)">
+      <div class="branch-card-title" style="color:var(--warn)">
+        <span>👤 人工处理（主观 / 结构性问题）</span>
+      </div>
+      <div class="branch-list">
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 布局结构差异（flex/grid 方向改变）</div>
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 组件缺失 / 替换为错误组件</div>
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 交互行为缺失（点击无响应、状态未切换）</div>
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 响应式布局在特定断点异常</div>
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 动效缺失或时机不对</div>
+        <div class="branch-item"><span style="color:var(--warn)">●</span> 内容截断 / 换行逻辑问题</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 脚注 ========== -->
+<div class="footnote">
+  <div class="fn-item">
+    <div class="fn-label" style="color:var(--l1)">当前已有 · L1 视觉走查</div>
+    <div class="fn-text">可以直接开始实现。核心链路：Figma API + Playwright + pixelmatch + HTML 报告。预计 2-3 天可跑通 MVP。</div>
+  </div>
+  <div class="fn-item">
+    <div class="fn-label" style="color:var(--l2)">待探索 · L2 交互走查</div>
+    <div class="fn-text">关键前置问题：设计师愿意维护「交互剧本」DSL 吗？如果愿意，技术上没有障碍。否则需要做 AI 自动生成剧本的能力。</div>
+  </div>
+  <div class="fn-item">
+    <div class="fn-label" style="color:var(--l3)">较复杂 · L3 AI 自动修复</div>
+    <div class="fn-text">依赖代码仓库的 Design Token 规范程度。Token 越规范，AI 修复准确率越高。混用魔法值的项目需要先做 Token 治理。</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+{"type":"server-started","port":59547,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:59547","screen_dir":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284"}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-scope.html"}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444317850}
+{"source":"user-event","type":"click","text":"B\n      \n        截图 / 图片\n        设计稿以 PNG/JPG 形式交付，走查时对比静态图","choice":"screenshot","id":null,"timestamp":1774444319369}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444320217}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444325051}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444325752}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444325900}
+{"source":"user-event","type":"click","text":"A\n      \n        Figma\n        设计师出图在 Figma，前端用 Figma URL 或导出图片还原","choice":"figma","id":null,"timestamp":1774444326435}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-trigger.html"}
+{"source":"user-event","type":"click","text":"A\n      \n        PR / 提测节点\n        前端提交代码 / 提测后，设计师去对比页面和设计稿","choice":"pr","id":null,"timestamp":1774444407634}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-granularity.html"}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-output.html"}
+{"source":"user-event","type":"click","text":"D\n      \n        都要\n        HTML 报告为主，同时推送 IM 通知 + 写 PR comment","choice":"multi","id":null,"timestamp":1774444477638}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-approach.html"}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/design-review-architecture.html"}
+{"type":"screen-added","file":"/Users/zhuyani/Downloads/styleguide-gh-pages/.superpowers/brainstorm/78493-1774444284/designer-view.html"}
+{"type":"server-stopped","reason":"idle timeout"}

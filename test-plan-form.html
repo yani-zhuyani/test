@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>测试计划配置 — 符合B端设计规范</title>
+<style>
+/* ========== Reset & Global ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: "PingFang SC", -apple-system, "Helvetica Neue", sans-serif;
+  color: #131416;
+  background: #F5F6F8;
+  min-width: 1440px;
+  line-height: 1.57;
+}
+
+/* ========== Color Tokens ========== */
+:root {
+  --color-primary: #2563F4;
+  --color-primary-hover: #5C8FFF;
+  --color-primary-active: #1747CA;
+  --color-primary-disabled: rgba(37, 99, 244, 0.36);
+  --color-primary-bg: rgba(37, 99, 244, 0.1);
+  --color-danger: #E34D59;
+  --color-text: #131416;
+  --color-text-secondary: #5F6062;
+  --color-placeholder: #8E8E90;
+  --color-disabled-text: #B2B2B3;
+  --color-border: #DFE0E2;
+  --color-border-light: #E9EAEC;
+  --color-border-lighter: #F0F2F4;
+  --color-bg-disabled: #F5F6F8;
+  --color-bg-hover: #F0F2F4;
+  --color-white: #FFFFFF;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
+/* ========== Top Navigation Bar (52px) ========== */
+.top-nav {
+  height: 52px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border-lighter);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.top-nav__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 14px;
+}
+.top-nav__back:hover { color: var(--color-primary); }
+.top-nav__back svg { width: 16px; height: 16px; }
+.top-nav__divider {
+  width: 1px;
+  height: 16px;
+  background: var(--color-border);
+  margin: 0 16px;
+}
+.top-nav__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.top-nav__tabs {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
+.top-nav__tab {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+  position: relative;
+  padding: 0 4px;
+  font-weight: 400;
+  text-decoration: none;
+}
+.top-nav__tab:hover { color: var(--color-primary); }
+.top-nav__tab--active {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.top-nav__tab--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: 2px 2px 0 0;
+}
+.top-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ========== Button ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  font-weight: 400;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+.btn--primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+.btn--primary:active {
+  background: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+}
+.btn--secondary {
+  background: var(--color-white);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.btn--secondary:hover {
+  color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+.btn--tertiary {
+  background: var(--color-white);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn--tertiary:hover {
+  border-color: var(--color-placeholder);
+}
+.btn--text {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  padding: 5px 8px;
+}
+.btn--text:hover { color: var(--color-primary-hover); }
+
+/* ========== Page Content ========== */
+.page-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 40px 60px;
+}
+
+/* ========== Section ========== */
+.section {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 24px 32px 32px;
+  margin-bottom: 16px;
+}
+.section__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+.section__header-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+  color: var(--color-text-secondary);
+}
+.section__header-icon.collapsed { transform: rotate(-90deg); }
+.section__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 24px;
+}
+.section__body { /* collapsible */ }
+.section__body.collapsed { display: none; }
+
+/* ========== Form ========== */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group:last-child { margin-bottom: 0; }
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--color-text);
+  margin-bottom: 8px;
+  line-height: 22px;
+}
+.form-label .required-star {
+  color: var(--color-danger);
+  font-size: 14px;
+  margin-left: 2px;
+}
+.form-label .help-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-placeholder);
+  margin-left: 4px;
+  cursor: help;
+}
+
+/* ========== Input ========== */
+.input {
+  width: 100%;
+  height: 32px;
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input::placeholder { color: var(--color-placeholder); }
+.input:hover { border-color: var(--color-placeholder); }
+.input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+.input:disabled {
+  background: var(--color-bg-disabled);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+/* ========== Textarea ========== */
+.textarea-wrap { position: relative; }
+.textarea-field {
+  width: 100%;
+  min-height: 64px;
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.textarea-field::placeholder { color: var(--color-placeholder); }
+.textarea-field:hover { border-color: var(--color-placeholder); }
+.textarea-field:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+.char-counter {
+  text-align: right;
+  font-size: 12px;
+  color: var(--color-placeholder);
+  margin-top: 4px;
+  line-height: 1;
+}
+.char-counter.over-limit { color: var(--color-danger); }
+
+/* ========== Select ========== */
+.select-wrap {
+  position: relative;
+  width: 100%;
+}
+.select {
+  width: 100%;
+  height: 32px;
+  padding: 5px 32px 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.select:hover { border-color: var(--color-placeholder); }
+.select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-placeholder);
+  pointer-events: none;
+}
+/* Placeholder style for select */
+.select option[value=""] { color: var(--color-placeholder); }
+.select.placeholder-active { color: var(--color-placeholder); }
+
+/* ========== Date Range Picker ========== */
+.date-range-picker {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.date-range-picker:hover { border-color: var(--color-placeholder); }
+.date-range-picker:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+.date-range-picker__input {
+  flex: 1;
+  height: 100%;
+  padding: 0 12px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: transparent;
+  text-align: center;
+}
+.date-range-picker__input::placeholder { color: var(--color-placeholder); }
+.date-range-picker__separator {
+  color: var(--color-placeholder);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.date-range-picker__icon {
+  width: 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-placeholder);
+  flex-shrink: 0;
+}
+.date-range-picker__icon svg { width: 16px; height: 16px; }
+
+/* ========== Radio ========== */
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 22px;
+}
+.radio-input {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-white);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.radio-input:hover { border-color: var(--color-primary); }
+.radio-input:checked {
+  border-color: var(--color-primary);
+  background: var(--color-white);
+}
+.radio-input:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+/* ========== Checkbox ========== */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 22px;
+}
+.checkbox-input {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.checkbox-input:hover { border-color: var(--color-primary); }
+.checkbox-input:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.checkbox-input:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--color-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ========== Number Input ========== */
+.number-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-white);
+  transition: border-color 0.15s;
+}
+.number-input-wrap:hover { border-color: var(--color-placeholder); }
+.number-input-wrap:focus-within { border-color: var(--color-primary); }
+.number-btn {
+  width: 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-disabled);
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  transition: background 0.15s;
+  user-select: none;
+}
+.number-btn:hover { background: var(--color-border-light); }
+.number-btn:active { background: var(--color-border); }
+.number-input {
+  width: 48px;
+  height: 100%;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: transparent;
+  -moz-appearance: textfield;
+}
+.number-input::-webkit-inner-spin-button,
+.number-input::-webkit-outer-spin-button { appearance: none; }
+
+/* ========== Time Picker ========== */
+.time-picker {
+  width: 100%;
+  height: 32px;
+  padding: 5px 32px 5px 12px;
+  font-size: 14px;
+  line-height: 22px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s;
+  position: relative;
+}
+.time-picker::placeholder { color: var(--color-placeholder); }
+.time-picker:hover { border-color: var(--color-placeholder); }
+.time-picker:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,244,0.1); }
+.time-picker-wrap {
+  position: relative;
+}
+.time-picker-wrap .picker-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--color-placeholder);
+  pointer-events: none;
+}
+
+/* ========== Link ========== */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-primary);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 22px;
+}
+.link:hover { color: var(--color-primary-hover); }
+.link svg { width: 14px; height: 14px; }
+
+/* ========== Config Card ========== */
+.config-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-top: 12px;
+  background: var(--color-white);
+}
+.config-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.config-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.config-card__delete {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  color: var(--color-placeholder);
+  transition: color 0.15s;
+}
+.config-card__delete:hover { color: var(--color-danger); }
+
+/* ========== Sub Label ========== */
+.sub-label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  line-height: 22px;
+}
+
+/* ========== Compliance Badge ========== */
+.compliance-badge {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  max-width: 320px;
+  z-index: 200;
+}
+.compliance-badge__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.compliance-badge__list {
+  list-style: none;
+  padding: 0;
+}
+.compliance-badge__list li {
+  padding: 2px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.compliance-badge__list li::before {
+  content: "✅";
+  flex-shrink: 0;
+}
+
+/* ========== Responsive inside content ========== */
+@media (max-width: 1440px) {
+  .page-content { padding: 24px 24px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== Top Navigation Bar (52px) ====== -->
+<header class="top-nav">
+  <a class="top-nav__back" href="javascript:void(0)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M10 3L5 8l5 5"/>
+    </svg>
+    <span>返回</span>
+  </a>
+  <span class="top-nav__divider"></span>
+  <span class="top-nav__title">TPYZXN00810-支持添加AI生成的case到KCase（新版页面支持）</span>
+
+  <nav class="top-nav__tabs">
+    <a class="top-nav__tab top-nav__tab--active" href="javascript:void(0)">基础配置</a>
+    <a class="top-nav__tab" href="javascript:void(0)">用例信息</a>
+    <a class="top-nav__tab" href="javascript:void(0)">操作日志</a>
+  </nav>
+
+  <div class="top-nav__actions">
+    <button class="btn btn--primary">保存</button>
+  </div>
+</header>
+
+<!-- ====== Page Content ====== -->
+<main class="page-content">
+
+  <!-- ====== Section: 基本信息 ====== -->
+  <div class="section">
+    <div class="section__header" onclick="toggleSection(this)">
+      <svg class="section__header-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4.646 5.646a.5.5 0 01.708 0L8 8.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+      </svg>
+      <span class="section__title">基本信息</span>
+    </div>
+    <div class="section__body">
+
+      <!-- 关联 Team -->
+      <div class="form-group">
+        <div class="form-label">
+          关联 Team：
+          <svg class="help-icon" viewBox="0 0 16 16" fill="currentColor">
+            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="8" y="11.5" text-anchor="middle" font-size="10" fill="currentColor">?</text>
+          </svg>
+        </div>
+        <a class="link" href="javascript:void(0)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="12" height="12" rx="2"/>
+            <path d="M8 5v6M5 8h6"/>
+          </svg>
+          关联 Team
+        </a>
+      </div>
+
+      <!-- 计划名称 -->
+      <div class="form-group">
+        <label class="form-label">
+          计划名称：<span class="required-star">*</span>
+        </label>
+        <input class="input" type="text" placeholder="请输入计划名称">
+      </div>
+
+      <!-- 计划类型 -->
+      <div class="form-group">
+        <label class="form-label">
+          计划类型：<span class="required-star">*</span>
+        </label>
+        <div class="select-wrap">
+          <select class="select placeholder-active" onchange="this.classList.toggle('placeholder-active', !this.value)">
+            <option value="">请选择测试计划类型标签</option>
+            <option value="1">功能测试</option>
+            <option value="2">性能测试</option>
+            <option value="3">回归测试</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 预计起止时间 -->
+      <div class="form-group">
+        <label class="form-label">
+          预计起止时间：<span class="required-star">*</span>
+          <svg class="help-icon" viewBox="0 0 16 16" fill="currentColor">
+            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="8" y="11.5" text-anchor="middle" font-size="10" fill="currentColor">?</text>
+          </svg>
+        </label>
+        <div class="date-range-picker">
+          <input class="date-range-picker__input" type="text" placeholder="请选择开始日期" value="2020-09-18">
+          <span class="date-range-picker__separator">→</span>
+          <input class="date-range-picker__input" type="text" placeholder="请选择结束日期" value="2020-09-24">
+          <span class="date-range-picker__icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="2" y="3" width="12" height="11" rx="1"/>
+              <path d="M2 6h12M5 1v3M11 1v3"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- 备注 -->
+      <div class="form-group">
+        <label class="form-label">备注：</label>
+        <div class="textarea-wrap">
+          <textarea class="textarea-field" rows="3" maxlength="200" placeholder="请输入备注信息，用于描述测试计划的补充说明" oninput="updateCounter(this, 'counter-remark', 200)"></textarea>
+          <div class="char-counter" id="counter-remark">
+            <span class="counter-current">0</span>/<span class="counter-max">200</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== Section: 执行信息 ====== -->
+  <div class="section">
+    <div class="section__header" onclick="toggleSection(this)">
+      <svg class="section__header-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4.646 5.646a.5.5 0 01.708 0L8 8.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+      </svg>
+      <span class="section__title">执行信息</span>
+    </div>
+    <div class="section__body">
+
+      <!-- 执行方式 -->
+      <div class="form-group">
+        <label class="form-label">执行方式：</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input class="radio-input" type="radio" name="execMode" value="manual">
+            <span>手动执行</span>
+          </label>
+          <label class="radio-label">
+            <input class="radio-input" type="radio" name="execMode" value="auto" checked>
+            <span>自动执行</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 执行引擎 -->
+      <div class="form-group">
+        <label class="form-label">
+          执行引擎：<span class="required-star">*</span>
+        </label>
+        <div class="select-wrap">
+          <select class="select placeholder-active" onchange="this.classList.toggle('placeholder-active', !this.value)">
+            <option value="">请选择执行引擎</option>
+            <option value="gui">GUI 引擎</option>
+            <option value="api">API 引擎</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- GUI 自动定时执行引擎配置 -->
+      <div class="config-card">
+        <div class="config-card__header">
+          <span class="config-card__title">GUI 自动定时执行引擎配置</span>
+          <svg class="config-card__delete" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 6h12M6 6V5a2 2 0 012-2h4a2 2 0 012 2v1M8 9v5M12 9v5M5 6l1 10a2 2 0 002 2h4a2 2 0 002-2l1-10"/>
+          </svg>
+        </div>
+
+        <!-- 触发周期/时间 -->
+        <div class="form-group">
+          <div class="sub-label">触发周期/时间：</div>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input class="radio-input" type="radio" name="triggerType" value="simple" checked>
+              <span>简单配置</span>
+            </label>
+            <label class="radio-label">
+              <input class="radio-input" type="radio" name="triggerType" value="cron">
+              <span>cron 表达式配置</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 触发日期 -->
+        <div class="form-group" style="background: var(--color-bg-disabled); padding: 12px 16px; border-radius: var(--radius-md);">
+          <div class="sub-label">触发日期：</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" id="checkAll" checked onchange="toggleAll(this)">
+              <span>全选</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期一</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期二</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期三</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期四</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期五</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期六</span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input day-check" type="checkbox" checked>
+              <span>星期日</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 触发方式 -->
+        <div class="form-group">
+          <div class="sub-label">触发方式：</div>
+          <div class="radio-group" style="margin-bottom: 12px;">
+            <label class="radio-label">
+              <input class="radio-input" type="radio" name="triggerMode" value="cycle">
+              <span>周期触发</span>
+            </label>
+            <label class="radio-label">
+              <input class="radio-input" type="radio" name="triggerMode" value="once" checked>
+              <span>单次触发</span>
+            </label>
+          </div>
+          <div class="time-picker-wrap">
+            <input class="time-picker" type="text" placeholder="请选择触发时间">
+            <svg class="picker-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="8" cy="8" r="6.5"/>
+              <path d="M8 4v4l3 2"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 执行次数上限 -->
+        <div class="form-group">
+          <label class="form-label">执行次数上限（最高12次）：</label>
+          <div class="number-input-wrap">
+            <button class="number-btn" type="button" onclick="changeNumber(-1)">−</button>
+            <input class="number-input" type="number" id="execCount" value="2" min="1" max="12">
+            <button class="number-btn" type="button" onclick="changeNumber(1)">+</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ====== Compliance Badge ====== -->
+<div class="compliance-badge">
+  <div class="compliance-badge__title">📐 B端设计规范合规项</div>
+  <ul class="compliance-badge__list">
+    <li>表单标签末尾加冒号（Form 规范）</li>
+    <li>必填星号 #E34D59 紧跟标签右侧</li>
+    <li>Placeholder 说明选择目的</li>
+    <li>长文本框带字符计数器</li>
+    <li>Radio 横排间距 ≥ 24px</li>
+    <li>Checkbox 横排间距 ≥ 24px</li>
+    <li>按钮文案"动宾"结构 ≤ 7字</li>
+    <li>导航激活态 56×3px 蓝色指示条</li>
+    <li>日期范围选择器双下拉框形态</li>
+    <li>数字输入框增减器固定 20px</li>
+    <li>组件宽度固定不随分辨率变化</li>
+    <li>顶导高度 52px 符合典型页面规范</li>
+  </ul>
+</div>
+
+<script>
+// Section toggle
+function toggleSection(header) {
+  const icon = header.querySelector('.section__header-icon');
+  const body = header.nextElementSibling;
+  icon.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+}
+
+// Textarea character counter
+function updateCounter(textarea, counterId, maxLen) {
+  const len = textarea.value.length;
+  const counter = document.getElementById(counterId);
+  counter.querySelector('.counter-current').textContent = len;
+  if (len >= maxLen) {
+    counter.classList.add('over-limit');
+    textarea.classList.add('over-limit');
+    textarea.style.borderColor = '#E34D59';
+    textarea.style.boxShadow = '0 0 0 2px rgba(227, 77, 89, 0.2)';
+  } else {
+    counter.classList.remove('over-limit');
+    textarea.classList.remove('over-limit');
+    textarea.style.borderColor = '';
+    textarea.style.boxShadow = '';
+  }
+}
+
+// Number input
+function changeNumber(delta) {
+  const input = document.getElementById('execCount');
+  let val = parseInt(input.value) || 1;
+  val = Math.min(12, Math.max(1, val + delta));
+  input.value = val;
+}
+
+// Checkbox all toggle
+function toggleAll(master) {
+  const checks = document.querySelectorAll('.day-check');
+  checks.forEach(c => c.checked = master.checked);
+}
+// Sync "all" checkbox state
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('day-check')) {
+    const checks = document.querySelectorAll('.day-check');
+    const all = document.getElementById('checkAll');
+    const allChecked = Array.from(checks).every(c => c.checked);
+    all.checked = allChecked;
+  }
+});
+</script>
+
+</body>
+</html>

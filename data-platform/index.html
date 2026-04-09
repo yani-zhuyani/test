@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataInsight — 数据智能平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== APP BAR (Top Navigation) ===== -->
+  <header class="app-bar" role="banner">
+    <div class="app-bar__nav">
+      <button class="icon-btn" id="sidebarToggle" aria-label="切换导航菜单">
+        <span class="material-icons">menu</span>
+      </button>
+      <div class="app-bar__logo">
+        <span class="material-icons app-bar__logo-icon">insights</span>
+        <span class="app-bar__title">DataInsight</span>
+      </div>
+    </div>
+
+    <div class="app-bar__search">
+      <span class="material-icons app-bar__search-icon">search</span>
+      <input type="text" class="app-bar__search-input" placeholder="搜索数据集、报表、看板..." aria-label="全局搜索" />
+    </div>
+
+    <div class="app-bar__actions">
+      <button class="icon-btn" aria-label="通知">
+        <span class="material-icons">notifications_none</span>
+        <span class="badge">3</span>
+      </button>
+      <button class="icon-btn" aria-label="设置">
+        <span class="material-icons">settings</span>
+      </button>
+      <div class="avatar" aria-label="用户头像">ZY</div>
+    </div>
+  </header>
+
+  <!-- ===== SIDE NAVIGATION DRAWER ===== -->
+  <nav class="nav-drawer" id="navDrawer" role="navigation" aria-label="主导航">
+    <div class="nav-drawer__header">
+      <span class="nav-drawer__workspace">工作空间</span>
+      <span class="nav-drawer__workspace-name">技术分析部</span>
+    </div>
+
+    <ul class="nav-list" role="list">
+      <li class="nav-item nav-item--active" role="listitem">
+        <a href="#" class="nav-link" aria-current="page">
+          <span class="material-icons nav-link__icon">dashboard</span>
+          <span class="nav-link__label">总览看板</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">bar_chart</span>
+          <span class="nav-link__label">数据分析</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">storage</span>
+          <span class="nav-link__label">数据集</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">description</span>
+          <span class="nav-link__label">报表中心</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">schema</span>
+          <span class="nav-link__label">数据建模</span>
+        </a>
+      </li>
+      <li class="nav-divider" role="separator"></li>
+      <li class="nav-subheader" role="listitem">数据管理</li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">sync_alt</span>
+          <span class="nav-link__label">数据接入</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">account_tree</span>
+          <span class="nav-link__label">调度任务</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">verified_user</span>
+          <span class="nav-link__label">数据质量</span>
+        </a>
+      </li>
+      <li class="nav-divider" role="separator"></li>
+      <li class="nav-subheader" role="listitem">系统</li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">manage_accounts</span>
+          <span class="nav-link__label">权限管理</span>
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a href="#" class="nav-link">
+          <span class="material-icons nav-link__icon">help_outline</span>
+          <span class="nav-link__label">帮助中心</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ===== SCRIM (Overlay for mobile) ===== -->
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content" role="main">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="page-header__text">
+        <h1 class="page-title">总览看板</h1>
+        <p class="page-subtitle">今日数据 · 实时更新 <span class="status-chip status-chip--success">
+          <span class="material-icons">fiber_manual_record</span> 运行正常
+        </span></p>
+      </div>
+      <div class="page-header__actions">
+        <button class="btn btn--outlined">
+          <span class="material-icons">file_download</span>
+          导出报告
+        </button>
+        <button class="btn btn--contained">
+          <span class="material-icons">add</span>
+          新建看板
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== KPI METRIC CARDS ===== -->
+    <section class="section" aria-labelledby="kpi-title">
+      <h2 class="section-title" id="kpi-title">核心指标</h2>
+      <div class="kpi-grid">
+
+        <article class="metric-card" aria-label="今日数据量">
+          <div class="metric-card__header">
+            <div class="metric-card__icon-wrap metric-card__icon-wrap--primary">
+              <span class="material-icons">storage</span>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="更多操作">
+              <span class="material-icons">more_vert</span>
+            </button>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__value" data-target="8642153">0</div>
+            <div class="metric-card__unit">条记录</div>
+            <div class="metric-card__label">今日数据量</div>
+          </div>
+          <div class="metric-card__footer">
+            <span class="trend trend--up">
+              <span class="material-icons">trending_up</span>+12.4%
+            </span>
+            <span class="metric-card__compare">较昨日</span>
+          </div>
+        </article>
+
+        <article class="metric-card" aria-label="活跃数据集">
+          <div class="metric-card__header">
+            <div class="metric-card__icon-wrap metric-card__icon-wrap--secondary">
+              <span class="material-icons">table_chart</span>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="更多操作">
+              <span class="material-icons">more_vert</span>
+            </button>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__value" data-target="1284">0</div>
+            <div class="metric-card__unit">个</div>
+            <div class="metric-card__label">活跃数据集</div>
+          </div>
+          <div class="metric-card__footer">
+            <span class="trend trend--up">
+              <span class="material-icons">trending_up</span>+3.2%
+            </span>
+            <span class="metric-card__compare">较上周</span>
+          </div>
+        </article>
+
+        <article class="metric-card" aria-label="任务成功率">
+          <div class="metric-card__header">
+            <div class="metric-card__icon-wrap metric-card__icon-wrap--success">
+              <span class="material-icons">task_alt</span>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="更多操作">
+              <span class="material-icons">more_vert</span>
+            </button>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__value" data-target="98.6" data-suffix="%">0</div>
+            <div class="metric-card__unit"></div>
+            <div class="metric-card__label">任务成功率</div>
+          </div>
+          <div class="metric-card__footer">
+            <span class="trend trend--down">
+              <span class="material-icons">trending_down</span>-0.3%
+            </span>
+            <span class="metric-card__compare">较昨日</span>
+          </div>
+        </article>
+
+        <article class="metric-card" aria-label="API调用次数">
+          <div class="metric-card__header">
+            <div class="metric-card__icon-wrap metric-card__icon-wrap--warning">
+              <span class="material-icons">api</span>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="更多操作">
+              <span class="material-icons">more_vert</span>
+            </button>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__value" data-target="342.8" data-suffix="万">0</div>
+            <div class="metric-card__unit"></div>
+            <div class="metric-card__label">API 调用次数</div>
+          </div>
+          <div class="metric-card__footer">
+            <span class="trend trend--up">
+              <span class="material-icons">trending_up</span>+21.7%
+            </span>
+            <span class="metric-card__compare">较上月</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===== CHARTS ROW ===== -->
+    <section class="section charts-row" aria-labelledby="charts-title">
+      <h2 class="section-title" id="charts-title">数据趋势</h2>
+      <div class="charts-grid">
+
+        <!-- 折线图卡片 -->
+        <div class="chart-card chart-card--wide">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="chart-card__title">数据写入量趋势</h3>
+              <p class="chart-card__subtitle">过去 30 天 · 按天统计</p>
+            </div>
+            <div class="chart-card__actions">
+              <div class="tab-group" role="tablist" aria-label="时间范围">
+                <button class="tab-btn tab-btn--active" role="tab" aria-selected="true">7天</button>
+                <button class="tab-btn" role="tab" aria-selected="false">30天</button>
+                <button class="tab-btn" role="tab" aria-selected="false">90天</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container" aria-label="数据写入量折线图">
+            <canvas id="lineChart" width="600" height="220"></canvas>
+          </div>
+        </div>
+
+        <!-- 饼图卡片 -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="chart-card__title">数据源分布</h3>
+              <p class="chart-card__subtitle">按来源类型</p>
+            </div>
+          </div>
+          <div class="chart-container chart-container--sm" aria-label="数据源分布饼图">
+            <canvas id="pieChart" width="260" height="200"></canvas>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#6200EE"></span>MySQL</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#03DAC6"></span>Kafka</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#FF6D00"></span>HDFS</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#1976D2"></span>API</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#43A047"></span>其他</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== TASK MONITOR + ALERTS (Two Columns) ===== -->
+    <div class="dual-col-section">
+
+      <!-- 调度任务监控 -->
+      <section class="section" aria-labelledby="task-title">
+        <div class="section-header">
+          <h2 class="section-title" id="task-title">调度任务状态</h2>
+          <a href="#" class="link-btn">查看全部 <span class="material-icons">arrow_forward</span></a>
+        </div>
+        <div class="task-list-card">
+          <table class="data-table" role="table" aria-label="调度任务列表">
+            <thead>
+              <tr>
+                <th scope="col">任务名称</th>
+                <th scope="col">类型</th>
+                <th scope="col">更新时间</th>
+                <th scope="col">状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="task-name"><span class="material-icons task-icon">sync_alt</span>用户行为数据同步</td>
+                <td><span class="overline">ETL</span></td>
+                <td class="text-secondary">08:32</td>
+                <td><span class="status-badge status-badge--success">成功</span></td>
+              </tr>
+              <tr>
+                <td class="task-name"><span class="material-icons task-icon">account_tree</span>订单聚合分析</td>
+                <td><span class="overline">SQL</span></td>
+                <td class="text-secondary">08:15</td>
+                <td><span class="status-badge status-badge--success">成功</span></td>
+              </tr>
+              <tr>
+                <td class="task-name"><span class="material-icons task-icon">model_training</span>推荐模型训练</td>
+                <td><span class="overline">ML</span></td>
+                <td class="text-secondary">07:50</td>
+                <td><span class="status-badge status-badge--running">运行中</span></td>
+              </tr>
+              <tr>
+                <td class="task-name"><span class="material-icons task-icon">storage</span>日志数据清洗</td>
+                <td><span class="overline">ETL</span></td>
+                <td class="text-secondary">07:00</td>
+                <td><span class="status-badge status-badge--error">失败</span></td>
+              </tr>
+              <tr>
+                <td class="task-name"><span class="material-icons task-icon">bar_chart</span>实时指标计算</td>
+                <td><span class="overline">流式</span></td>
+                <td class="text-secondary">实时</td>
+                <td><span class="status-badge status-badge--success">成功</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 告警通知 -->
+      <section class="section" aria-labelledby="alert-title">
+        <div class="section-header">
+          <h2 class="section-title" id="alert-title">告警通知</h2>
+          <a href="#" class="link-btn">全部标记已读 <span class="material-icons">done_all</span></a>
+        </div>
+        <div class="alert-list">
+
+          <div class="alert-item alert-item--error" role="alert">
+            <span class="material-icons alert-icon">error_outline</span>
+            <div class="alert-content">
+              <div class="alert-title">日志清洗任务失败</div>
+              <div class="alert-desc">源表 ods_log_detail 连接超时，已重试 3 次</div>
+              <div class="alert-time">今天 07:02</div>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="关闭告警">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="alert-item alert-item--warning" role="alert">
+            <span class="material-icons alert-icon">warning_amber</span>
+            <div class="alert-content">
+              <div class="alert-title">数据质量异常</div>
+              <div class="alert-desc">dws_user_behavior 表空值率达 15.3%，超过阈值</div>
+              <div class="alert-time">今天 06:45</div>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="关闭告警">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="alert-item alert-item--info" role="alert">
+            <span class="material-icons alert-icon">info_outline</span>
+            <div class="alert-content">
+              <div class="alert-title">存储空间提醒</div>
+              <div class="alert-desc">HDFS 集群存储使用率已达 78%，建议清理</div>
+              <div class="alert-time">昨天 23:10</div>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="关闭告警">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="alert-item alert-item--success" role="alert">
+            <span class="material-icons alert-icon">check_circle_outline</span>
+            <div class="alert-content">
+              <div class="alert-title">数据接入完成</div>
+              <div class="alert-desc">新增数据源「商品评论库」接入成功，共 412 万条</div>
+              <div class="alert-time">昨天 22:30</div>
+            </div>
+            <button class="icon-btn icon-btn--sm" aria-label="关闭告警">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===== RECENTLY USED ===== -->
+    <section class="section" aria-labelledby="recent-title">
+      <div class="section-header">
+        <h2 class="section-title" id="recent-title">最近使用</h2>
+        <a href="#" class="link-btn">浏览全部 <span class="material-icons">arrow_forward</span></a>
+      </div>
+      <div class="recent-grid">
+
+        <a href="#" class="recent-card" aria-label="用户增长分析报表">
+          <div class="recent-card__thumbnail recent-card__thumbnail--chart">
+            <span class="material-icons">show_chart</span>
+          </div>
+          <div class="recent-card__info">
+            <div class="recent-card__name">用户增长分析</div>
+            <div class="recent-card__meta">
+              <span class="chip chip--sm"><span class="material-icons">description</span> 报表</span>
+              <span class="text-secondary">3小时前</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="recent-card" aria-label="GMV核心指标看板">
+          <div class="recent-card__thumbnail recent-card__thumbnail--dashboard">
+            <span class="material-icons">dashboard</span>
+          </div>
+          <div class="recent-card__info">
+            <div class="recent-card__name">GMV 核心指标</div>
+            <div class="recent-card__meta">
+              <span class="chip chip--sm"><span class="material-icons">dashboard</span> 看板</span>
+              <span class="text-secondary">昨天</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="recent-card" aria-label="商品点击行为数据集">
+          <div class="recent-card__thumbnail recent-card__thumbnail--dataset">
+            <span class="material-icons">storage</span>
+          </div>
+          <div class="recent-card__info">
+            <div class="recent-card__name">商品点击行为</div>
+            <div class="recent-card__meta">
+              <span class="chip chip--sm"><span class="material-icons">storage</span> 数据集</span>
+              <span class="text-secondary">2天前</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="recent-card" aria-label="供应链可视化看板">
+          <div class="recent-card__thumbnail recent-card__thumbnail--dashboard">
+            <span class="material-icons">account_tree</span>
+          </div>
+          <div class="recent-card__info">
+            <div class="recent-card__name">供应链可视化</div>
+            <div class="recent-card__meta">
+              <span class="chip chip--sm"><span class="material-icons">dashboard</span> 看板</span>
+              <span class="text-secondary">3天前</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="recent-card" aria-label="广告投放效果分析">
+          <div class="recent-card__thumbnail recent-card__thumbnail--chart">
+            <span class="material-icons">bar_chart</span>
+          </div>
+          <div class="recent-card__info">
+            <div class="recent-card__name">广告投放效果</div>
+            <div class="recent-card__meta">
+              <span class="chip chip--sm"><span class="material-icons">description</span> 报表</span>
+              <span class="text-secondary">4天前</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FAB ===== -->
+  <button class="fab" aria-label="快速新建">
+    <span class="material-icons">add</span>
+  </button>
+
+  <!-- ===== SNACKBAR ===== -->
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite">
+    <span class="snackbar__message">数据已更新</span>
+    <button class="snackbar__action">知道了</button>
+  </div>
+
+  <script src="charts.js"></script>
+</body>
+</html>

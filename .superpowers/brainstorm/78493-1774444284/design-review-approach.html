@@ -1,0 +1,58 @@
+<h2>3 种方案，选一个方向</h2>
+<p class="subtitle">设计稿 Figma → 前端页面截图 → Diff → 报告。核心差异在于"谁来运行"</p>
+
+<div class="section">
+  <div class="cards">
+
+    <div class="card" data-choice="browser-ext" onclick="toggleSelect(this)">
+      <div class="card-image" style="background: linear-gradient(135deg,#6366f1 0%,#818cf8 100%); padding: 24px; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:32px;">🔌</div>
+        <div style="color:white;font-weight:700;font-size:15px;">浏览器插件</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:12px;">设计师本地运行</div>
+      </div>
+      <div class="card-body">
+        <h3>浏览器插件（Chrome Extension）</h3>
+        <p>设计师安装插件，在浏览器里打开前端页面，点一下按钮自动拉取 Figma API 获取对应 Frame，截图对比，悬浮显示 diff 高亮 + 问题列表</p>
+        <div class="pros-cons" style="margin-top:12px;">
+          <div class="pros"><h4>优势</h4><ul><li>零部署，设计师自助</li><li>实时叠加 overlay 直观</li><li>无需后端</li></ul></div>
+          <div class="cons"><h4>劣势</h4><ul><li>需要发布到应用商店或内部分发</li><li>跨域/截图有限制</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-choice="cli-tool" onclick="toggleSelect(this)">
+      <div class="card-image" style="background: linear-gradient(135deg,#059669 0%,#34d399 100%); padding: 24px; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:32px;">⚡</div>
+        <div style="color:white;font-weight:700;font-size:15px;">CLI + CI 工具</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:12px;">集成到流水线</div>
+      </div>
+      <div class="card-body">
+        <h3>CLI 命令行工具 + CI 集成</h3>
+        <p>一条命令 <code>design-review --url http://staging.xxx.com --figma-url xxx</code>，Playwright 截图 → Figma API 拉图 → pixelmatch 对比 → 生成 HTML 报告 + 发 PR comment + 推 IM</p>
+        <div class="pros-cons" style="margin-top:12px;">
+          <div class="pros"><h4>优势</h4><ul><li>CI 自动触发，PR 节点天然契合</li><li>技术最成熟，可精准控制</li><li>报告可存档</li></ul></div>
+          <div class="cons"><h4>劣势</h4><ul><li>需要接入 CI/CD</li><li>设计师不能自助触发</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-choice="web-app" onclick="toggleSelect(this)">
+      <div class="card-image" style="background: linear-gradient(135deg,#d97706 0%,#fbbf24 100%); padding: 24px; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:32px;">🌐</div>
+        <div style="color:white;font-weight:700;font-size:15px;">Web 平台</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:12px;">团队共享，最完整</div>
+      </div>
+      <div class="card-body">
+        <h3>内部 Web 平台</h3>
+        <p>搭建一个 Web 服务，设计师填入 Figma URL + 页面 URL，后端用 Playwright 截图对比，结果展示在平台上，支持历史记录、多人协作标注、趋势追踪</p>
+        <div class="pros-cons" style="margin-top:12px;">
+          <div class="pros"><h4>优势</h4><ul><li>功能最完整</li><li>设计师自助，团队共享</li><li>可沉淀历史数据</li></ul></div>
+          <div class="cons"><h4>劣势</h4><ul><li>需要部署和维护后端</li><li>开发成本最高</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;">💡 我的推荐：<strong>方案 B（CLI + CI）</strong>— 和你们 PR 节点触发的需求完美匹配，技术方案成熟，先跑通核心链路，后续可以再加 Web UI</p>

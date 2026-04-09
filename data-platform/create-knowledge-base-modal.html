@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新建知识库 — 设计稿 v2</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #F0F2F4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #131416;
+      padding-top: 40px;
+    }
+
+    /* ─── Demo Bar ─────────────────────────────────── */
+    .demo-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 40px;
+      background: #131416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 9999;
+    }
+    .demo-bar span {
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+    }
+    .demo-btn {
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 2px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.15s;
+    }
+    .demo-btn:hover, .demo-btn.active {
+      background: #2563F4;
+      border-color: #2563F4;
+      color: #fff;
+    }
+
+    /* ─── Modal Overlay ────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    /* ─── Modal Dialog ─────────────────────────────── */
+    .modal {
+      background: #FFFFFF;
+      border-radius: 4px;
+      width: 640px;
+      max-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* ─── Modal Header ─────────────────────────────── */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 20px 24px;
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+      color: #131416;
+    }
+    .modal-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #8E8E90;
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .modal-close:hover { color: #131416; background: #F0F2F4; }
+
+    .modal-divider { width: 100%; height: 1px; background: #F0F2F4; flex-shrink: 0; }
+
+    /* ─── Modal Body ───────────────────────────────── */
+    .modal-body {
+      padding: 24px 24px 8px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* ─── Form ─────────────────────────────────────── */
+    .form-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .form-item:last-child { margin-bottom: 0; }
+
+    .form-label {
+      width: 84px;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 32px;
+      color: #131416;
+      text-align: right;
+      padding-right: 12px;
+      white-space: nowrap;
+    }
+    .form-item.top-align .form-label {
+      line-height: 22px;
+      padding-top: 5px;
+    }
+
+    .required-star { color: #E34D59; font-size: 14px; margin-left: 2px; }
+
+    .form-control { flex: 1; min-width: 0; position: relative; }
+
+    /* ─── Input ────────────────────────────────────── */
+    .input-field {
+      width: 100%;
+      height: 32px;
+      border: 1px solid #DFE0E2;
+      border-radius: 2px;
+      padding: 5px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 22px;
+      color: #131416;
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input-field::placeholder { color: #B2B2B3; }
+    .input-field:hover { border-color: #8E8E90; }
+    .input-field:focus { border-color: #2563F4; box-shadow: 0 0 0 2px rgba(37,99,244,0.12); }
+
+    /* ─── Textarea ─────────────────────────────────── */
+    .textarea-field {
+      width: 100%;
+      min-height: 96px;
+      border: 1px solid #DFE0E2;
+      border-radius: 2px;
+      padding: 5px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 22px;
+      color: #131416;
+      background: #FFFFFF;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .textarea-field::placeholder { color: #B2B2B3; }
+    /* 字符计数器 */
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #8E8E90;
+      margin-top: 4px;
+      line-height: 1;
+      user-select: none;
+    }
+    .char-counter.over-limit { color: #E34D59; }
+    .char-counter.over-limit ~ .textarea-field,
+    .textarea-field.count-over { border-color: #E34D59 !important; box-shadow: 0 0 0 2px rgba(227,77,89,0.10) !important; }
+    .textarea-field:hover { border-color: #8E8E90; }
+    .textarea-field:focus { border-color: #2563F4; box-shadow: 0 0 0 2px rgba(37,99,244,0.12); }
+
+    /* ─── Icon Upload ──────────────────────────────── */
+    .icon-upload-area {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding-top: 5px;
+    }
+    .icon-preview-box {
+      width: 40px;
+      height: 40px;
+      border: 1px dashed #DFE0E2;
+      border-radius: 4px;
+      background: #FAFAFA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #B2B2B3;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      overflow: hidden;
+    }
+    .icon-preview-box:hover { border-color: #2563F4; background: #F2F6FF; color: #2563F4; }
+    .icon-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+    .icon-upload-actions { display: flex; align-items: center; margin-left: 12px; }
+    .link {
+      font-size: 14px;
+      line-height: 22px;
+      color: #2563F4;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .link:hover { color: #5C8FFF; text-decoration: underline; }
+    .link:active { color: #1747CA; }
+    .vdivider { width: 1px; height: 14px; background: #DFE0E2; margin: 0 8px; flex-shrink: 0; }
+
+    /* ─── Multi-Select Tag Input ────────────────────── */
+    .tag-select {
+      min-height: 32px;
+      border: 1px solid #DFE0E2;
+      border-radius: 2px;
+      padding: 3px 8px;
+      background: #FFFFFF;
+      cursor: text;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+    .tag-select:hover { border-color: #8E8E90; }
+    .tag-select.focused { border-color: #2563F4; box-shadow: 0 0 0 2px rgba(37,99,244,0.12); }
+    .tag-select.has-error-border { border-color: #E34D59 !important; box-shadow: 0 0 0 2px rgba(227,77,89,0.10) !important; }
+
+    /* Tag item */
+    .tag-item {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      background: #F0F2F4;
+      border-radius: 2px;
+      padding: 0 6px;
+      gap: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #131416;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tag-item .tag-remove {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #8E8E90;
+      transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+    .tag-item .tag-remove:hover { background: #DFE0E2; color: #131416; }
+
+    /* Tag input */
+    .tag-input-inner {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 22px;
+      color: #131416;
+      background: transparent;
+      min-width: 80px;
+      flex: 1;
+      padding: 0;
+      height: 24px;
+    }
+    .tag-input-inner::placeholder { color: #B2B2B3; }
+
+    /* Dropdown panel */
+    .dropdown-panel {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border: 1px solid #DFE0E2;
+      border-radius: 2px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      z-index: 200;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    .dropdown-panel.open { display: block; }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      height: 32px;
+      font-size: 14px;
+      line-height: 22px;
+      color: #131416;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { background: #F5F7FA; }
+    .dropdown-item.selected { color: #2563F4; background: #F2F6FF; }
+    .dropdown-item.selected .check-icon { display: flex; }
+    .check-icon {
+      display: none;
+      margin-left: auto;
+      flex-shrink: 0;
+      color: #2563F4;
+    }
+    .dropdown-empty {
+      padding: 24px 0;
+      text-align: center;
+      font-size: 13px;
+      color: #B2B2B3;
+    }
+
+    /* ─── Radio Group ──────────────────────────────── */
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding-top: 5px;
+      flex-wrap: wrap;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .radio-input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #B2B2B3;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      background: #FFFFFF;
+    }
+    .radio-input::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2563F4;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.15s;
+    }
+    .radio-input:checked { border-color: #2563F4; }
+    .radio-input:checked::after { transform: translate(-50%, -50%) scale(1); }
+    .radio-input:hover:not(:checked) { border-color: #8E8E90; }
+    .radio-label { font-size: 14px; line-height: 22px; color: #131416; }
+
+    /* ─── Conditional Field ─────────────────────────── */
+    /* 当选中"指定部门"或"指定人员"时，在 radio 组下方展开一个关联多选字段 */
+    .conditional-field {
+      display: none;
+      margin-top: 12px;
+    }
+    .conditional-field.show { display: block; }
+
+    /* ─── Error ─────────────────────────────────────── */
+    .field-error {
+      font-size: 12px;
+      line-height: 18px;
+      color: #E34D59;
+      margin-top: 4px;
+      display: none;
+    }
+    .has-error .input-field,
+    .has-error .textarea-field { border-color: #E34D59 !important; box-shadow: 0 0 0 2px rgba(227,77,89,0.10) !important; }
+    .has-error .tag-select { border-color: #E34D59 !important; box-shadow: 0 0 0 2px rgba(227,77,89,0.10) !important; }
+    .has-error .field-error { display: block; }
+
+    /* ─── Modal Footer ─────────────────────────────── */
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 16px 24px 20px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Buttons ──────────────────────────────────── */
+    .btn {
+      height: 32px;
+      border-radius: 2px;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 400;
+      line-height: 22px;
+      padding: 5px 16px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-secondary {
+      background: #FFFFFF;
+      border: 1px solid #DFE0E2;
+      color: #131416;
+    }
+    .btn-secondary:hover { border-color: #8E8E90; }
+    .btn-secondary:active { border-color: #8E8E90; background: #F0F2F4; }
+
+    .btn-primary {
+      background: #2563F4;
+      border: 1px solid #2563F4;
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+    .btn-primary:hover { background: #5C8FFF; border-color: #5C8FFF; }
+    .btn-primary:active { background: #1747CA; border-color: #1747CA; }
+    .btn-primary:disabled {
+      background: rgba(37,99,244,0.36);
+      border-color: rgba(37,99,244,0.36);
+      cursor: not-allowed;
+    }
+
+    /* loading spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 顶部工具栏 -->
+<div class="demo-bar">
+  <span>状态预览：</span>
+  <button class="demo-btn active" onclick="setDemo('default',this)">默认</button>
+  <button class="demo-btn" onclick="setDemo('error',this)">校验错误</button>
+  <button class="demo-btn" onclick="setDemo('dept',this)">已选指定部门</button>
+  <button class="demo-btn" onclick="setDemo('person',this)">已选指定人员</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay">
+  <div class="modal" id="modal">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">新建知识库</h2>
+      <div class="modal-close" onclick="handleCancel()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="modal-divider"></div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- 知识库名称 -->
+      <div class="form-item" id="field-name">
+        <label class="form-label">知识库名称：<span class="required-star">*</span></label>
+        <div class="form-control">
+          <input class="input-field" id="input-name" type="text"
+            placeholder="请输入知识库名称" maxlength="50" autocomplete="off"
+            oninput="clearError('field-name')" />
+          <div class="field-error" id="err-name">请输入知识库名称</div>
+        </div>
+      </div>
+
+      <!-- 知识库描述 -->
+      <div class="form-item top-align">
+        <label class="form-label">知识库描述：</label>
+        <div class="form-control">
+          <textarea class="textarea-field" id="input-desc" rows="4"
+            placeholder="输入内容描述知识库的具体用途..." maxlength="200"
+            oninput="updateCharCounter(this, 'counter-desc', 200)"></textarea>
+          <div class="char-counter" id="counter-desc"><span id="cc-current-desc">0</span>/200</div>
+        </div>
+      </div>
+
+      <!-- 知识库图标 -->
+      <div class="form-item top-align" id="field-icon">
+        <label class="form-label">知识库图标：<span class="required-star">*</span></label>
+        <div class="form-control">
+          <div class="icon-upload-area">
+            <div class="icon-preview-box" id="icon-preview" onclick="handleUpload()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="icon-upload-actions">
+              <a class="link" href="javascript:void(0)" onclick="handleUpload()">本地上传</a>
+              <div class="vdivider"></div>
+              <a class="link" href="javascript:void(0)" onclick="handleAIGenerate()">智能生成</a>
+            </div>
+          </div>
+          <div class="field-error" id="err-icon">请上传知识库图标</div>
+        </div>
+      </div>
+
+      <!-- 维护者（多选） -->
+      <div class="form-item top-align" id="field-maintainer">
+        <label class="form-label">维护者：<span class="required-star">*</span></label>
+        <div class="form-control">
+          <div class="tag-select" id="ts-maintainer"
+            onclick="focusTagInput('maintainer')">
+            <!-- Tags render here by JS -->
+            <input class="tag-input-inner" id="ti-maintainer"
+              placeholder="搜索并添加维护者"
+              autocomplete="off"
+              oninput="filterDropdown('maintainer')"
+              onfocus="openDropdown('maintainer')"
+              onkeydown="tagKeydown(event,'maintainer')" />
+          </div>
+          <div class="dropdown-panel" id="dp-maintainer">
+            <!-- options render here by JS -->
+          </div>
+          <div class="field-error" id="err-maintainer">请添加至少一位维护者</div>
+        </div>
+      </div>
+
+      <!-- 可见权限 -->
+      <div class="form-item top-align" id="field-permission">
+        <label class="form-label">可见权限：<span class="required-star">*</span></label>
+        <div class="form-control">
+          <div class="radio-group">
+            <label class="radio-option">
+              <input class="radio-input" type="radio" name="permission" value="company"
+                checked onchange="onPermissionChange(this)" />
+              <span class="radio-label">公司级共享</span>
+            </label>
+            <label class="radio-option">
+              <input class="radio-input" type="radio" name="permission" value="department"
+                onchange="onPermissionChange(this)" />
+              <span class="radio-label">指定部门级共享</span>
+            </label>
+            <label class="radio-option">
+              <input class="radio-input" type="radio" name="permission" value="person"
+                onchange="onPermissionChange(this)" />
+              <span class="radio-label">指定人员共享</span>
+            </label>
+          </div>
+
+          <!-- 条件展示：指定部门 -->
+          <div class="conditional-field" id="cf-department">
+            <div class="tag-select" id="ts-department"
+              onclick="focusTagInput('department')">
+              <input class="tag-input-inner" id="ti-department"
+                placeholder="搜索并选择部门"
+                autocomplete="off"
+                oninput="filterDropdown('department')"
+                onfocus="openDropdown('department')"
+                onkeydown="tagKeydown(event,'department')" />
+            </div>
+            <div class="dropdown-panel" id="dp-department"></div>
+            <div class="field-error" id="err-department">请选择至少一个部门</div>
+          </div>
+
+          <!-- 条件展示：指定人员 -->
+          <div class="conditional-field" id="cf-person">
+            <div class="tag-select" id="ts-person"
+              onclick="focusTagInput('person')">
+              <input class="tag-input-inner" id="ti-person"
+                placeholder="搜索并选择人员"
+                autocomplete="off"
+                oninput="filterDropdown('person')"
+                onfocus="openDropdown('person')"
+                onkeydown="tagKeydown(event,'person')" />
+            </div>
+            <div class="dropdown-panel" id="dp-person"></div>
+            <div class="field-error" id="err-person">请选择至少一位人员</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /body -->
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="handleCancel()">取消</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="handleSubmit()">新建</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════
+   DATA  —  模拟数据源
+════════════════════════════════════════════════════ */
+const DATA = {
+  maintainer: [
+    { id: 'u1', label: '朱雅妮' }, { id: 'u2', label: '张三' },
+    { id: 'u3', label: '李四' },   { id: 'u4', label: '王五' },
+    { id: 'u5', label: '赵六' },   { id: 'u6', label: '陈七' },
+    { id: 'u7', label: '刘八' },   { id: 'u8', label: '周九' },
+  ],
+  department: [
+    { id: 'd1', label: '产品研发中心' }, { id: 'd2', label: '数据平台组' },
+    { id: 'd3', label: '算法工程部' },   { id: 'd4', label: 'AI 研究院' },
+    { id: 'd5', label: '安全技术部' },   { id: 'd6', label: '用户产品部' },
+    { id: 'd7', label: '商业化技术部' }, { id: 'd8', label: '基础架构部' },
+  ],
+  person: [
+    { id: 'p1', label: '朱雅妮' }, { id: 'p2', label: '张三丰' },
+    { id: 'p3', label: '李小龙' }, { id: 'p4', label: '王阳明' },
+    { id: 'p5', label: '赵子龙' }, { id: 'p6', label: '诸葛亮' },
+    { id: 'p7', label: '周瑜' },   { id: 'p8', label: '曹操' },
+  ]
+};
+
+/* selected 集合 */
+const selected = { maintainer: [], department: [], person: [] };
+let iconUploaded = false;
+
+/* ════════════════════════════════════════════════════
+   TAG SELECT 核心逻辑
+════════════════════════════════════════════════════ */
+
+/** 渲染 tag + input 到容器 */
+function renderTags(key) {
+  const wrap = document.getElementById('ts-' + key);
+  const input = document.getElementById('ti-' + key);
+  // 清除所有旧 tag
+  wrap.querySelectorAll('.tag-item').forEach(t => t.remove());
+  // 重新插入 tags（在 input 前面）
+  selected[key].forEach(item => {
+    const tag = document.createElement('span');
+    tag.className = 'tag-item';
+    tag.innerHTML = `
+      <span>${item.label}</span>
+      <span class="tag-remove" data-id="${item.id}" onclick="removeTag(event,'${key}','${item.id}')">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M9 3L3 9M3 3l6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </span>`;
+    wrap.insertBefore(tag, input);
+  });
+  // 更新 placeholder
+  input.placeholder = selected[key].length > 0 ? '' : input.dataset.placeholder || input.placeholder;
+}
+
+/** 初始化 placeholder 存储 */
+function initTagSelect(key) {
+  const input = document.getElementById('ti-' + key);
+  input.dataset.placeholder = input.placeholder;
+  renderDropdown(key, '');
+}
+
+/** 打开 dropdown */
+function openDropdown(key) {
+  const panel = document.getElementById('dp-' + key);
+  const wrap = document.getElementById('ts-' + key);
+  panel.classList.add('open');
+  wrap.classList.add('focused');
+  filterDropdown(key);
+  // 点击外部关闭
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!wrap.contains(e.target) && !panel.contains(e.target)) {
+        closeDropdown(key);
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 10);
+}
+
+function closeDropdown(key) {
+  document.getElementById('dp-' + key).classList.remove('open');
+  document.getElementById('ts-' + key).classList.remove('focused');
+  document.getElementById('ti-' + key).value = '';
+}
+
+function focusTagInput(key) {
+  document.getElementById('ti-' + key).focus();
+}
+
+/** 渲染下拉选项 */
+function renderDropdown(key, query) {
+  const panel = document.getElementById('dp-' + key);
+  const items = DATA[key].filter(d =>
+    d.label.includes(query) && !selected[key].find(s => s.id === d.id)
+  );
+  if (items.length === 0) {
+    panel.innerHTML = `<div class="dropdown-empty">${query ? '无匹配结果' : '暂无更多选项'}</div>`;
+    return;
+  }
+  panel.innerHTML = items.map(d => `
+    <div class="dropdown-item" data-id="${d.id}" onclick="selectItem(event,'${key}','${d.id}')">
+      <span>${highlight(d.label, query)}</span>
+      <span class="check-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.5 7l3.5 3.5 5.5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>`).join('');
+}
+
+function filterDropdown(key) {
+  const q = document.getElementById('ti-' + key).value.trim();
+  renderDropdown(key, q);
+}
+
+/** 选中一项 */
+function selectItem(e, key, id) {
+  e.stopPropagation();
+  const item = DATA[key].find(d => d.id === id);
+  if (item && !selected[key].find(s => s.id === id)) {
+    selected[key].push(item);
+    renderTags(key);
+    clearTagError(key);
+  }
+  filterDropdown(key);
+  document.getElementById('ti-' + key).value = '';
+  document.getElementById('ti-' + key).focus();
+}
+
+/** 删除一个 tag */
+function removeTag(e, key, id) {
+  e.stopPropagation();
+  selected[key] = selected[key].filter(s => s.id !== id);
+  renderTags(key);
+  renderDropdown(key, '');
+}
+
+/** 键盘 Backspace 删最后一个 tag */
+function tagKeydown(e, key) {
+  if (e.key === 'Backspace' && document.getElementById('ti-' + key).value === '') {
+    if (selected[key].length > 0) {
+      selected[key].pop();
+      renderTags(key);
+      renderDropdown(key, '');
+    }
+  }
+  if (e.key === 'Escape') closeDropdown(key);
+}
+
+/** 搜索高亮 */
+function highlight(text, query) {
+  if (!query) return text;
+  return text.replace(new RegExp(query, 'g'), s => `<mark style="background:#FFF3CC;border-radius:1px;padding:0">${s}</mark>`);
+}
+
+/* ════════════════════════════════════════════════════
+   权限联动
+════════════════════════════════════════════════════ */
+function onPermissionChange(radio) {
+  // 隐藏所有条件字段
+  document.getElementById('cf-department').classList.remove('show');
+  document.getElementById('cf-person').classList.remove('show');
+  // 清除条件字段错误
+  clearTagError('department');
+  clearTagError('person');
+
+  if (radio.value === 'department') {
+    document.getElementById('cf-department').classList.add('show');
+  } else if (radio.value === 'person') {
+    document.getElementById('cf-person').classList.add('show');
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   图标上传
+════════════════════════════════════════════════════ */
+const MOCK_ICONS = [
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="4" fill="#2563F4"/><path d="M9 14h10M14 9v10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" fill="#16A34A"/><path d="M9.5 14.5l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="4" fill="#F59E0B"/><path d="M14 8v8M14 18v2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+];
+let iconIdx = 0;
+
+function handleUpload() {
+  const box = document.getElementById('icon-preview');
+  box.innerHTML = MOCK_ICONS[iconIdx % MOCK_ICONS.length];
+  iconIdx++;
+  iconUploaded = true;
+  clearIconError();
+}
+function handleAIGenerate() {
+  const box = document.getElementById('icon-preview');
+  // AI 生成动效
+  box.innerHTML = `<div style="animation: spin 0.7s linear infinite; width:20px;height:20px;border:2px solid #DFE0E2;border-top-color:#2563F4;border-radius:50%"></div>`;
+  setTimeout(() => {
+    box.innerHTML = MOCK_ICONS[(iconIdx + 1) % MOCK_ICONS.length];
+    iconIdx++;
+    iconUploaded = true;
+    clearIconError();
+  }, 900);
+}
+function clearIconError() {
+  document.getElementById('field-icon').classList.remove('has-error');
+}
+
+/* ════════════════════════════════════════════════════
+   校验
+════════════════════════════════════════════════════ */
+function updateCharCounter(textarea, counterId, maxLen) {
+  const len = textarea.value.length;
+  const counter = document.getElementById(counterId);
+  const current = document.getElementById('cc-current-' + counterId.replace('counter-', ''));
+  if (current) current.textContent = len;
+  if (len >= maxLen) {
+    counter.classList.add('over-limit');
+    textarea.classList.add('count-over');
+  } else {
+    counter.classList.remove('over-limit');
+    textarea.classList.remove('count-over');
+  }
+}
+
+function clearError(fieldId) {
+  document.getElementById(fieldId).classList.remove('has-error');
+}
+
+function clearTagError(key) {
+  const map = { maintainer: 'field-maintainer', department: 'cf-department', person: 'cf-person' };
+  const el = document.getElementById(map[key]);
+  if (el) el.classList.remove('has-error');
+  // 对于 maintainer，清除 field 级别
+  if (key === 'maintainer') document.getElementById('field-maintainer').classList.remove('has-error');
+}
+
+function validate() {
+  let ok = true;
+
+  // 名称
+  if (!document.getElementById('input-name').value.trim()) {
+    document.getElementById('field-name').classList.add('has-error');
+    ok = false;
+  }
+  // 图标
+  if (!iconUploaded) {
+    document.getElementById('field-icon').classList.add('has-error');
+    ok = false;
+  }
+  // 维护者
+  if (selected.maintainer.length === 0) {
+    document.getElementById('field-maintainer').classList.add('has-error');
+    ok = false;
+  }
+  // 条件字段
+  const perm = document.querySelector('input[name="permission"]:checked').value;
+  if (perm === 'department' && selected.department.length === 0) {
+    document.getElementById('cf-department').classList.add('has-error');
+    ok = false;
+  }
+  if (perm === 'person' && selected.person.length === 0) {
+    document.getElementById('cf-person').classList.add('has-error');
+    ok = false;
+  }
+
+  return ok;
+}
+
+/* ════════════════════════════════════════════════════
+   表单操作
+════════════════════════════════════════════════════ */
+function handleSubmit() {
+  if (!validate()) return;
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>新建中...`;
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '新建';
+    showSuccessToast();
+  }, 1200);
+}
+
+function handleCancel() {
+  // 清空所有字段
+  document.getElementById('input-name').value = '';
+  document.getElementById('input-desc').value = '';
+  document.getElementById('icon-preview').innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>`;
+  iconUploaded = false;
+  selected.maintainer = [];
+  selected.department = [];
+  selected.person = [];
+  ['maintainer','department','person'].forEach(k => { renderTags(k); renderDropdown(k,''); });
+  document.querySelector('input[name="permission"][value="company"]').checked = true;
+  document.getElementById('cf-department').classList.remove('show');
+  document.getElementById('cf-person').classList.remove('show');
+  document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit').innerHTML = '新建';
+}
+
+/* ════════════════════════════════════════════════════
+   Success Toast
+════════════════════════════════════════════════════ */
+function showSuccessToast() {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;top:60px;left:50%;transform:translateX(-50%);
+    background:#1B1E23;color:#fff;font-size:14px;line-height:22px;
+    padding:8px 16px 8px 12px;border-radius:4px;
+    display:flex;align-items:center;gap:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    z-index:99999;animation:toastIn 0.2s ease;
+  `;
+  toast.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" fill="#16A34A"/>
+      <path d="M5 8l2.5 2.5L11 5.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    知识库创建成功！`;
+  const style = document.createElement('style');
+  style.textContent = '@keyframes toastIn{from{opacity:0;top:48px}to{opacity:1;top:60px}}';
+  document.head.appendChild(style);
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+/* ════════════════════════════════════════════════════
+   Demo State Switcher
+════════════════════════════════════════════════════ */
+function setDemo(state, btn) {
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  handleCancel();
+
+  if (state === 'error') {
+    // 触发校验错误态
+    document.getElementById('field-name').classList.add('has-error');
+    document.getElementById('field-icon').classList.add('has-error');
+    document.getElementById('field-maintainer').classList.add('has-error');
+  } else if (state === 'dept') {
+    // 填充"指定部门"场景
+    document.getElementById('input-name').value = '研发团队知识库';
+    handleUpload();
+    selected.maintainer = [DATA.maintainer[0]];
+    renderTags('maintainer');
+    // 切换到"指定部门"
+    const radio = document.querySelector('input[name="permission"][value="department"]');
+    radio.checked = true;
+    onPermissionChange(radio);
+    selected.department = [DATA.department[0], DATA.department[1]];
+    renderTags('department');
+  } else if (state === 'person') {
+    document.getElementById('input-name').value = '私人知识库';
+    handleUpload();
+    selected.maintainer = [DATA.maintainer[0], DATA.maintainer[1]];
+    renderTags('maintainer');
+    const radio = document.querySelector('input[name="permission"][value="person"]');
+    radio.checked = true;
+    onPermissionChange(radio);
+    selected.person = [DATA.person[0], DATA.person[2], DATA.person[4]];
+    renderTags('person');
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initTagSelect('maintainer');
+  initTagSelect('department');
+  initTagSelect('person');
+});
+</script>
+</body>
+</html>
