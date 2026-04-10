@@ -439,6 +439,7 @@ html {
   border-collapse: separate;
   border-spacing: 0;
   min-width: 1400px;
+  font-size: 13px;
 }
 
 .journey-map-table th,
@@ -659,6 +660,37 @@ html {
 .emotion-row-point.warn { fill: #f59e0b; }
 .emotion-row-point.danger { fill: #ef4444; }
 .emotion-row-point.positive { fill: #10b981; }
+
+.issues-filter-note {
+  margin: -4px 0 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #f7f8fa;
+  border: 1px solid var(--line);
+}
+
+.issues-filter-note strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.issues-filter-note p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 13px;
+}
+
+.issues-filter-note p + p {
+  margin-top: 6px;
+}
+
+.issues-filter-note span {
+  color: var(--text);
+  font-weight: 600;
+}
 
 .issues-stack {
   display: grid;
